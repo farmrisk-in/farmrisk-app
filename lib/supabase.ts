@@ -10,9 +10,44 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
+// Custom storage wrapper to handle SSR / server-side execution without window crashes
+const customStorage = {
+  getItem: async (key: string) => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    try {
+      return await AsyncStorage.getItem(key);
+    } catch (e) {
+      console.error("Storage getItem error:", e);
+      return null;
+    }
+  },
+  setItem: async (key: string, value: string) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (e) {
+      console.error("Storage setItem error:", e);
+    }
+  },
+  removeItem: async (key: string) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (e) {
+      console.error("Storage removeItem error:", e);
+    }
+  },
+};
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: AsyncStorage,
+    storage: customStorage,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
