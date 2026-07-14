@@ -40,31 +40,39 @@ We use **Expo SDK 54** with **Expo Router** file-based navigation, backed by **S
 ## 🚀 Local Development Setup
 
 ### 1. Prerequisites
+
 Ensure you have **Node.js**, **Bun**, and the **Expo CLI** (or EAS CLI) installed.
 
 ### 2. Environment Configuration
+
 Create a `.env` file in the root directory (this is already set up for you):
+
 ```env
-EXPO_PUBLIC_SUPABASE_URL=https://meaqfipbbrlqfautkaan.supabase.co
-EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_jCYy_8ivOndk6MRLJ3nzNw_vT9_R8el
-EXPO_PUBLIC_API_URL=http://localhost:3000
+EXPO_PUBLIC_SUPABASE_URL=
+EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+EXPO_PUBLIC_API_URL=
 ```
+
 > [!NOTE]
 > During development, `EXPO_PUBLIC_API_URL` should point to your active Next.js backend server. The mobile app automatically handles routing requests from `localhost` to `10.0.2.2` when running inside an Android Emulator.
 
 ### 3. Install Dependencies
+
 Run the package installer:
+
 ```bash
 bun install
 ```
 
 ### 4. Run the Development Server
+
 ```bash
 bun start
 ```
-* Press **`a`** to load the app in an Android Emulator.
-* Press **`i`** to load the app in an iOS Simulator.
-* Press **`w`** to open the web portal version in your browser.
+
+- Press **`a`** to load the app in an Android Emulator.
+- Press **`i`** to load the app in an iOS Simulator.
+- Press **`w`** to open the web portal version in your browser.
 
 ---
 
@@ -73,7 +81,9 @@ bun start
 To distribute the app directly to users or upload it to GitHub, you need an **APK file**. There are three ways to build this:
 
 ### Option A: Automated Release (GitHub Actions)
+
 We have configured a CI/CD pipeline inside [.github/workflows/build-and-release.yml](file:///.github/workflows/build-and-release.yml).
+
 1. Add an `EXPO_TOKEN` secret to your GitHub Repository Settings (generated from your [Expo Dashboard](https://expo.dev/settings/access-tokens)).
 2. Push a release tag starting with `v` (e.g., `v1.0.0`):
    ```bash
@@ -85,7 +95,9 @@ We have configured a CI/CD pipeline inside [.github/workflows/build-and-release.
 ---
 
 ### Option B: Local EAS Builder (No Cloud Credits Needed)
+
 You can compile the Android package directly on your local computer using the installed Android SDK.
+
 1. Log in to your Expo account:
    ```bash
    eas login
@@ -99,7 +111,9 @@ You can compile the Android package directly on your local computer using the in
 ---
 
 ### Option C: EAS Cloud Builder (Uses Expo Servers)
+
 If you don't have the Android SDK or Java configured locally, you can delegate the compilation to Expo's remote servers:
+
 1. Log in to your Expo account:
    ```bash
    eas login
@@ -115,6 +129,7 @@ If you don't have the Android SDK or Java configured locally, you can delegate t
 ## 🐙 Adding APK to GitHub Releases Manually
 
 If you built the APK locally using **Option B** or **Option C**, you can attach it to a GitHub Release manually:
+
 1. Navigate to your repository page on GitHub.
 2. Click **Releases** on the right sidebar, then click **Draft a new release**.
 3. Create a version tag (e.g., `v1.0.0`), enter a title, and write release notes.
