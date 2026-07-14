@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.farmrisk.farmrisk",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -50,6 +54,7 @@
       "eas": {
         "projectId": "4d53853d-d902-4e2f-98a3-d73ac9b66fa3"
       }
-    }
+    },
+    "owner": "farmrisk"
   }
 }
