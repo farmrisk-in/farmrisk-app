@@ -10,15 +10,32 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://meaqfipbbrlqfautkaan.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_jCYy_8ivOndk6MRLJ3nzNw_vT9_R8el",
+        "EXPO_PUBLIC_API_URL": "https://farmrisk.vercel.app"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://meaqfipbbrlqfautkaan.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_jCYy_8ivOndk6MRLJ3nzNw_vT9_R8el",
+        "EXPO_PUBLIC_API_URL": "https://farmrisk.vercel.app"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "track": "internal"
+      }
+    }
   }
 }

@@ -44,3 +44,5 @@ app-example
 
 .env*
 !.env.example
+
+farmrisk_Secret.json

@@ -1,7 +1,8 @@
 import { Platform } from "react-native";
 
 export function getApiUrl() {
-  const url = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
+  const url =
+    process.env.EXPO_PUBLIC_API_URL || "https://farmrisk.vercel.app";
   // Android emulator localhost needs to be routed to 10.0.2.2
   if (Platform.OS === "android" && url.includes("localhost")) {
     return url.replace("localhost", "10.0.2.2");

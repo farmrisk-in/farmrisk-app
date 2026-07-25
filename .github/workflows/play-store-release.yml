@@ -1,0 +1,52 @@
+name: Build and Submit to Google Play Store
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Build & Submit Android App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Set up Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build Production AAB (Local Build)
+        run: |
+          # We build locally to save EAS cloud build concurrency/limits
+          # This outputs a production app bundle (.aab) ready for Google Play Store
+          eas build --platform android --profile production --local --non-interactive --output=app-release.aab
+
+      - name: Submit to Google Play Store (EAS Submit)
+        run: |
+          # Submit the generated .aab directly to the track specified in eas.json (internal track)
+          # Make sure Google Play Store credentials are set up on Expo Dashboard via `eas credentials`
+          eas submit --platform android --profile production --path=app-release.aab --non-interactive
