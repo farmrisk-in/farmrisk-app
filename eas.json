@@ -11,6 +11,7 @@
     "preview": {
       "distribution": "internal",
       "env": {
+        "NODE_ENV": "production",
         "EXPO_PUBLIC_SUPABASE_URL": "https://meaqfipbbrlqfautkaan.supabase.co",
         "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_jCYy_8ivOndk6MRLJ3nzNw_vT9_R8el",
         "EXPO_PUBLIC_API_URL": "https://farmrisk.vercel.app"
@@ -22,6 +23,7 @@
     "production": {
       "autoIncrement": true,
       "env": {
+        "NODE_ENV": "production",
         "EXPO_PUBLIC_SUPABASE_URL": "https://meaqfipbbrlqfautkaan.supabase.co",
         "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_jCYy_8ivOndk6MRLJ3nzNw_vT9_R8el",
         "EXPO_PUBLIC_API_URL": "https://farmrisk.vercel.app"
