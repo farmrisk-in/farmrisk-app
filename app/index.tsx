@@ -24,13 +24,14 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View className="flex-row items-center justify-between mb-4">
+      <ScrollView className="px-4">
+        <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Leaf color="#006045" size={28} strokeWidth={2.5} />
+            <Leaf color="#006045" size={32} strokeWidth={2.5} />
             <Text
-              variant="headlineSmall"
-              className="font-extrabold text-foreground"
+              variant="headlineLarge"
+              style={{ fontWeight: "600" }}
+              className="text-foreground"
             >
               FarmRisk
             </Text>
