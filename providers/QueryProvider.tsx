@@ -26,7 +26,7 @@ export const queryClient = new QueryClient({
     queries: {
       retry: 2,
       staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10,   // 10 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes
     },
   },
 });
@@ -49,21 +49,32 @@ function InAppDevTools() {
         style={styles.floatingButton}
         onPress={() => setIsOpen(true)}
       >
-        <Text style={styles.floatingButtonText}>⚡ Query DevTools ({queryCache.length})</Text>
+        <Text style={styles.floatingButtonText}>
+          ⚡ Query DevTools ({queryCache.length})
+        </Text>
       </TouchableOpacity>
 
       {/* DevTools Drawer Modal */}
-      <Modal visible={isOpen} animationType="slide" onRequestClose={() => setIsOpen(false)}>
+      <Modal
+        visible={isOpen}
+        animationType="slide"
+        onRequestClose={() => setIsOpen(false)}
+      >
         <SafeAreaView style={styles.modalSafeArea}>
           <View style={styles.header}>
             <Text style={styles.headerTitle}>⚡ TanStack Query DevTools</Text>
-            <TouchableOpacity style={styles.closeBtn} onPress={() => setIsOpen(false)}>
+            <TouchableOpacity
+              style={styles.closeBtn}
+              onPress={() => setIsOpen(false)}
+            >
               <Text style={styles.closeBtnText}>✕ Close</Text>
             </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.body}>
-            <Text style={styles.sectionHeader}>Active Queries ({queryCache.length})</Text>
+            <Text style={styles.sectionHeader}>
+              Active Queries ({queryCache.length})
+            </Text>
             {queryCache.length === 0 ? (
               <Text style={styles.emptyText}>No queries cached yet.</Text>
             ) : (
@@ -73,8 +84,8 @@ function InAppDevTools() {
                   state.status === "success"
                     ? "#2ecc71"
                     : state.status === "error"
-                    ? "#e74c3c"
-                    : "#f39c12";
+                      ? "#e74c3c"
+                      : "#f39c12";
 
                 return (
                   <View key={idx} style={styles.queryCard}>
@@ -82,12 +93,16 @@ function InAppDevTools() {
                       <Text style={styles.queryKey}>
                         {JSON.stringify(q.queryKey)}
                       </Text>
-                      <Text style={[styles.badge, { backgroundColor: statusColor }]}>
+                      <Text
+                        style={[styles.badge, { backgroundColor: statusColor }]}
+                      >
                         {state.status}
                       </Text>
                     </View>
                     <Text style={styles.metaText}>
-                      Updated: {new Date(state.dataUpdatedAt).toLocaleTimeString()} | Fetching: {String(state.isFetching)}
+                      Updated:{" "}
+                      {new Date(state.dataUpdatedAt).toLocaleTimeString()} |
+                      Fetching: {String(state.status)}
                     </Text>
                     {state.data ? (
                       <View style={styles.dataBox}>
@@ -143,10 +158,20 @@ const styles = StyleSheet.create({
     borderBottomColor: "#333",
   },
   headerTitle: { color: "#fff", fontSize: 18, fontWeight: "700" },
-  closeBtn: { backgroundColor: "#333", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+  closeBtn: {
+    backgroundColor: "#333",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
   closeBtnText: { color: "#fff", fontSize: 12, fontWeight: "600" },
   body: { flex: 1, padding: 16 },
-  sectionHeader: { color: "#aaa", fontSize: 13, fontWeight: "600", marginBottom: 12 },
+  sectionHeader: {
+    color: "#aaa",
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
   emptyText: { color: "#666", fontSize: 14 },
   queryCard: {
     backgroundColor: "#1e1e1e",
@@ -156,10 +181,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#333",
   },
-  queryRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  queryKey: { color: "#61dafb", fontWeight: "600", fontSize: 13, flex: 1, marginRight: 8 },
-  badge: { color: "#fff", paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4, fontSize: 10, fontWeight: "700" },
+  queryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  queryKey: {
+    color: "#61dafb",
+    fontWeight: "600",
+    fontSize: 13,
+    flex: 1,
+    marginRight: 8,
+  },
+  badge: {
+    color: "#fff",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    fontSize: 10,
+    fontWeight: "700",
+  },
   metaText: { color: "#888", fontSize: 11, marginTop: 4 },
-  dataBox: { backgroundColor: "#0a0a0a", borderRadius: 4, padding: 8, marginTop: 6 },
-  dataText: { color: "#a6e22e", fontFamily: "Platform.OS === 'ios' ? 'Courier' : 'monospace'", fontSize: 10 },
+  dataBox: {
+    backgroundColor: "#0a0a0a",
+    borderRadius: 4,
+    padding: 8,
+    marginTop: 6,
+  },
+  dataText: {
+    color: "#a6e22e",
+    fontFamily: "Platform.OS === 'ios' ? 'Courier' : 'monospace'",
+    fontSize: 10,
+  },
 });

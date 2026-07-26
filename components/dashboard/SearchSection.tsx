@@ -25,9 +25,12 @@ export function SearchSection() {
 
   const handleSelect = (item: any) => {
     const displayName = item.displayName || item.display_name || "";
+    // Handle both 'lng' and 'lon' depending on what the API returns
+    const longitude = item.lng !== undefined ? item.lng : item.lon;
+    
     setLocation({
       lat: parseFloat(item.lat),
-      lng: parseFloat(item.lon),
+      lng: parseFloat(longitude),
       name: item.district || item.state || displayName,
       displayName: displayName,
     });
