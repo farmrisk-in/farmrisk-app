@@ -22,8 +22,8 @@ export function AIAdvisorySection({ crop }: Props) {
         <Text variant="titleMedium" style={styles.title}>🌾 AI Farm Advisory</Text>
         <TextInput
           mode="outlined"
-          value={query}
-          onChangeText={setQuery}
+          value={query || ""}
+          onChangeText={(t) => setQuery(t || "")}
           placeholder="Ask a farming question..."
           style={styles.input}
           textColor="#000000"

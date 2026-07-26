@@ -183,8 +183,8 @@ export default function ProfileScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Enter first name"
-                value={firstName}
-                onChangeText={setFirstName}
+                value={firstName || ""}
+                onChangeText={(t) => setFirstName(t || "")}
                 autoCapitalize="words"
               />
 
@@ -192,8 +192,8 @@ export default function ProfileScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Enter last name"
-                value={lastName}
-                onChangeText={setLastName}
+                value={lastName || ""}
+                onChangeText={(t) => setLastName(t || "")}
                 autoCapitalize="words"
               />
             </>
@@ -204,8 +204,8 @@ export default function ProfileScreen() {
             style={styles.input}
             placeholder="e.g. 9876543210"
             keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
+            value={phone || ""}
+            onChangeText={(t) => setPhone(t || "")}
           />
 
           <Text style={styles.label}>Password</Text>
@@ -213,8 +213,8 @@ export default function ProfileScreen() {
             style={styles.input}
             placeholder="Min 6 characters"
             secureTextEntry
-            value={password}
-            onChangeText={setPassword}
+            value={password || ""}
+            onChangeText={(t) => setPassword(t || "")}
           />
 
           {mode === "register" && (
@@ -224,8 +224,8 @@ export default function ProfileScreen() {
                 style={styles.input}
                 placeholder="Repeat password"
                 secureTextEntry
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                value={confirmPassword || ""}
+                onChangeText={(t) => setConfirmPassword(t || "")}
               />
             </>
           )}
