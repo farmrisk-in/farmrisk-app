@@ -1,13 +1,6 @@
-/**
- * app/(tabs)/index.tsx
- * Main Dashboard screen.
- * Assembles all section components from components/dashboard/.
- * Each section manages its own data fetching via TanStack Query hooks.
- * selectedCrop state is lifted here so CropsSection, SoilMoistureSection
- * and CalendarSection all stay in sync.
- */
 import React, { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
 
 import {
   SearchSection,
@@ -23,16 +16,14 @@ import {
 } from "@/components/dashboard";
 
 export default function HomeScreen() {
-  // Shared selected crop state — driven by CropsSection, consumed by Soil & Calendar
   const [selectedCrop, setSelectedCrop] = useState<string>("");
 
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.scroll}>
 
-        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>FarmRisk Dashboard</Text>
+          <Text variant="headlineSmall" style={styles.headerTitle}>FarmRisk Dashboard</Text>
         </View>
 
         {/* 1. Location Search */}
@@ -53,20 +44,20 @@ export default function HomeScreen() {
         {/* 6. 16-Day Forecast */}
         <ForecastSection />
 
-        {/* 7. Crops (tapping a crop updates selectedCrop) */}
+        {/* 7. Crops (selecting a crop updates selectedCrop) */}
         <CropsSection
           selectedCrop={selectedCrop}
           onSelectCrop={setSelectedCrop}
         />
 
-        {/* 8. Soil Moisture (filtered by selected crop) */}
+        {/* 8. Soil Moisture (reacts to selected crop) */}
         <SoilMoistureSection crop={selectedCrop} />
 
-        {/* 9. Crop Calendar (requires selected crop) */}
+        {/* 9. Crop Calendar (reacts to selected crop) */}
         <CalendarSection crop={selectedCrop} />
 
-        {/* 10. AI Advisory */}
-        <AIAdvisorySection />
+        {/* 10. AI Advisory (reacts to selected crop) */}
+        <AIAdvisorySection crop={selectedCrop} />
 
       </ScrollView>
     </SafeAreaView>
@@ -77,5 +68,5 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: "#f5f5f5" },
   scroll: { padding: 16 },
   header: { marginBottom: 16 },
-  headerTitle: { fontSize: 22, fontWeight: "800", color: "#1a1a1a" },
+  headerTitle: { fontWeight: "800", color: "#1a1a1a" },
 });
