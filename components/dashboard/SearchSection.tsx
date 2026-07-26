@@ -5,9 +5,16 @@
  */
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { Searchbar, List, Card, Text } from "react-native-paper";
+import { Searchbar, List, Card } from "react-native-paper";
 import { useLocationSearch } from "@/hooks/useDashboardQueries";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { cssInterop } from "nativewind";
+
+// Teach NativeWind how to style the Searchbar
+cssInterop(Searchbar, {
+  className: "style",
+  inputClassName: "inputStyle",
+});
 
 export function SearchSection() {
   const [query, setQuery] = useState("");
@@ -15,9 +22,9 @@ export function SearchSection() {
   const [showResults, setShowResults] = useState(false);
   const { setLocation } = useLocationContext();
 
-  // Debounce input (200ms)
+  // Debounce input (300ms)
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(query || ""), 200);
+    const timer = setTimeout(() => setDebouncedQuery(query || ""), 300);
     return () => clearTimeout(timer);
   }, [query]);
 
@@ -27,7 +34,7 @@ export function SearchSection() {
     const displayName = item.displayName || item.display_name || "";
     // Handle both 'lng' and 'lon' depending on what the API returns
     const longitude = item.lng !== undefined ? item.lng : item.lon;
-    
+
     setLocation({
       lat: parseFloat(item.lat),
       lng: parseFloat(longitude),
@@ -39,10 +46,7 @@ export function SearchSection() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text variant="titleMedium" style={styles.label}>
-        📍 Search Location
-      </Text>
+    <View className="my-4">
       <Searchbar
         placeholder="Search city, district..."
         onChangeText={(t) => {
@@ -51,8 +55,9 @@ export function SearchSection() {
         }}
         value={query || ""}
         loading={isLoading}
-        style={styles.searchbar}
-        inputStyle={styles.searchInput}
+        className="rounded-xl bg-card elevation"
+        // @ts-ignore - cssInterop adds this prop at runtime but TS doesn't know
+        inputClassName="text-card-foreground"
       />
 
       {showResults && results && results.length > 0 && (

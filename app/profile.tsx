@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/hooks/useAuth";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
 import { useColorScheme } from "@/hooks/use-color-scheme";
@@ -133,41 +133,107 @@ export default function ProfileScreen() {
     const phoneNo = meta.phone || user.email?.split("@")[0] || "";
 
     return (
-      <SafeAreaView style={styles.safeArea} className="bg-gray-50 dark:bg-gray-900">
+      <SafeAreaView
+        style={styles.safeArea}
+        className="bg-gray-50 dark:bg-gray-900"
+      >
         <ScrollView contentContainerStyle={styles.container}>
           <View className="flex-row justify-between items-center mb-8">
             <View>
-              <Text style={styles.title} className="text-gray-900 dark:text-white">Your Profile</Text>
-              <Text style={styles.subtitle} className="text-gray-600 dark:text-gray-400 text-left">Premium Dashboard Active</Text>
+              <Text
+                style={styles.title}
+                className="text-gray-900 dark:text-white"
+              >
+                Your Profile
+              </Text>
+              <Text
+                style={styles.subtitle}
+                className="text-gray-600 dark:text-gray-400 text-left"
+              >
+                Premium Dashboard Active
+              </Text>
             </View>
-            <TouchableOpacity onPress={() => router.back()} className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full">
-              <X size={24} className="text-gray-900 dark:text-white" color={colorScheme === 'dark' ? 'white' : 'black'} />
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full"
+            >
+              <X
+                size={24}
+                className="text-gray-900 dark:text-white"
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
             </TouchableOpacity>
           </View>
-          
-          <View style={styles.profileCard} className="bg-white dark:bg-gray-800">
+
+          <View
+            style={styles.profileCard}
+            className="bg-white dark:bg-gray-800"
+          >
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel} className="text-gray-500 dark:text-gray-400">Theme</Text>
-              <TouchableOpacity onPress={toggleColorScheme} className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded">
-                <Text className="text-gray-900 dark:text-white">{colorScheme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}</Text>
+              <Text
+                style={styles.infoLabel}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                Theme
+              </Text>
+              <TouchableOpacity
+                onPress={toggleColorScheme}
+                className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded"
+              >
+                <Text className="text-gray-900 dark:text-white">
+                  {colorScheme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          <View style={styles.profileCard} className="bg-white dark:bg-gray-800">
+          <View
+            style={styles.profileCard}
+            className="bg-white dark:bg-gray-800"
+          >
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel} className="text-gray-500 dark:text-gray-400">Name</Text>
-              <Text style={styles.infoValue} className="text-gray-900 dark:text-white">{name || "Farmer"}</Text>
+              <Text
+                style={styles.infoLabel}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                Name
+              </Text>
+              <Text
+                style={styles.infoValue}
+                className="text-gray-900 dark:text-white"
+              >
+                {name || "Farmer"}
+              </Text>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel} className="text-gray-500 dark:text-gray-400">Phone</Text>
-              <Text style={styles.infoValue} className="text-gray-900 dark:text-white">{phoneNo}</Text>
+              <Text
+                style={styles.infoLabel}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                Phone
+              </Text>
+              <Text
+                style={styles.infoValue}
+                className="text-gray-900 dark:text-white"
+              >
+                {phoneNo}
+              </Text>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel} className="text-gray-500 dark:text-gray-400">Email Login</Text>
-              <Text style={styles.infoValue} className="text-gray-900 dark:text-white">{user.email}</Text>
+              <Text
+                style={styles.infoLabel}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                Email Login
+              </Text>
+              <Text
+                style={styles.infoValue}
+                className="text-gray-900 dark:text-white"
+              >
+                {user.email}
+              </Text>
             </View>
           </View>
 
@@ -180,21 +246,37 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} className="bg-gray-50 dark:bg-gray-900">
+    <SafeAreaView
+      style={styles.safeArea}
+      className="bg-gray-50 dark:bg-gray-900"
+    >
       <ScrollView contentContainerStyle={styles.container}>
         <View className="flex-row justify-between items-center mb-8">
           <View className="flex-1 mr-4">
-            <Text style={styles.title} className="text-gray-900 dark:text-white">
+            <Text
+              style={styles.title}
+              className="text-gray-900 dark:text-white"
+            >
               {mode === "login" ? "Sign In" : "Register"}
             </Text>
-            <Text style={styles.subtitle} className="text-gray-600 dark:text-gray-400 text-left">
+            <Text
+              style={styles.subtitle}
+              className="text-gray-600 dark:text-gray-400 text-left"
+            >
               {mode === "login"
                 ? "Access your personalized paid dashboard"
                 : "Create an account for remote field sensing & AI advice"}
             </Text>
           </View>
-          <TouchableOpacity onPress={() => router.back()} className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full">
-            <X size={24} className="text-gray-900 dark:text-white" color={colorScheme === 'dark' ? 'white' : 'black'} />
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full"
+          >
+            <X
+              size={24}
+              className="text-gray-900 dark:text-white"
+              color={colorScheme === "dark" ? "white" : "black"}
+            />
           </TouchableOpacity>
         </View>
 

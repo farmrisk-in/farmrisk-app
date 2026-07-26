@@ -18,8 +18,8 @@ import {
   Modal,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export const queryClient = new QueryClient({
   defaultOptions: {

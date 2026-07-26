@@ -17,6 +17,7 @@ import {
   CropsSection,
   CalendarSection,
 } from "@/components/dashboard";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function HomeScreen() {
   const [selectedCrop, setSelectedCrop] = useState<string>("");
@@ -35,6 +36,7 @@ export default function HomeScreen() {
             >
               FarmRisk
             </Text>
+            <ThemeToggle />
           </View>
           <TouchableOpacity onPress={() => router.push("/profile")}>
             <Avatar.Icon
