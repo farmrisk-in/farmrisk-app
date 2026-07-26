@@ -4,7 +4,7 @@ Welcome to the **FarmRisk** mobile client repository. This is an universal React
 
 ---
 
-## 🛠️ Project Architecture
+## Project Architecture
 
 We use **Expo SDK 54** with **Expo Router** file-based navigation, backed by **Supabase Auth** and persistent storage.
 
@@ -37,7 +37,7 @@ We use **Expo SDK 54** with **Expo Router** file-based navigation, backed by **S
 
 ---
 
-## 🚀 Local Development Setup
+## Local Development Setup
 
 ### 1. Prerequisites
 
@@ -76,7 +76,7 @@ bun start
 
 ---
 
-## 📦 Building the Android APK
+##  Building the Android APK
 
 To distribute the app directly to users or upload it to GitHub, you need an **APK file**. There are three ways to build this:
 
@@ -126,7 +126,7 @@ If you don't have the Android SDK or Java configured locally, you can delegate t
 
 ---
 
-## 🐙 Adding APK to GitHub Releases Manually
+## Adding APK to GitHub Releases Manually
 
 If you built the APK locally using **Option B** or **Option C**, you can attach it to a GitHub Release manually:
 

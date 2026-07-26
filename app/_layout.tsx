@@ -7,6 +7,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { LanguageProvider } from '@/providers/LanguageProvider';
 import { LocationProvider } from '@/providers/LocationProvider';
+import { QueryProvider } from '@/providers/QueryProvider';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -17,19 +18,21 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <AuthProvider>
-      <LanguageProvider>
-        <LocationProvider>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-            </Stack>
-            <StatusBar style="auto" />
-          </ThemeProvider>
-        </LocationProvider>
-      </LanguageProvider>
-    </AuthProvider>
+    <QueryProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <LocationProvider>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+              </Stack>
+              <StatusBar style="auto" />
+            </ThemeProvider>
+          </LocationProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </QueryProvider>
   );
 }
 

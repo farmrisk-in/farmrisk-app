@@ -46,3 +46,4 @@ app-example
 !.env.example
 
 farmrisk_Secret.json
+out
