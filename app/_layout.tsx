@@ -8,6 +8,7 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { LanguageProvider } from '@/providers/LanguageProvider';
 import { LocationProvider } from '@/providers/LocationProvider';
 import { QueryProvider } from '@/providers/QueryProvider';
+import { PaperProvider } from 'react-native-paper';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -19,19 +20,21 @@ export default function RootLayout() {
 
   return (
     <QueryProvider>
-      <AuthProvider>
-        <LanguageProvider>
-          <LocationProvider>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-              </Stack>
-              <StatusBar style="auto" />
-            </ThemeProvider>
-          </LocationProvider>
-        </LanguageProvider>
-      </AuthProvider>
+      <PaperProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <LocationProvider>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+                </Stack>
+                <StatusBar style="auto" />
+              </ThemeProvider>
+            </LocationProvider>
+          </LanguageProvider>
+        </AuthProvider>
+      </PaperProvider>
     </QueryProvider>
   );
 }
