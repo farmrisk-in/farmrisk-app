@@ -5,90 +5,62 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import { useRouter } from "expo-router";
-import { useColorScheme } from "nativewind";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { Search, MapPin, Map } from "lucide-react-native";
+import { Icons } from "@/components/iconLoader";
 
 export function SearchSection() {
   const router = useRouter();
   const { location } = useLocationContext();
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-
-  const surface = isDark ? "#18181b" : "#ffffff";
-  const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
-  const textMuted = isDark ? "#9f9fa9" : "#71717a";
-  const textPrimary = isDark ? "#fafafa" : "#09090b";
-  const accent = "#006045";
-  const accentBg = isDark ? "#052e16" : "#ecfdf5";
 
   return (
-    <View style={{ flexDirection: "row", gap: 8, marginVertical: 16 }}>
+    <View className="flex flex-row gap-2 my-4">
       {/* Tappable fake search bar */}
       <TouchableOpacity
         onPress={() => router.push("/search")}
         activeOpacity={0.75}
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-          backgroundColor: surface,
-          borderRadius: 24,
-          borderWidth: 1,
-          borderColor: border,
-          paddingHorizontal: 14,
-          paddingVertical: 12,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: isDark ? 0.3 : 0.06,
-          shadowRadius: 4,
-          elevation: 2,
-        }}
+        className="flex flex-row items-center grow gap-3 bg-card rounded-3xl border border-border p-3 elevation"
       >
-        <Search size={18} color={textMuted} />
+        <Icons.Search size={25} className="text-foreground" />
         <View style={{ flex: 1 }}>
           {location?.name ? (
             <>
               <Text
-                style={{ fontSize: 15, fontWeight: "500", color: textPrimary }}
+                className="text-xl font-medium text-foreground"
                 numberOfLines={1}
               >
                 {location.name}
               </Text>
-              <Text
-                style={{ fontSize: 12, color: textMuted, marginTop: 1 }}
-                numberOfLines={1}
-              >
+              <Text className="text-md text-muted-foreground" numberOfLines={1}>
                 {location.displayName}
               </Text>
             </>
           ) : (
-            <Text style={{ fontSize: 15, color: textMuted }}>
+            <Text className="text-2xl text-foreground opacity-80">
               Search city, district...
             </Text>
           )}
         </View>
+        <TouchableOpacity
+          onPress={() => console.log("GPS")}
+          activeOpacity={0.75}
+          className="justify-center"
+          accessibilityRole="button"
+          accessibilityLabel="Use Current Location"
+          hitSlop={{ top: 15, bottom: 15, left: 10, right: 10 }}
+        >
+          <Icons.LocateFixed size={25} className="text-foreground opacity-80" />
+        </TouchableOpacity>
       </TouchableOpacity>
 
       {/* Map button */}
       <TouchableOpacity
-        onPress={() => router.push("/search")}
+        onPress={() => console.log("MAPS")}
         activeOpacity={0.75}
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: 24,
-          backgroundColor: accentBg,
-          borderWidth: 1,
-          borderColor: isDark ? "#064e3b" : "#bbf7d0",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        className="aspect-square rounded-3xl bg-emerald-600 dark:bg-emerald-800 items-center justify-center"
         accessibilityRole="button"
         accessibilityLabel="Select from map"
       >
-        <Map size={20} color={accent} />
+        <Icons.MapPin size={25} className="text-primary-foreground" />
       </TouchableOpacity>
     </View>
   );

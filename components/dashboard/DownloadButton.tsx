@@ -1,10 +1,7 @@
 import React from "react";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { Download } from "lucide-react-native";
-import { useColorScheme } from "nativewind";
+import { Icons } from "@/components/iconLoader";
 export function DownloadButton(props: TouchableOpacityProps) {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
   return (
     <TouchableOpacity
       onPress={() => console.log("download")}
@@ -13,11 +10,7 @@ export function DownloadButton(props: TouchableOpacityProps) {
       accessibilityLabel="Download"
       {...props}
     >
-      {isDark ? (
-        <Download size={20} color="white" />
-      ) : (
-        <Download size={20} color="black" />
-      )}
+      <Icons.Download size={20} className="text-foreground" />
     </TouchableOpacity>
   );
 }

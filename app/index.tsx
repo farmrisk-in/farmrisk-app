@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
+import { ScrollView, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Avatar } from "react-native-paper";
-import { Leaf } from "lucide-react-native";
+import { Icons } from "@/components/iconLoader";
 import { DownloadButton } from "@/components/dashboard/DownloadButton";
 import { useRouter } from "expo-router";
 
@@ -27,9 +27,14 @@ export default function HomeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">
       <ScrollView className="px-4">
+        {/* Header */}
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Leaf color="#006045" size={32} strokeWidth={2.5} />
+            <Icons.Leaf
+              className="text-emerald-700 dark:text-emerald-400"
+              size={32}
+              strokeWidth={2.5}
+            />
             <Text
               variant="headlineLarge"
               style={{ fontWeight: "600" }}
@@ -88,10 +93,3 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#f5f5f5" },
-  scroll: { padding: 16 },
-  header: { marginBottom: 16 },
-  headerTitle: { fontWeight: "800", color: "#1a1a1a" },
-});
