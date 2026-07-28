@@ -1,40 +1,40 @@
 /**
  * app/search.tsx
- * Full-page search modal — Google Maps style.
- * Auto-focuses the search bar. Shows recent searches when idle,
- * live results when typing.
+ * Full-page search screen — Google Maps style.
+ * Uses react-native-paper Searchbar with NativeWind styling & Lucide icons.
  */
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
-  FlatList,
   ActivityIndicator,
   Keyboard,
-  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useColorScheme } from "nativewind";
+import { Searchbar } from "react-native-paper";
+import { cssInterop } from "nativewind";
 import { useLocationSearch } from "@/hooks/useDashboardQueries";
 import { useLocationContext } from "@/providers/LocationProvider";
-import {
-  Search,
-  ArrowLeft,
-  X,
-  MapPin,
-  Clock,
-  Navigation,
-  Map,
-} from "lucide-react-native";
 import { Icons } from "@/components/iconLoader";
 
+// Teach NativeWind how to style the Searchbar
+cssInterop(Searchbar, {
+  className: "style",
+  inputClassName: "inputStyle",
+});
+
 const RECENT_KEY = "farmrisk:recent_locations";
-const MAX_RECENT = 5;
+const MAX_RECENT = 12;
 
 type LocationItem = {
   displayName: string;
@@ -55,18 +55,16 @@ type RecentItem = {
 export default function SearchScreen() {
   const router = useRouter();
   const { setLocation } = useLocationContext();
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [recents, setRecents] = useState<RecentItem[]>([]);
 
-  const inputRef = useRef<TextInput>(null);
+  const searchbarRef = useRef<any>(null);
 
   // Auto-focus search bar when screen mounts
   useEffect(() => {
-    const timer = setTimeout(() => inputRef.current?.focus(), 100);
+    const timer = setTimeout(() => searchbarRef.current?.focus(), 150);
     return () => clearTimeout(timer);
   }, []);
 
@@ -133,281 +131,255 @@ export default function SearchScreen() {
     [recents],
   );
 
-  // --- Colors (inline so no CSS var issues) ---
-  const bg = isDark ? "#09090b" : "#fafafa";
-  const surface = isDark ? "#18181b" : "#ffffff";
-  const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
-  const textPrimary = isDark ? "#fafafa" : "#09090b";
-  const textMuted = isDark ? "#9f9fa9" : "#71717a";
-  const accent = "#006045";
-  const accentSoft = isDark ? "#052e16" : "#ecfdf5";
-  const divider = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
+  // Fill search query into searchbar without submitting
+  const handleFillQuery = useCallback((textToFill: string) => {
+    setQuery(textToFill);
+    searchbarRef.current?.focus();
+  }, []);
 
-  const showResults = debouncedQuery.length >= 2 && results;
+  // Calculate matching recents during search
+  const matchingRecents = useMemo(() => {
+    if (debouncedQuery.length < 2) return [];
+    const q = debouncedQuery.toLowerCase();
+    return recents.filter(
+      (r) =>
+        r.name.toLowerCase().includes(q) ||
+        r.displayName.toLowerCase().includes(q),
+    );
+  }, [debouncedQuery, recents]);
+
+  // Filter API results to exclude duplicate items that are already in matchingRecents
+  const filteredApiResults = useMemo(() => {
+    if (!results || debouncedQuery.length < 2) return [];
+    return results.filter((res: any) => {
+      const label = res.displayName || res.display_name || "";
+      const primary = res.district || res.state || label.split(",")[0];
+      return !matchingRecents.some(
+        (rec) => rec.name === primary || rec.displayName === label,
+      );
+    });
+  }, [results, debouncedQuery, matchingRecents]);
+
+  const totalResultsCount = matchingRecents.length + filteredApiResults.length;
+  const showResults = debouncedQuery.length >= 2 && totalResultsCount > 0;
   const showEmpty =
-    debouncedQuery.length >= 2 && !isLoading && results?.length === 0;
+    debouncedQuery.length >= 2 && !isLoading && totalResultsCount === 0;
 
   return (
-    <SafeAreaView className="flex bg-background">
-      {/* ── Search bar ─────────────────────────────────────────── */}
-
-      <View className="flex flex-row items-center px-3 py-2 gap-3 border border-border m-2 mt-4 rounded-2xl bg-card">
-        {/* Back */}
-        <TouchableOpacity
-          onPress={() => router.back()}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          style={{ padding: 4 }}
-        >
-          <Icons.ArrowLeft
-            size={22}
-            className="text-primary"
-            strokeWidth={2.5}
-          />
-        </TouchableOpacity>
-
-        {/* Input */}
-        <View className="flex flex-row items-center gap-2">
-          <TextInput
-            ref={inputRef}
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search city, district, state..."
-            placeholderTextColor={textMuted}
-            returnKeyType="search"
-            autoCorrect={false}
-            autoCapitalize="none"
-            className="text-lg text-foreground py-2"
-          />
-        </View>
-        {query.length > 0 && (
-          <TouchableOpacity
-            onPress={() => setQuery("")}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Icons.X size={18} className="text-foreground opacity-80" />
-          </TouchableOpacity>
-        )}
+    <SafeAreaView className="flex-1 bg-background">
+      <View className="px-3 py-4 pb-1">
+        {/* Paper Searchbar styled with NativeWind using built-in arrow-left back button */}
+        <Searchbar
+          ref={searchbarRef}
+          placeholder="Search city, district, state..."
+          onChangeText={setQuery}
+          value={query}
+          loading={false}
+          icon="chevron-left"
+          onIconPress={() => router.back()}
+          clearIcon={query.length > 0 ? "close" : ""}
+          onClearIconPress={() => setQuery("")}
+          elevation={0}
+          className="rounded-2xl bg-muted border border-border h-12 justify-center"
+          // @ts-ignore - cssInterop mapping
+          inputClassName="text-foreground text-base py-0 my-0 min-h-0 align-center"
+        />
       </View>
 
-      {/* ── Body ───────────────────────────────────────────────── */}
+      {/* ── Body Content ───────────────────────────────────────────────── */}
       <ScrollView
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        {/* Loading */}
-        {isLoading && debouncedQuery.length >= 2 && (
-          <View style={{ padding: 32, alignItems: "center" }}>
-            <ActivityIndicator color={accent} />
-            <Text style={{ marginTop: 8, color: textMuted, fontSize: 14 }}>
-              Searching...
+        {/* Loading State */}
+        {isLoading && debouncedQuery.length >= 2 && totalResultsCount === 0 && (
+          <View className="py-12 items-center">
+            <ActivityIndicator size="large" className="text-primary" />
+            <Text className="mt-3 text-md text-muted-foreground">
+              Searching locations...
             </Text>
           </View>
         )}
 
-        {/* No results */}
+        {/* No Results State */}
         {showEmpty && (
-          <View style={{ padding: 32, alignItems: "center" }}>
-            <MapPin size={32} color={textMuted} />
-            <Text
-              style={{
-                marginTop: 12,
-                color: textMuted,
-                fontSize: 15,
-                textAlign: "center",
-              }}
-            >
-              No results for "{debouncedQuery}"
+          <View className="py-12 items-center px-6">
+            <View className="w-14 h-14 rounded-2xl bg-muted items-center justify-center mb-3">
+              <Icons.MapPinOff
+                size={25}
+                className="text-destructive opacity-80"
+              />
+            </View>
+            <Text className="text-lg font-semibold text-foreground text-center">
+              No results found
+            </Text>
+            <Text className="text-md text-muted-foreground text-center mt-1">
+              We couldn't find any location matching &quot;{debouncedQuery}
+              &quot;.
             </Text>
           </View>
         )}
 
-        {/* Search results */}
-        {showResults && !isLoading && results!.length > 0 && (
-          <View style={{ paddingTop: 8 }}>
-            <Text
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 10,
-                fontSize: 12,
-                fontWeight: "600",
-                color: textMuted,
-                textTransform: "uppercase",
-                letterSpacing: 0.8,
-              }}
-            >
-              Results
-            </Text>
-            {results!.map((item: any, idx: number) => {
-              const label = item.displayName || item.display_name || "";
+        {/* Live Search Results (Matching Recents + API Results) */}
+        {showResults && (
+          <View className="mt-2 px-2">
+            {/* Matching Recents Section */}
+            {matchingRecents.map((item, idx) => {
+              const isLast =
+                idx === matchingRecents.length - 1 &&
+                filteredApiResults.length === 0;
               return (
                 <TouchableOpacity
-                  key={idx}
-                  onPress={() => handleSelect(item)}
-                  activeOpacity={0.65}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    paddingHorizontal: 16,
-                    paddingVertical: 14,
-                    gap: 14,
-                    borderBottomWidth: 1,
-                    borderBottomColor: divider,
-                  }}
+                  key={`rec-${idx}`}
+                  onPress={() => handleSelectRecent(item)}
+                  activeOpacity={0.7}
+                  className={`flex-row items-center gap-2 p-3.5 ${
+                    !isLast ? "border-b border-border" : ""
+                  }`}
                 >
-                  <View
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 18,
-                      backgroundColor: accentSoft,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <MapPin size={16} color={accent} />
+                  <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
+                    <Icons.Clock size={18} className="text-muted-foreground" />
                   </View>
-                  <View style={{ flex: 1 }}>
+
+                  <View className="flex-1">
                     <Text
+                      className="text-sm font-semibold text-foreground"
                       numberOfLines={1}
-                      style={{
-                        fontSize: 15,
-                        fontWeight: "500",
-                        color: textPrimary,
-                      }}
                     >
-                      {item.district || item.state || label.split(",")[0]}
+                      {item.name}
                     </Text>
                     <Text
+                      className="text-xs text-muted-foreground mt-0.5"
                       numberOfLines={1}
-                      style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
+                    >
+                      {item.displayName}
+                    </Text>
+                  </View>
+
+                  {/* Fill query into searchbar button */}
+                  <TouchableOpacity
+                    onPress={() => handleFillQuery(item.name)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    className="p-2 rounded-full active:bg-muted"
+                  >
+                    <Icons.ArrowUpLeft
+                      size={18}
+                      className="text-muted-foreground"
+                    />
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              );
+            })}
+
+            {/* API Search Results Section */}
+            {filteredApiResults.map((item: any, idx: number) => {
+              const label = item.displayName || item.display_name || "";
+              const primaryTitle =
+                item.district || item.state || label.split(",")[0];
+              const isLast = idx === filteredApiResults.length - 1;
+
+              return (
+                <TouchableOpacity
+                  key={`api-${idx}`}
+                  onPress={() => handleSelect(item)}
+                  activeOpacity={0.7}
+                  className={`flex-row items-center gap-2 p-3.5 ${
+                    !isLast ? "border-b border-border" : ""
+                  }`}
+                >
+                  <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
+                    <Icons.MapPin size={18} className="text-muted-foreground" />
+                  </View>
+
+                  <View className="flex-1">
+                    <Text
+                      className="text-sm font-semibold text-foreground"
+                      numberOfLines={1}
+                    >
+                      {primaryTitle}
+                    </Text>
+                    <Text
+                      className="text-xs text-muted-foreground mt-0.5"
+                      numberOfLines={1}
                     >
                       {label}
                     </Text>
                   </View>
+
+                  {/* Fill query into searchbar button */}
+                  <TouchableOpacity
+                    onPress={() => handleFillQuery(primaryTitle)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                    className="p-2 rounded-full active:bg-muted"
+                  >
+                    <Icons.ArrowUpLeft
+                      size={18}
+                      className="text-muted-foreground"
+                    />
+                  </TouchableOpacity>
                 </TouchableOpacity>
               );
             })}
           </View>
         )}
 
-        {/* Idle state — show when not searching */}
+        {/* Idle State (Quick Actions + Recents) */}
         {debouncedQuery.length < 2 && (
           <>
-            {/* Quick actions */}
-            <View style={{ paddingTop: 16, paddingHorizontal: 16, gap: 2 }}>
+            {/* Quick Actions (Side by Side in 1 line) */}
+            <View className="flex-row gap-2 px-3 pt-2">
+              {/* Use Current Location */}
               <TouchableOpacity
-                activeOpacity={0.65}
+                activeOpacity={0.75}
                 onPress={() => {
-                  // TODO: wire up GPS permission + device location
-                  router.back();
+                  // Action for current location
+                  console.log("GPS");
                 }}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 14,
-                  paddingVertical: 16,
-                  borderBottomWidth: 1,
-                  borderBottomColor: divider,
-                }}
+                className="flex-1 flex-row items-center gap-2 px-5 py-3 bg-muted rounded-2xl border border-border active:opacity-80"
               >
-                <View
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    backgroundColor: accentSoft,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Navigation size={16} color={accent} />
-                </View>
-                <View>
+                <Icons.LocateFixed
+                  size={20}
+                  className="text-muted-foreground"
+                />
+                <View className="flex-1">
                   <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: "500",
-                      color: textPrimary,
-                    }}
+                    className="text-sm font-semibold text-foreground"
+                    numberOfLines={1}
                   >
-                    Use my current location
-                  </Text>
-                  <Text
-                    style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
-                  >
-                    Enable GPS for automatic detection
+                    Use My Location
                   </Text>
                 </View>
               </TouchableOpacity>
 
+              {/* Select on Map */}
               <TouchableOpacity
-                activeOpacity={0.65}
+                activeOpacity={0.75}
                 onPress={() => {
-                  // TODO: open map picker screen
-                  router.back();
+                  // Action for map selection
+                  console.log("MAP");
                 }}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 14,
-                  paddingVertical: 16,
-                }}
+                className="flex-1 flex-row items-center gap-3 py-3 px-5 bg-emerald-600 dark:bg-emerald-900 rounded-xl active:opacity-80"
               >
-                <View
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    backgroundColor: accentSoft,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Map size={16} color={accent} />
-                </View>
-                <View>
+                <Icons.MapPinned size={20} className="text-white" />
+                <View className="flex-1">
                   <Text
-                    style={{
-                      fontSize: 15,
-                      fontWeight: "500",
-                      color: textPrimary,
-                    }}
+                    className="text-sm font-semibold text-white"
+                    numberOfLines={1}
                   >
-                    Select from map
-                  </Text>
-                  <Text
-                    style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
-                  >
-                    Tap any point on the map
+                    Select on Map
                   </Text>
                 </View>
               </TouchableOpacity>
             </View>
 
-            {/* Recent searches */}
+            {/* Recent Searches */}
             {recents.length > 0 && (
-              <View style={{ marginTop: 24 }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingHorizontal: 16,
-                    marginBottom: 4,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: "600",
-                      color: textMuted,
-                      textTransform: "uppercase",
-                      letterSpacing: 0.8,
-                    }}
-                  >
-                    Recent
+              <View className="mt-6 px-4">
+                <View className="flex-row items-center justify-between mb-2.5 px-1">
+                  <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Recent Searches
                   </Text>
                   <TouchableOpacity
                     onPress={async () => {
@@ -415,85 +387,66 @@ export default function SearchScreen() {
                       await AsyncStorage.removeItem(RECENT_KEY);
                     }}
                   >
-                    <Text
-                      style={{ fontSize: 13, color: accent, fontWeight: "500" }}
-                    >
+                    <Text className="text-xs font-semibold text-rose-600 dark:text-destructive opacity-70">
                       Clear all
                     </Text>
                   </TouchableOpacity>
                 </View>
 
-                {recents.map((item, idx) => (
-                  <TouchableOpacity
-                    key={idx}
-                    onPress={() => handleSelectRecent(item)}
-                    activeOpacity={0.65}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      paddingHorizontal: 16,
-                      paddingVertical: 14,
-                      gap: 14,
-                      borderBottomWidth: idx < recents.length - 1 ? 1 : 0,
-                      borderBottomColor: divider,
-                    }}
-                  >
-                    <View
-                      style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 18,
-                        backgroundColor: isDark ? "#27272a" : "#f4f4f5",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Clock size={16} color={textMuted} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          fontSize: 15,
-                          fontWeight: "500",
-                          color: textPrimary,
-                        }}
-                      >
-                        {item.name}
-                      </Text>
-                      <Text
-                        numberOfLines={1}
-                        style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
-                      >
-                        {item.displayName}
-                      </Text>
-                    </View>
+                <View>
+                  {recents.map((item, idx) => (
                     <TouchableOpacity
-                      onPress={() => handleClearRecent(item.displayName)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      key={idx}
+                      onPress={() => handleSelectRecent(item)}
+                      activeOpacity={0.7}
+                      className={`flex-row items-center gap-2 p-3 active:bg-muted ${
+                        idx < recents.length - 1 ? "border-b border-border" : ""
+                      }`}
                     >
-                      <X size={16} color={textMuted} />
+                      <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
+                        <Icons.Clock
+                          size={16}
+                          className="text-muted-foreground"
+                        />
+                      </View>
+                      <View className="flex-1">
+                        <Text
+                          className="text-sm font-medium text-foreground"
+                          numberOfLines={1}
+                        >
+                          {item.name}
+                        </Text>
+                        <Text
+                          className="text-xs text-muted-foreground mt-0.5"
+                          numberOfLines={1}
+                        >
+                          {item.displayName}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => handleClearRecent(item.displayName)}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        className="p-1 rounded-full active:bg-muted"
+                      >
+                        <Icons.X size={16} className="text-muted-foreground" />
+                      </TouchableOpacity>
                     </TouchableOpacity>
-                  </TouchableOpacity>
-                ))}
+                  ))}
+                </View>
               </View>
             )}
 
+            {/* Empty Recent Searches Placeholder */}
             {recents.length === 0 && (
-              <View style={{ paddingTop: 48, alignItems: "center", gap: 8 }}>
-                <Search size={40} color={isDark ? "#27272a" : "#e4e4e7"} />
-                <Text style={{ fontSize: 15, color: textMuted }}>
-                  Search for a location
+              <View className="py-16 items-center px-6">
+                <View className="w-14 h-14 rounded-2xl bg-muted items-center justify-center mb-3">
+                  <Icons.Search size={28} className="text-muted-foreground" />
+                </View>
+                <Text className="text-base font-semibold text-foreground">
+                  Search for a city or district
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    color: isDark ? "#52525b" : "#a1a1aa",
-                    textAlign: "center",
-                    paddingHorizontal: 32,
-                  }}
-                >
-                  Your recent searches will appear here
+                <Text className="text-sm text-muted-foreground text-center mt-1">
+                  Your recent location searches will appear here.
                 </Text>
               </View>
             )}
