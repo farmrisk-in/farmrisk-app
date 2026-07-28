@@ -31,6 +31,7 @@ import {
   Navigation,
   Map,
 } from "lucide-react-native";
+import { Icons } from "@/components/iconLoader";
 
 const RECENT_KEY = "farmrisk:recent_locations";
 const MAX_RECENT = 5;
@@ -93,7 +94,7 @@ export default function SearchScreen() {
       setRecents(updated);
       await AsyncStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     },
-    [recents]
+    [recents],
   );
 
   const handleSelect = useCallback(
@@ -111,7 +112,7 @@ export default function SearchScreen() {
       Keyboard.dismiss();
       router.back();
     },
-    [setLocation, saveRecent, router]
+    [setLocation, saveRecent, router],
   );
 
   const handleSelectRecent = useCallback(
@@ -120,7 +121,7 @@ export default function SearchScreen() {
       saveRecent(item);
       router.back();
     },
-    [setLocation, saveRecent, router]
+    [setLocation, saveRecent, router],
   );
 
   const handleClearRecent = useCallback(
@@ -129,7 +130,7 @@ export default function SearchScreen() {
       setRecents(updated);
       await AsyncStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     },
-    [recents]
+    [recents],
   );
 
   // --- Colors (inline so no CSS var issues) ---
@@ -143,35 +144,29 @@ export default function SearchScreen() {
   const divider = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
 
   const showResults = debouncedQuery.length >= 2 && results;
-  const showEmpty = debouncedQuery.length >= 2 && !isLoading && results?.length === 0;
+  const showEmpty =
+    debouncedQuery.length >= 2 && !isLoading && results?.length === 0;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: bg }}>
+    <SafeAreaView className="flex bg-background">
       {/* ── Search bar ─────────────────────────────────────────── */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 12,
-          paddingVertical: 8,
-          gap: 10,
-          borderBottomWidth: 1,
-          borderBottomColor: border,
-          backgroundColor: surface,
-        }}
-      >
+
+      <View className="flex flex-row items-center px-3 py-2 gap-3 border border-border m-2 mt-4 rounded-2xl bg-card">
         {/* Back */}
         <TouchableOpacity
           onPress={() => router.back()}
           hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           style={{ padding: 4 }}
         >
-          <ArrowLeft size={22} color={textPrimary} />
+          <Icons.ArrowLeft
+            size={22}
+            className="text-primary"
+            strokeWidth={2.5}
+          />
         </TouchableOpacity>
 
         {/* Input */}
-        <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Search size={18} color={textMuted} />
+        <View className="flex flex-row items-center gap-2">
           <TextInput
             ref={inputRef}
             value={query}
@@ -181,19 +176,17 @@ export default function SearchScreen() {
             returnKeyType="search"
             autoCorrect={false}
             autoCapitalize="none"
-            style={{
-              flex: 1,
-              fontSize: 16,
-              color: textPrimary,
-              paddingVertical: Platform.OS === "ios" ? 10 : 6,
-            }}
+            className="text-lg text-foreground py-2"
           />
-          {query.length > 0 && (
-            <TouchableOpacity onPress={() => setQuery("")} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <X size={18} color={textMuted} />
-            </TouchableOpacity>
-          )}
         </View>
+        {query.length > 0 && (
+          <TouchableOpacity
+            onPress={() => setQuery("")}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Icons.X size={18} className="text-foreground opacity-80" />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* ── Body ───────────────────────────────────────────────── */}
@@ -217,7 +210,14 @@ export default function SearchScreen() {
         {showEmpty && (
           <View style={{ padding: 32, alignItems: "center" }}>
             <MapPin size={32} color={textMuted} />
-            <Text style={{ marginTop: 12, color: textMuted, fontSize: 15, textAlign: "center" }}>
+            <Text
+              style={{
+                marginTop: 12,
+                color: textMuted,
+                fontSize: 15,
+                textAlign: "center",
+              }}
+            >
               No results for "{debouncedQuery}"
             </Text>
           </View>
@@ -226,7 +226,17 @@ export default function SearchScreen() {
         {/* Search results */}
         {showResults && !isLoading && results!.length > 0 && (
           <View style={{ paddingTop: 8 }}>
-            <Text style={{ paddingHorizontal: 16, paddingVertical: 10, fontSize: 12, fontWeight: "600", color: textMuted, textTransform: "uppercase", letterSpacing: 0.8 }}>
+            <Text
+              style={{
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                fontSize: 12,
+                fontWeight: "600",
+                color: textMuted,
+                textTransform: "uppercase",
+                letterSpacing: 0.8,
+              }}
+            >
               Results
             </Text>
             {results!.map((item: any, idx: number) => {
@@ -246,14 +256,33 @@ export default function SearchScreen() {
                     borderBottomColor: divider,
                   }}
                 >
-                  <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: accentSoft, alignItems: "center", justifyContent: "center" }}>
+                  <View
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 18,
+                      backgroundColor: accentSoft,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <MapPin size={16} color={accent} />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text numberOfLines={1} style={{ fontSize: 15, fontWeight: "500", color: textPrimary }}>
+                    <Text
+                      numberOfLines={1}
+                      style={{
+                        fontSize: 15,
+                        fontWeight: "500",
+                        color: textPrimary,
+                      }}
+                    >
                       {item.district || item.state || label.split(",")[0]}
                     </Text>
-                    <Text numberOfLines={1} style={{ fontSize: 13, color: textMuted, marginTop: 2 }}>
+                    <Text
+                      numberOfLines={1}
+                      style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
+                    >
                       {label}
                     </Text>
                   </View>
@@ -283,14 +312,31 @@ export default function SearchScreen() {
                   borderBottomColor: divider,
                 }}
               >
-                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: accentSoft, alignItems: "center", justifyContent: "center" }}>
+                <View
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: accentSoft,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <Navigation size={16} color={accent} />
                 </View>
                 <View>
-                  <Text style={{ fontSize: 15, fontWeight: "500", color: textPrimary }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "500",
+                      color: textPrimary,
+                    }}
+                  >
                     Use my current location
                   </Text>
-                  <Text style={{ fontSize: 13, color: textMuted, marginTop: 2 }}>
+                  <Text
+                    style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
+                  >
                     Enable GPS for automatic detection
                   </Text>
                 </View>
@@ -309,14 +355,31 @@ export default function SearchScreen() {
                   paddingVertical: 16,
                 }}
               >
-                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: accentSoft, alignItems: "center", justifyContent: "center" }}>
+                <View
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 18,
+                    backgroundColor: accentSoft,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <Map size={16} color={accent} />
                 </View>
                 <View>
-                  <Text style={{ fontSize: 15, fontWeight: "500", color: textPrimary }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "500",
+                      color: textPrimary,
+                    }}
+                  >
                     Select from map
                   </Text>
-                  <Text style={{ fontSize: 13, color: textMuted, marginTop: 2 }}>
+                  <Text
+                    style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
+                  >
                     Tap any point on the map
                   </Text>
                 </View>
@@ -326,8 +389,24 @@ export default function SearchScreen() {
             {/* Recent searches */}
             {recents.length > 0 && (
               <View style={{ marginTop: 24 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, marginBottom: 4 }}>
-                  <Text style={{ fontSize: 12, fontWeight: "600", color: textMuted, textTransform: "uppercase", letterSpacing: 0.8 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    paddingHorizontal: 16,
+                    marginBottom: 4,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "600",
+                      color: textMuted,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.8,
+                    }}
+                  >
                     Recent
                   </Text>
                   <TouchableOpacity
@@ -336,7 +415,11 @@ export default function SearchScreen() {
                       await AsyncStorage.removeItem(RECENT_KEY);
                     }}
                   >
-                    <Text style={{ fontSize: 13, color: accent, fontWeight: "500" }}>Clear all</Text>
+                    <Text
+                      style={{ fontSize: 13, color: accent, fontWeight: "500" }}
+                    >
+                      Clear all
+                    </Text>
                   </TouchableOpacity>
                 </View>
 
@@ -355,14 +438,33 @@ export default function SearchScreen() {
                       borderBottomColor: divider,
                     }}
                   >
-                    <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: isDark ? "#27272a" : "#f4f4f5", alignItems: "center", justifyContent: "center" }}>
+                    <View
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 18,
+                        backgroundColor: isDark ? "#27272a" : "#f4f4f5",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       <Clock size={16} color={textMuted} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text numberOfLines={1} style={{ fontSize: 15, fontWeight: "500", color: textPrimary }}>
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          fontSize: 15,
+                          fontWeight: "500",
+                          color: textPrimary,
+                        }}
+                      >
                         {item.name}
                       </Text>
-                      <Text numberOfLines={1} style={{ fontSize: 13, color: textMuted, marginTop: 2 }}>
+                      <Text
+                        numberOfLines={1}
+                        style={{ fontSize: 13, color: textMuted, marginTop: 2 }}
+                      >
                         {item.displayName}
                       </Text>
                     </View>
@@ -380,8 +482,17 @@ export default function SearchScreen() {
             {recents.length === 0 && (
               <View style={{ paddingTop: 48, alignItems: "center", gap: 8 }}>
                 <Search size={40} color={isDark ? "#27272a" : "#e4e4e7"} />
-                <Text style={{ fontSize: 15, color: textMuted }}>Search for a location</Text>
-                <Text style={{ fontSize: 13, color: isDark ? "#52525b" : "#a1a1aa", textAlign: "center", paddingHorizontal: 32 }}>
+                <Text style={{ fontSize: 15, color: textMuted }}>
+                  Search for a location
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    color: isDark ? "#52525b" : "#a1a1aa",
+                    textAlign: "center",
+                    paddingHorizontal: 32,
+                  }}
+                >
                   Your recent searches will appear here
                 </Text>
               </View>
