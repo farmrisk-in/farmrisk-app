@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Avatar } from "react-native-paper";
 import { Leaf } from "lucide-react-native";
+import { DownloadButton } from "@/components/dashboard/DownloadButton";
 import { useRouter } from "expo-router";
 
 import {
@@ -24,7 +25,7 @@ export default function HomeScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView className="flex-1 bg-background mt-4">
       <ScrollView className="px-4">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
@@ -36,16 +37,19 @@ export default function HomeScreen() {
             >
               FarmRisk
             </Text>
-            <ThemeToggle />
           </View>
-          <TouchableOpacity onPress={() => router.push("/profile")}>
-            <Avatar.Icon
-              size={40}
-              icon="account"
-              className="bg-primary"
-              color="white"
-            />
-          </TouchableOpacity>
+          <View className="flex-row items-center gap-2">
+            <DownloadButton />
+            <ThemeToggle />
+            <TouchableOpacity onPress={() => router.push("/profile")}>
+              <Avatar.Icon
+                size={40}
+                icon="account"
+                className="bg-primary"
+                color="white"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* 1. Location Search */}

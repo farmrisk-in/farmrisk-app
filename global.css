@@ -2,13 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@custom-variant dark (&:is(.dark *));
-
 :root {
-  --background: #fafafa;
+  --background: white;
   --foreground: #09090b;
 
-  --card: #ffffff;
+  --card: #eee;
   --card-foreground: #09090b;
 
   --popover: #ffffff;
@@ -103,24 +101,12 @@
 }
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-sans;
-  }
-}
-
-@property --angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes rotate {
-  to {
-    --angle: 360deg;
   }
 }

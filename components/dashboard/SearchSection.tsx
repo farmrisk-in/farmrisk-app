@@ -1,107 +1,95 @@
 /**
  * components/dashboard/SearchSection.tsx
- * Location search using react-native-paper Searchbar and List.Section.
- * Renders suggestions inline so ScrollView clipping never hides the list.
+ * Keeps the dashboard clean — no dropdowns, no floating windows.
  */
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import { Searchbar, List, Card } from "react-native-paper";
-import { useLocationSearch } from "@/hooks/useDashboardQueries";
+import React from "react";
+import { View, TouchableOpacity, Text } from "react-native";
+import { useRouter } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { cssInterop } from "nativewind";
-
-// Teach NativeWind how to style the Searchbar
-cssInterop(Searchbar, {
-  className: "style",
-  inputClassName: "inputStyle",
-});
+import { Search, MapPin, Map } from "lucide-react-native";
 
 export function SearchSection() {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [showResults, setShowResults] = useState(false);
-  const { setLocation } = useLocationContext();
+  const router = useRouter();
+  const { location } = useLocationContext();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
-  // Debounce input (300ms)
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(query || ""), 300);
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  const { data: results, isLoading } = useLocationSearch(debouncedQuery);
-
-  const handleSelect = (item: any) => {
-    const displayName = item.displayName || item.display_name || "";
-    // Handle both 'lng' and 'lon' depending on what the API returns
-    const longitude = item.lng !== undefined ? item.lng : item.lon;
-
-    setLocation({
-      lat: parseFloat(item.lat),
-      lng: parseFloat(longitude),
-      name: item.district || item.state || displayName,
-      displayName: displayName,
-    });
-    setQuery(displayName);
-    setShowResults(false);
-  };
+  const surface = isDark ? "#18181b" : "#ffffff";
+  const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const textMuted = isDark ? "#9f9fa9" : "#71717a";
+  const textPrimary = isDark ? "#fafafa" : "#09090b";
+  const accent = "#006045";
+  const accentBg = isDark ? "#052e16" : "#ecfdf5";
 
   return (
-    <View className="my-4">
-      <Searchbar
-        placeholder="Search city, district..."
-        onChangeText={(t) => {
-          setQuery(t || "");
-          setShowResults(true);
+    <View style={{ flexDirection: "row", gap: 8, marginVertical: 16 }}>
+      {/* Tappable fake search bar */}
+      <TouchableOpacity
+        onPress={() => router.push("/search")}
+        activeOpacity={0.75}
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          backgroundColor: surface,
+          borderRadius: 24,
+          borderWidth: 1,
+          borderColor: border,
+          paddingHorizontal: 14,
+          paddingVertical: 12,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: isDark ? 0.3 : 0.06,
+          shadowRadius: 4,
+          elevation: 2,
         }}
-        value={query || ""}
-        loading={isLoading}
-        className="rounded-xl bg-card elevation"
-        // @ts-ignore - cssInterop adds this prop at runtime but TS doesn't know
-        inputClassName="text-card-foreground"
-      />
+      >
+        <Search size={18} color={textMuted} />
+        <View style={{ flex: 1 }}>
+          {location?.name ? (
+            <>
+              <Text
+                style={{ fontSize: 15, fontWeight: "500", color: textPrimary }}
+                numberOfLines={1}
+              >
+                {location.name}
+              </Text>
+              <Text
+                style={{ fontSize: 12, color: textMuted, marginTop: 1 }}
+                numberOfLines={1}
+              >
+                {location.displayName}
+              </Text>
+            </>
+          ) : (
+            <Text style={{ fontSize: 15, color: textMuted }}>
+              Search city, district...
+            </Text>
+          )}
+        </View>
+      </TouchableOpacity>
 
-      {showResults && results && results.length > 0 && (
-        <Card style={styles.resultsCard} mode="elevated">
-          <Card.Content style={{ paddingHorizontal: 0, paddingVertical: 4 }}>
-            {results.map((item: any, idx: number) => {
-              const label = item.displayName || item.display_name || "";
-              return (
-                <List.Item
-                  key={idx}
-                  title={label}
-                  titleNumberOfLines={2}
-                  left={(props) => <List.Icon {...props} icon="map-marker" />}
-                  onPress={() => handleSelect(item)}
-                  style={styles.listItem}
-                />
-              );
-            })}
-          </Card.Content>
-        </Card>
-      )}
+      {/* Map button */}
+      <TouchableOpacity
+        onPress={() => router.push("/search")}
+        activeOpacity={0.75}
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: 24,
+          backgroundColor: accentBg,
+          borderWidth: 1,
+          borderColor: isDark ? "#064e3b" : "#bbf7d0",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        accessibilityRole="button"
+        accessibilityLabel="Select from map"
+      >
+        <Map size={20} color={accent} />
+      </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { marginBottom: 16 },
-  label: { fontWeight: "700", marginBottom: 8, color: "#1a1a1a" },
-  searchbar: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    elevation: 2,
-  },
-  searchInput: {
-    color: "#000000",
-  },
-  resultsCard: {
-    marginTop: 6,
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    elevation: 4,
-  },
-  listItem: {
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#e0e0e0",
-  },
-});
