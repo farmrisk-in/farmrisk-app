@@ -54,7 +54,7 @@ type RecentItem = {
 
 export default function SearchScreen() {
   const router = useRouter();
-  const { setLocation } = useLocationContext();
+  const { setLocation, requestCurrentLocation, isResolving } = useLocationContext();
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -333,16 +333,25 @@ export default function SearchScreen() {
               {/* Use Current Location */}
               <TouchableOpacity
                 activeOpacity={0.75}
-                onPress={() => {
-                  // Action for current location
-                  console.log("GPS");
+                disabled={isResolving}
+                onPress={async () => {
+                  const loc = await requestCurrentLocation();
+                  if (loc) {
+                    saveRecent(loc);
+                    Keyboard.dismiss();
+                    router.back();
+                  }
                 }}
                 className="flex-1 flex-row items-center gap-2 px-5 py-3 bg-muted rounded-2xl border border-border active:opacity-80"
               >
-                <Icons.LocateFixed
-                  size={20}
-                  className="text-muted-foreground"
-                />
+                {isResolving ? (
+                  <ActivityIndicator size="small" className="text-primary" />
+                ) : (
+                  <Icons.LocateFixed
+                    size={20}
+                    className="text-muted-foreground"
+                  />
+                )}
                 <View className="flex-1">
                   <Text
                     className="text-sm font-semibold text-foreground"
@@ -358,7 +367,7 @@ export default function SearchScreen() {
                 activeOpacity={0.75}
                 onPress={() => {
                   // Action for map selection
-                  console.log("MAP");
+                  router.push("/map");
                 }}
                 className="flex-1 flex-row items-center gap-3 py-3 px-5 bg-emerald-600 dark:bg-emerald-900 rounded-xl active:opacity-80"
               >

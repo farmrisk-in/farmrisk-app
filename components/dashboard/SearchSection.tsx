@@ -3,14 +3,18 @@
  * Keeps the dashboard clean — no dropdowns, no floating windows.
  */
 import React from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Icons } from "@/components/iconLoader";
 
 export function SearchSection() {
   const router = useRouter();
-  const { location } = useLocationContext();
+  const { location, requestCurrentLocation, isResolving } = useLocationContext();
+
+  const handleGPSPress = async () => {
+    await requestCurrentLocation();
+  };
 
   return (
     <View className="flex flex-row gap-2 my-4">
@@ -41,20 +45,25 @@ export function SearchSection() {
           )}
         </View>
         <TouchableOpacity
-          onPress={() => console.log("GPS")}
+          onPress={handleGPSPress}
+          disabled={isResolving}
           activeOpacity={0.75}
-          className="justify-center"
+          className="justify-center p-1"
           accessibilityRole="button"
           accessibilityLabel="Use Current Location"
           hitSlop={{ top: 15, bottom: 15, left: 10, right: 10 }}
         >
-          <Icons.LocateFixed size={25} className="text-foreground opacity-80" />
+          {isResolving ? (
+            <ActivityIndicator size="small" className="text-primary" />
+          ) : (
+            <Icons.LocateFixed size={25} className="text-foreground opacity-80" />
+          )}
         </TouchableOpacity>
       </TouchableOpacity>
 
       {/* Map button */}
       <TouchableOpacity
-        onPress={() => console.log("MAPS")}
+        onPress={() => router.push("/map")}
         activeOpacity={0.75}
         className="aspect-square rounded-2xl bg-emerald-600 dark:bg-emerald-800 items-center justify-center"
         accessibilityRole="button"

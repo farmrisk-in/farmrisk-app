@@ -50,7 +50,9 @@ export default function RootLayout() {
                         headerShown: false,
                       }}
                     />
+                    <Stack.Screen name="map" options={{ headerShown: true }} />
                   </Stack>
+
                   <StatusBar style="auto" />
                 </View>
               </ThemeProvider>
