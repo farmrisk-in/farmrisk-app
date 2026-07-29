@@ -17,13 +17,25 @@ export function CurrentWeatherSection() {
   return (
     <Card style={styles.card} mode="elevated">
       <Card.Content>
-        <Text variant="titleMedium" style={styles.title}>🌤 Current Weather</Text>
-        <Text variant="bodySmall" style={styles.location}>{location.displayName}</Text>
-        <Text variant="displayMedium" style={styles.temp}>{current.temperature_2m}°C</Text>
-        <Text variant="titleSmall" style={styles.condition}>{current.condition?.en ?? "—"}</Text>
-        <Text variant="bodyMedium" style={styles.detail}>💧 Humidity: {current.relative_humidity_2m}%</Text>
+        <Text variant="titleMedium" style={styles.title}>
+          🌤 Current Weather
+        </Text>
+        <Text variant="bodySmall" style={styles.location}>
+          {location.displayName}
+        </Text>
+        <Text variant="displayMedium" style={styles.temp}>
+          {current.temperature_2m}°C
+        </Text>
+        <Text variant="titleSmall" style={styles.condition}>
+          {current.condition?.en ?? "—"}
+        </Text>
+        <Text variant="bodyMedium" style={styles.detail}>
+          💧 Humidity: {current.relative_humidity_2m}%
+        </Text>
         {current.wind_speed_10m !== undefined && (
-          <Text variant="bodyMedium" style={styles.detail}>💨 Wind: {current.wind_speed_10m} km/h</Text>
+          <Text variant="bodyMedium" style={styles.detail}>
+            💨 Wind: {current.wind_speed_10m} km/h
+          </Text>
         )}
       </Card.Content>
     </Card>

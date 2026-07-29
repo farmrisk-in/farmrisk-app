@@ -15,7 +15,7 @@ export default function ForecastTabScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">
-      <ScrollView className="px-4">
+      <ScrollView className="px-4" contentContainerStyle={{ paddingBottom: 110 }}>
         {/* Shared Header */}
         <Header />
 

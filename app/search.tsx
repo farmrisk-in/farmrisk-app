@@ -3,7 +3,13 @@
  * Full-page search screen — Google Maps style.
  * Uses react-native-paper Searchbar with NativeWind styling & Hugeicons.
  */
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   View,
   Text,
@@ -96,7 +102,7 @@ export default function SearchScreen() {
       setRecents(updated);
       await AsyncStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     },
-    [recents]
+    [recents],
   );
 
   const handleSelect = useCallback(
@@ -114,7 +120,7 @@ export default function SearchScreen() {
       Keyboard.dismiss();
       router.back();
     },
-    [setLocation, saveRecent, router]
+    [setLocation, saveRecent, router],
   );
 
   const handleSelectRecent = useCallback(
@@ -123,7 +129,7 @@ export default function SearchScreen() {
       saveRecent(item);
       router.back();
     },
-    [setLocation, saveRecent, router]
+    [setLocation, saveRecent, router],
   );
 
   const handleClearRecent = useCallback(
@@ -132,7 +138,7 @@ export default function SearchScreen() {
       setRecents(updated);
       await AsyncStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     },
-    [recents]
+    [recents],
   );
 
   // Fill search query into searchbar without submitting
@@ -148,7 +154,7 @@ export default function SearchScreen() {
     return recents.filter(
       (r) =>
         r.name.toLowerCase().includes(q) ||
-        r.displayName.toLowerCase().includes(q)
+        r.displayName.toLowerCase().includes(q),
     );
   }, [debouncedQuery, recents]);
 
@@ -159,7 +165,7 @@ export default function SearchScreen() {
       const label = res.displayName || res.display_name || "";
       const primary = res.district || res.state || label.split(",")[0];
       return !matchingRecents.some(
-        (rec) => rec.name === primary || rec.displayName === label
+        (rec) => rec.name === primary || rec.displayName === label,
       );
     });
   }, [results, debouncedQuery, matchingRecents]);
@@ -221,7 +227,7 @@ export default function SearchScreen() {
               No results found
             </Text>
             <Text className="text-md text-muted-foreground text-center mt-1">
-              We couldn't find any location matching &quot;{debouncedQuery}
+              We couldn&apos;t find any location matching &quot;{debouncedQuery}
               &quot;.
             </Text>
           </View>
@@ -245,7 +251,11 @@ export default function SearchScreen() {
                   }`}
                 >
                   <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
-                    <Icon icon={Clock01Icon} size={18} className="text-muted-foreground" />
+                    <Icon
+                      icon={Clock01Icon}
+                      size={18}
+                      className="text-muted-foreground"
+                    />
                   </View>
 
                   <View className="flex-1">
@@ -451,7 +461,11 @@ export default function SearchScreen() {
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                         className="p-1 rounded-full active:bg-muted"
                       >
-                        <Icon icon={Cancel01Icon} size={16} className="text-muted-foreground" />
+                        <Icon
+                          icon={Cancel01Icon}
+                          size={16}
+                          className="text-muted-foreground"
+                        />
                       </TouchableOpacity>
                     </TouchableOpacity>
                   ))}
@@ -463,7 +477,11 @@ export default function SearchScreen() {
             {recents.length === 0 && (
               <View className="py-16 items-center px-6">
                 <View className="w-14 h-14 rounded-2xl bg-muted items-center justify-center mb-3">
-                  <Icon icon={Search01Icon} size={28} className="text-muted-foreground" />
+                  <Icon
+                    icon={Search01Icon}
+                    size={28}
+                    className="text-muted-foreground"
+                  />
                 </View>
                 <Text className="text-base font-semibold text-foreground">
                   Search for a city or district

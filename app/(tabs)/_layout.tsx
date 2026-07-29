@@ -1,6 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { useColorScheme } from "nativewind";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
 import {
   Home01Icon,
@@ -12,6 +13,7 @@ import {
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -20,15 +22,15 @@ export default function TabLayout() {
         tabBarActiveTintColor: isDark ? "#4ade80" : "#007a55",
         tabBarInactiveTintColor: isDark ? "#9f9fa9" : "#71717a",
         tabBarStyle: {
+          paddingBottom: Math.max(insets.bottom, 12),
           backgroundColor: isDark ? "#18181b" : "#ffffff",
-          borderTopColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 6,
+          borderTopWidth: 1,
+          borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)",
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: "600",
+          marginTop: 2,
         },
       }}
     >

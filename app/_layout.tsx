@@ -68,7 +68,7 @@ export default function RootLayout() {
                     <Stack.Screen name="map" options={{ headerShown: true }} />
                   </Stack>
 
-                  <StatusBar style="auto" />
+                  {/*<StatusBar style="auto" />*/}
                 </View>
               </ThemeProvider>
             </LocationProvider>
