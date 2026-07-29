@@ -1,7 +1,13 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { Icons } from "@/components/iconLoader";
+import { Icon } from "@/components/ui/Icon";
+import {
+  Home01Icon,
+  SunCloud01Icon,
+  Wrench01Icon,
+  Notification01Icon,
+} from "@hugeicons/core-free-icons";
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
@@ -32,7 +38,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => (
-            <Icons.Home size={size || 22} color={color} />
+            <Icon icon={Home01Icon} size={size || 22} color={color} />
           ),
         }}
       />
@@ -43,7 +49,7 @@ export default function TabLayout() {
         options={{
           title: "Forecast",
           tabBarIcon: ({ color, size }) => (
-            <Icons.CloudSun size={size || 22} color={color} />
+            <Icon icon={SunCloud01Icon} size={size || 22} color={color} />
           ),
         }}
       />
@@ -54,7 +60,7 @@ export default function TabLayout() {
         options={{
           title: "Tools",
           tabBarIcon: ({ color, size }) => (
-            <Icons.Wrench size={size || 22} color={color} />
+            <Icon icon={Wrench01Icon} size={size || 22} color={color} />
           ),
         }}
       />
@@ -65,7 +71,7 @@ export default function TabLayout() {
         options={{
           title: "Alerts",
           tabBarIcon: ({ color, size }) => (
-            <Icons.Bell size={size || 22} color={color} />
+            <Icon icon={Notification01Icon} size={size || 22} color={color} />
           ),
         }}
       />

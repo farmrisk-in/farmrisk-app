@@ -1,6 +1,8 @@
 import React from "react";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { Icons } from "@/components/iconLoader";
+import { Icon } from "@/components/ui/Icon";
+import { Download01Icon } from "@hugeicons/core-free-icons";
+
 export function DownloadButton(props: TouchableOpacityProps) {
   return (
     <TouchableOpacity
@@ -10,7 +12,7 @@ export function DownloadButton(props: TouchableOpacityProps) {
       accessibilityLabel="Download"
       {...props}
     >
-      <Icons.Download size={20} className="text-foreground" />
+      <Icon icon={Download01Icon} size={20} className="text-foreground" />
     </TouchableOpacity>
   );
 }

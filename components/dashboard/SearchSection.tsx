@@ -6,7 +6,8 @@ import React from "react";
 import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { Icons } from "@/components/iconLoader";
+import { Icon } from "@/components/ui/Icon";
+import { Search01Icon, Gps01Icon, Location01Icon } from "@hugeicons/core-free-icons";
 
 export function SearchSection() {
   const router = useRouter();
@@ -25,7 +26,7 @@ export function SearchSection() {
         activeOpacity={0.75}
         className="flex flex-row items-center grow gap-3 bg-card rounded-3xl border border-border px-3 py-3"
       >
-        <Icons.Search size={20} className="text-foreground" />
+        <Icon icon={Search01Icon} size={20} className="text-foreground" />
         <View style={{ flex: 1 }}>
           {location?.name ? (
             <>
@@ -57,7 +58,8 @@ export function SearchSection() {
           {isResolving ? (
             <ActivityIndicator size="small" className="text-primary" />
           ) : (
-            <Icons.LocateFixed
+            <Icon
+              icon={Gps01Icon}
               size={25}
               className="text-foreground opacity-70"
             />
@@ -73,7 +75,7 @@ export function SearchSection() {
         accessibilityRole="button"
         accessibilityLabel="Select from map"
       >
-        <Icons.MapPin size={25} className="text-primary-foreground" />
+        <Icon icon={Location01Icon} size={25} className="text-primary-foreground" />
       </TouchableOpacity>
     </View>
   );

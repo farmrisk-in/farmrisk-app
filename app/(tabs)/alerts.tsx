@@ -2,7 +2,8 @@ import React from "react";
 import { ScrollView, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header, LightningRiskSection } from "@/components/dashboard";
-import { Icons } from "@/components/iconLoader";
+import { Icon } from "@/components/ui/Icon";
+import { Alert01Icon } from "@hugeicons/core-free-icons";
 
 export default function AlertsTabScreen() {
   return (
@@ -28,7 +29,7 @@ export default function AlertsTabScreen() {
         <View className="bg-card rounded-2xl border border-border p-4 my-2">
           <View className="flex-row items-center gap-3 mb-3">
             <View className="w-10 h-10 rounded-xl bg-amber-500/10 items-center justify-center">
-              <Icons.ShieldAlert size={20} className="text-amber-500" />
+              <Icon icon={Alert01Icon} size={20} className="text-amber-500" />
             </View>
             <View className="flex-1">
               <Text className="text-base font-semibold text-foreground">

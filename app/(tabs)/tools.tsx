@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { ScrollView, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header, CropsSection, AIAdvisorySection } from "@/components/dashboard";
-import { Icons } from "@/components/iconLoader";
+import { Icon } from "@/components/ui/Icon";
+import { Wrench01Icon, DropletIcon, Calendar01Icon } from "@hugeicons/core-free-icons";
 
 export default function ToolsTabScreen() {
   const [selectedCrop, setSelectedCrop] = useState<string>("");
@@ -36,7 +37,7 @@ export default function ToolsTabScreen() {
         <View className="bg-card rounded-2xl border border-border p-4 my-2 mb-6">
           <View className="flex-row items-center gap-3 mb-3">
             <View className="w-10 h-10 rounded-xl bg-primary/10 items-center justify-center">
-              <Icons.Wrench size={20} className="text-primary" />
+              <Icon icon={Wrench01Icon} size={20} className="text-primary" />
             </View>
             <View className="flex-1">
               <Text className="text-base font-semibold text-foreground">
@@ -50,7 +51,7 @@ export default function ToolsTabScreen() {
 
           <View className="flex-row gap-3">
             <View className="flex-1 bg-muted/50 p-3 rounded-xl border border-border/50">
-              <Icons.Droplets size={20} className="text-primary mb-1.5" />
+              <Icon icon={DropletIcon} size={20} className="text-primary mb-1.5" />
               <Text className="text-sm font-semibold text-foreground">
                 Irrigation Tool
               </Text>
@@ -60,7 +61,7 @@ export default function ToolsTabScreen() {
             </View>
 
             <View className="flex-1 bg-muted/50 p-3 rounded-xl border border-border/50">
-              <Icons.CalendarDays size={20} className="text-primary mb-1.5" />
+              <Icon icon={Calendar01Icon} size={20} className="text-primary mb-1.5" />
               <Text className="text-sm font-semibold text-foreground">
                 Sowing Planner
               </Text>

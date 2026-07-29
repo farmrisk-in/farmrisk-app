@@ -2,6 +2,7 @@
  * components/dashboard/index.ts
  * Barrel export for all dashboard section components.
  */
+export { Header } from "./Header";
 export { SearchSection } from "./SearchSection";
 export { CurrentWeatherSection } from "./CurrentWeatherSection";
 export { HourlyWeatherSection } from "./HourlyWeatherSection";

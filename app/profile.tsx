@@ -13,7 +13,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { supabase } from "@/lib/supabase";
-import { X } from "lucide-react-native";
+import { Icon } from "@/components/ui/Icon";
+import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 
 type Mode = "login" | "register";
@@ -157,7 +158,8 @@ export default function ProfileScreen() {
               onPress={() => router.back()}
               className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full"
             >
-              <X
+              <Icon
+                icon={Cancel01Icon}
                 size={24}
                 className="text-gray-900 dark:text-white"
                 color={colorScheme === "dark" ? "white" : "black"}
@@ -272,7 +274,8 @@ export default function ProfileScreen() {
             onPress={() => router.back()}
             className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full"
           >
-            <X
+            <Icon
+              icon={Cancel01Icon}
               size={24}
               className="text-gray-900 dark:text-white"
               color={colorScheme === "dark" ? "white" : "black"}

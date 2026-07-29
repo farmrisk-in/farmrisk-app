@@ -1,7 +1,8 @@
 import React from "react";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { useColorScheme } from "nativewind";
-import { Sun, Moon } from "lucide-react-native";
+import { Icon } from "@/components/ui/Icon";
+import { Sun01Icon, Moon01Icon } from "@hugeicons/core-free-icons";
 
 export function ThemeToggle(props: TouchableOpacityProps) {
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -16,9 +17,9 @@ export function ThemeToggle(props: TouchableOpacityProps) {
       {...props}
     >
       {isDark ? (
-        <Sun size={22} color="#fafafa" />
+        <Icon icon={Sun01Icon} size={22} className="text-foreground" />
       ) : (
-        <Moon size={22} color="#09090b" />
+        <Icon icon={Moon01Icon} size={22} className="text-foreground" />
       )}
     </TouchableOpacity>
   );

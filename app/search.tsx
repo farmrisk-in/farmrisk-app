@@ -1,15 +1,9 @@
 /**
  * app/search.tsx
  * Full-page search screen — Google Maps style.
- * Uses react-native-paper Searchbar with NativeWind styling & Lucide icons.
+ * Uses react-native-paper Searchbar with NativeWind styling & Hugeicons.
  */
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -25,7 +19,16 @@ import { Searchbar } from "react-native-paper";
 import { cssInterop } from "nativewind";
 import { useLocationSearch } from "@/hooks/useDashboardQueries";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { Icons } from "@/components/iconLoader";
+import { Icon } from "@/components/ui/Icon";
+import {
+  LocationOffline01Icon,
+  Clock01Icon,
+  ArrowUpLeft01Icon,
+  Gps01Icon,
+  Location01Icon,
+  Cancel01Icon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons";
 
 // Teach NativeWind how to style the Searchbar
 cssInterop(Searchbar, {
@@ -34,7 +37,7 @@ cssInterop(Searchbar, {
 });
 
 const RECENT_KEY = "farmrisk:recent_locations";
-const MAX_RECENT = 12;
+const MAX_RECENT = 5;
 
 type LocationItem = {
   displayName: string;
@@ -93,7 +96,7 @@ export default function SearchScreen() {
       setRecents(updated);
       await AsyncStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     },
-    [recents],
+    [recents]
   );
 
   const handleSelect = useCallback(
@@ -111,7 +114,7 @@ export default function SearchScreen() {
       Keyboard.dismiss();
       router.back();
     },
-    [setLocation, saveRecent, router],
+    [setLocation, saveRecent, router]
   );
 
   const handleSelectRecent = useCallback(
@@ -120,7 +123,7 @@ export default function SearchScreen() {
       saveRecent(item);
       router.back();
     },
-    [setLocation, saveRecent, router],
+    [setLocation, saveRecent, router]
   );
 
   const handleClearRecent = useCallback(
@@ -129,7 +132,7 @@ export default function SearchScreen() {
       setRecents(updated);
       await AsyncStorage.setItem(RECENT_KEY, JSON.stringify(updated));
     },
-    [recents],
+    [recents]
   );
 
   // Fill search query into searchbar without submitting
@@ -145,7 +148,7 @@ export default function SearchScreen() {
     return recents.filter(
       (r) =>
         r.name.toLowerCase().includes(q) ||
-        r.displayName.toLowerCase().includes(q),
+        r.displayName.toLowerCase().includes(q)
     );
   }, [debouncedQuery, recents]);
 
@@ -156,7 +159,7 @@ export default function SearchScreen() {
       const label = res.displayName || res.display_name || "";
       const primary = res.district || res.state || label.split(",")[0];
       return !matchingRecents.some(
-        (rec) => rec.name === primary || rec.displayName === label,
+        (rec) => rec.name === primary || rec.displayName === label
       );
     });
   }, [results, debouncedQuery, matchingRecents]);
@@ -207,10 +210,13 @@ export default function SearchScreen() {
         {/* No Results State */}
         {showEmpty && (
           <View className="py-12 items-center px-6">
-            <Icons.MapPinOff
-              size={32}
-              className="text-destructive opacity-80 m-3"
-            />
+            <View className="w-14 h-14 rounded-2xl bg-muted items-center justify-center mb-3">
+              <Icon
+                icon={LocationOffline01Icon}
+                size={25}
+                className="text-destructive opacity-80"
+              />
+            </View>
             <Text className="text-lg font-semibold text-foreground text-center">
               No results found
             </Text>
@@ -234,12 +240,12 @@ export default function SearchScreen() {
                   key={`rec-${idx}`}
                   onPress={() => handleSelectRecent(item)}
                   activeOpacity={0.7}
-                  className={`flex-row items-center gap-2 p-3 ${
+                  className={`flex-row items-center gap-2 p-3.5 active:bg-primary ${
                     !isLast ? "border-b border-border" : ""
                   }`}
                 >
                   <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
-                    <Icons.Clock size={18} className="text-muted-foreground" />
+                    <Icon icon={Clock01Icon} size={18} className="text-muted-foreground" />
                   </View>
 
                   <View className="flex-1">
@@ -263,7 +269,8 @@ export default function SearchScreen() {
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     className="p-2 rounded-full active:bg-muted"
                   >
-                    <Icons.ArrowUpLeft
+                    <Icon
+                      icon={ArrowUpLeft01Icon}
                       size={18}
                       className="text-muted-foreground"
                     />
@@ -284,12 +291,16 @@ export default function SearchScreen() {
                   key={`api-${idx}`}
                   onPress={() => handleSelect(item)}
                   activeOpacity={0.7}
-                  className={`flex-row items-center gap-2 p-3.5 ${
+                  className={`flex-row items-center gap-2 p-3.5 active:bg-primary ${
                     !isLast ? "border-b border-border" : ""
                   }`}
                 >
                   <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
-                    <Icons.MapPin size={18} className="text-muted-foreground" />
+                    <Icon
+                      icon={Location01Icon}
+                      size={18}
+                      className="text-muted-foreground"
+                    />
                   </View>
 
                   <View className="flex-1">
@@ -313,7 +324,8 @@ export default function SearchScreen() {
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     className="p-2 rounded-full active:bg-muted"
                   >
-                    <Icons.ArrowUpLeft
+                    <Icon
+                      icon={ArrowUpLeft01Icon}
                       size={18}
                       className="text-muted-foreground"
                     />
@@ -346,7 +358,8 @@ export default function SearchScreen() {
                 {isResolving ? (
                   <ActivityIndicator size="small" className="text-primary" />
                 ) : (
-                  <Icons.LocateFixed
+                  <Icon
+                    icon={Gps01Icon}
                     size={20}
                     className="text-muted-foreground"
                   />
@@ -365,12 +378,11 @@ export default function SearchScreen() {
               <TouchableOpacity
                 activeOpacity={0.75}
                 onPress={() => {
-                  // Action for map selection
                   router.push("/map");
                 }}
-                className="flex-1 flex-row items-center gap-3 py-3 px-5 bg-emerald-600 dark:bg-emerald-900 rounded-2xl active:opacity-80"
+                className="flex-1 flex-row items-center gap-3 py-3 px-5 bg-emerald-800 rounded-xl active:opacity-80"
               >
-                <Icons.MapPinned size={20} className="text-white" />
+                <Icon icon={Location01Icon} size={20} className="text-white" />
                 <View className="flex-1">
                   <Text
                     className="text-sm font-semibold text-white"
@@ -395,24 +407,27 @@ export default function SearchScreen() {
                       await AsyncStorage.removeItem(RECENT_KEY);
                     }}
                   >
-                    <Text className="text-xs font-semibold text-rose-600 dark:text-destructive opacity-70">
+                    <Text className="text-xs font-semibold text-primary">
                       Clear all
                     </Text>
                   </TouchableOpacity>
                 </View>
 
-                <View>
+                <View className="bg-card rounded-2xl border border-border overflow-hidden">
                   {recents.map((item, idx) => (
                     <TouchableOpacity
                       key={idx}
                       onPress={() => handleSelectRecent(item)}
                       activeOpacity={0.7}
-                      className={`flex-row items-center gap-2 p-3 active:bg-muted ${
-                        idx < recents.length - 1 ? "border-b border-border" : ""
+                      className={`flex-row items-center gap-3 p-3.5 active:bg-muted/50 ${
+                        idx < recents.length - 1
+                          ? "border-b border-border/50"
+                          : ""
                       }`}
                     >
                       <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
-                        <Icons.Clock
+                        <Icon
+                          icon={Clock01Icon}
                           size={16}
                           className="text-muted-foreground"
                         />
@@ -436,7 +451,7 @@ export default function SearchScreen() {
                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                         className="p-1 rounded-full active:bg-muted"
                       >
-                        <Icons.X size={16} className="text-muted-foreground" />
+                        <Icon icon={Cancel01Icon} size={16} className="text-muted-foreground" />
                       </TouchableOpacity>
                     </TouchableOpacity>
                   ))}
@@ -448,7 +463,7 @@ export default function SearchScreen() {
             {recents.length === 0 && (
               <View className="py-16 items-center px-6">
                 <View className="w-14 h-14 rounded-2xl bg-muted items-center justify-center mb-3">
-                  <Icons.Search size={28} className="text-muted-foreground" />
+                  <Icon icon={Search01Icon} size={28} className="text-muted-foreground" />
                 </View>
                 <Text className="text-base font-semibold text-foreground">
                   Search for a city or district

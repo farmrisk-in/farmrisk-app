@@ -14,7 +14,6 @@ import { LanguageProvider } from "@/providers/LanguageProvider";
 import { LocationProvider } from "@/providers/LocationProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { PaperProvider } from "react-native-paper";
-import "@/components/iconLoader";
 import {
   useFonts,
   Fraunces_400Regular,
@@ -48,7 +47,7 @@ export default function RootLayout() {
                 >
                   <Stack>
                     <Stack.Screen
-                      name="index"
+                      name="(tabs)"
                       options={{ headerShown: false }}
                     />
                     <Stack.Screen
