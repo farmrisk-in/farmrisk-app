@@ -15,8 +15,24 @@ import { LocationProvider } from "@/providers/LocationProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { PaperProvider } from "react-native-paper";
 import "@/components/iconLoader";
+import {
+  useFonts,
+  Fraunces_400Regular,
+  Fraunces_600SemiBold,
+  Fraunces_700Bold,
+} from "@expo-google-fonts/fraunces";
+
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
+  const [loaded] = useFonts({
+    Fraunces: Fraunces_400Regular,
+    Fraunces_600SemiBold,
+    Fraunces_700Bold,
+  });
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <QueryProvider>

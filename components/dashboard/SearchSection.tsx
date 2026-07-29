@@ -10,7 +10,8 @@ import { Icons } from "@/components/iconLoader";
 
 export function SearchSection() {
   const router = useRouter();
-  const { location, requestCurrentLocation, isResolving } = useLocationContext();
+  const { location, requestCurrentLocation, isResolving } =
+    useLocationContext();
 
   const handleGPSPress = async () => {
     await requestCurrentLocation();
@@ -22,7 +23,7 @@ export function SearchSection() {
       <TouchableOpacity
         onPress={() => router.push("/search")}
         activeOpacity={0.75}
-        className="flex flex-row items-center grow gap-3 bg-card rounded-2xl border border-border px-3 py-2"
+        className="flex flex-row items-center grow gap-3 bg-card rounded-3xl border border-border px-3 py-2"
       >
         <Icons.Search size={20} className="text-foreground" />
         <View style={{ flex: 1 }}>
@@ -56,7 +57,10 @@ export function SearchSection() {
           {isResolving ? (
             <ActivityIndicator size="small" className="text-primary" />
           ) : (
-            <Icons.LocateFixed size={25} className="text-foreground opacity-80" />
+            <Icons.LocateFixed
+              size={25}
+              className="text-foreground opacity-80"
+            />
           )}
         </TouchableOpacity>
       </TouchableOpacity>
