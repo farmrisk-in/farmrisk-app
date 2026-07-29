@@ -1,0 +1,76 @@
+import React, { useState } from "react";
+import { ScrollView, View, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Header, CropsSection, AIAdvisorySection } from "@/components/dashboard";
+import { Icons } from "@/components/iconLoader";
+
+export default function ToolsTabScreen() {
+  const [selectedCrop, setSelectedCrop] = useState<string>("");
+
+  return (
+    <SafeAreaView className="flex-1 bg-background mt-4">
+      <ScrollView className="px-4">
+        {/* Shared Header */}
+        <Header />
+
+        {/* Section Title */}
+        <View className="my-3">
+          <Text className="text-xl font-bold text-foreground">
+            Farming & Field Tools
+          </Text>
+          <Text className="text-xs text-muted-foreground mt-0.5">
+            AI crop advisory, field calculators, and local crop area analytics
+          </Text>
+        </View>
+
+        {/* Crop Selection Tool */}
+        <CropsSection
+          selectedCrop={selectedCrop}
+          onSelectCrop={setSelectedCrop}
+        />
+
+        {/* AI Advisory RAG Tool */}
+        <AIAdvisorySection crop={selectedCrop} />
+
+        {/* Additional Farm Tools Overview */}
+        <View className="bg-card rounded-2xl border border-border p-4 my-2 mb-6">
+          <View className="flex-row items-center gap-3 mb-3">
+            <View className="w-10 h-10 rounded-xl bg-primary/10 items-center justify-center">
+              <Icons.Wrench size={20} className="text-primary" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-semibold text-foreground">
+                Smart Field Utilities
+              </Text>
+              <Text className="text-xs text-muted-foreground">
+                Additional agricultural decision support tools
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex-row gap-3">
+            <View className="flex-1 bg-muted/50 p-3 rounded-xl border border-border/50">
+              <Icons.Droplets size={20} className="text-primary mb-1.5" />
+              <Text className="text-sm font-semibold text-foreground">
+                Irrigation Tool
+              </Text>
+              <Text className="text-xs text-muted-foreground mt-0.5">
+                Water requirement guide
+              </Text>
+            </View>
+
+            <View className="flex-1 bg-muted/50 p-3 rounded-xl border border-border/50">
+              <Icons.CalendarDays size={20} className="text-primary mb-1.5" />
+              <Text className="text-sm font-semibold text-foreground">
+                Sowing Planner
+              </Text>
+              <Text className="text-xs text-muted-foreground mt-0.5">
+                Crop season timeline
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

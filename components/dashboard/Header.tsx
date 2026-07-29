@@ -1,0 +1,86 @@
+import React from "react";
+import { View, TouchableOpacity } from "react-native";
+import { Text, Avatar } from "react-native-paper";
+import { Icon } from "@/components/ui/Icon";
+import { Menu01Icon } from "@hugeicons/core-free-icons";
+import { DownloadButton } from "@/components/dashboard/DownloadButton";
+import { useRouter } from "expo-router";
+import { useAuth } from "@/hooks/useAuth";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { Logo } from "@/components/Logo";
+
+export function Header() {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  // Time-based greeting helper
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning,";
+    if (hour < 17) return "Good afternoon,";
+    if (hour < 21) return "Good evening,";
+    return "Good night,";
+  };
+
+  // Extract user's name if logged in
+  const meta = user?.user_metadata || {};
+  const userName =
+    [meta.first_name, meta.last_name].filter(Boolean).join(" ") ||
+    meta.name ||
+    user?.email?.split("@")[0] ||
+    "Farmer";
+
+  return (
+    <View className="flex-row items-center justify-between py-1">
+      {user ? (
+        /* Logged In Header */
+        <TouchableOpacity
+          onPress={() => router.push("/profile")}
+          activeOpacity={0.8}
+          className="flex-row items-center gap-3"
+        >
+          <Avatar.Icon
+            size={45}
+            icon="account"
+            className="bg-primary"
+            color="white"
+          />
+          <View>
+            <Text className="text-sm text-muted-foreground font-medium">
+              {getGreeting()}
+            </Text>
+            <Text
+              style={{ fontFamily: "Fraunces_600SemiBold" }}
+              className="text-3xl text-foreground font-fraunces-semibold"
+              numberOfLines={1}
+            >
+              {userName}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ) : (
+        /* Logged Out Header */
+        <View className="flex-row items-center gap-2">
+          <Logo size={32} />
+          <Text
+            style={{ fontFamily: "Fraunces_600SemiBold", fontSize: 26 }}
+            className="text-foreground font-fraunces-semibold"
+          >
+            FarmRisk
+          </Text>
+        </View>
+      )}
+
+      {/* Header Action Buttons */}
+      <View className="flex-row items-center gap-2">
+        <TouchableOpacity
+          onPress={() => router.push("/profile")}
+          accessibilityRole="button"
+          accessibilityLabel="Profile & Settings"
+        >
+          <Icon icon={Menu01Icon} size={30} className="text-foreground" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
