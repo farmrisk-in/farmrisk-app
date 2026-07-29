@@ -54,7 +54,8 @@ type RecentItem = {
 
 export default function SearchScreen() {
   const router = useRouter();
-  const { setLocation, requestCurrentLocation, isResolving } = useLocationContext();
+  const { setLocation, requestCurrentLocation, isResolving } =
+    useLocationContext();
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -206,12 +207,10 @@ export default function SearchScreen() {
         {/* No Results State */}
         {showEmpty && (
           <View className="py-12 items-center px-6">
-            <View className="w-14 h-14 rounded-2xl bg-muted items-center justify-center mb-3">
-              <Icons.MapPinOff
-                size={25}
-                className="text-destructive opacity-80"
-              />
-            </View>
+            <Icons.MapPinOff
+              size={32}
+              className="text-destructive opacity-80 m-3"
+            />
             <Text className="text-lg font-semibold text-foreground text-center">
               No results found
             </Text>
@@ -235,7 +234,7 @@ export default function SearchScreen() {
                   key={`rec-${idx}`}
                   onPress={() => handleSelectRecent(item)}
                   activeOpacity={0.7}
-                  className={`flex-row items-center gap-2 p-3.5 ${
+                  className={`flex-row items-center gap-2 p-3 ${
                     !isLast ? "border-b border-border" : ""
                   }`}
                 >
@@ -369,7 +368,7 @@ export default function SearchScreen() {
                   // Action for map selection
                   router.push("/map");
                 }}
-                className="flex-1 flex-row items-center gap-3 py-3 px-5 bg-emerald-600 dark:bg-emerald-900 rounded-xl active:opacity-80"
+                className="flex-1 flex-row items-center gap-3 py-3 px-5 bg-emerald-600 dark:bg-emerald-900 rounded-2xl active:opacity-80"
               >
                 <Icons.MapPinned size={20} className="text-white" />
                 <View className="flex-1">

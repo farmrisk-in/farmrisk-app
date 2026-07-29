@@ -23,7 +23,7 @@ export function SearchSection() {
       <TouchableOpacity
         onPress={() => router.push("/search")}
         activeOpacity={0.75}
-        className="flex flex-row items-center grow gap-3 bg-card rounded-3xl border border-border px-3 py-2"
+        className="flex flex-row items-center grow gap-3 bg-card rounded-3xl border border-border px-3 py-3"
       >
         <Icons.Search size={20} className="text-foreground" />
         <View style={{ flex: 1 }}>
@@ -59,7 +59,7 @@ export function SearchSection() {
           ) : (
             <Icons.LocateFixed
               size={25}
-              className="text-foreground opacity-80"
+              className="text-foreground opacity-70"
             />
           )}
         </TouchableOpacity>
@@ -69,7 +69,7 @@ export function SearchSection() {
       <TouchableOpacity
         onPress={() => router.push("/map")}
         activeOpacity={0.75}
-        className="aspect-square rounded-2xl bg-emerald-600 dark:bg-emerald-800 items-center justify-center"
+        className="aspect-square rounded-3xl bg-emerald-800 items-center justify-center"
         accessibilityRole="button"
         accessibilityLabel="Select from map"
       >
