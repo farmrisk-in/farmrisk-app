@@ -168,12 +168,14 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const defaultLocationContext: LocationContextValue = {
+  location: null,
+  setLocation: () => {},
+  isResolving: true,
+  requestCurrentLocation: async () => null,
+};
+
 export function useLocationContext(): LocationContextValue {
   const ctx = useContext(LocationContext);
-  if (!ctx) {
-    throw new Error(
-      "useLocationContext must be used inside <LocationProvider>"
-    );
-  }
-  return ctx;
+  return ctx || defaultLocationContext;
 }

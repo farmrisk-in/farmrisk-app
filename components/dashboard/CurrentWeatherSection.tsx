@@ -71,10 +71,11 @@ export function CurrentWeatherSection() {
 
   const temp = Math.round(current.temperature_2m ?? 0);
   const feelsLike = Math.round(
-    current.apparent_temperature ?? current.feels_like ?? temp + 1
+    current.apparent_temperature ?? current.feels_like ?? temp + 1,
   );
   const conditionText = current.condition?.en || "Overcast";
   const iconName = current.icon;
+  console.log(iconName);
 
   return (
     <View className="my-2 rounded-3xl overflow-hidden shadow-xl elevation-6 border border-emerald-500/30 relative bg-emerald-950">
@@ -90,13 +91,18 @@ export function CurrentWeatherSection() {
             fx="85%"
             fy="25%"
           >
-            <Stop offset="0%" stopColor="#10b981" stopOpacity={1} />
-            <Stop offset="35%" stopColor="#047857" stopOpacity={1} />
-            <Stop offset="70%" stopColor="#064e3b" stopOpacity={1} />
+            <Stop offset="5%" stopColor="#047857" stopOpacity={1} />
+            <Stop offset="40%" stopColor="#064e3b" stopOpacity={1} />
             <Stop offset="100%" stopColor="#022c22" stopOpacity={1} />
           </SvgRadialGradient>
         </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" fill="url(#weatherSpotlight)" />
+        <Rect
+          x="0"
+          y="0"
+          width="100%"
+          height="100%"
+          fill="url(#weatherSpotlight)"
+        />
       </Svg>
 
       {/* Card Content Overlay */}
@@ -107,20 +113,18 @@ export function CurrentWeatherSection() {
             className="text-sm font-medium text-emerald-100/90"
             numberOfLines={1}
           >
-            {location?.displayName || location?.name || "Current Location"}
+            Current Weather
           </Text>
-          <View className="px-2.5 py-0.5 rounded-full bg-emerald-400/20 border border-emerald-300/40">
-            <Text className="text-[10px] font-bold text-emerald-300 uppercase tracking-widest">
-              LIVE
-            </Text>
-          </View>
         </View>
 
         {/* Main Weather Display Row */}
         <View className="flex-row items-center justify-between mt-4 mb-2">
           {/* Left Column: Big Temperature & Feels Like */}
           <View>
-            <Text className="text-6xl font-extrabold text-white tracking-tighter">
+            <Text
+              style={{ fontFamily: "Fraunces_700Bold" }}
+              className="text-7xl text-white tracking-tighter font-fraunces-bold"
+            >
               {temp}°
             </Text>
             <Text className="text-sm font-medium text-emerald-200/90 mt-1">
@@ -133,7 +137,7 @@ export function CurrentWeatherSection() {
             <View className="w-16 h-16 rounded-2xl bg-white/15 items-center justify-center mb-1.5 border border-white/20 shadow-md overflow-hidden">
               <WeatherIcon name={iconName} size={44} />
             </View>
-            <Text className="text-base font-bold text-white capitalize text-right">
+            <Text className="text-base font-fraunces text-white capitalize text-right">
               {conditionText}
             </Text>
           </View>
