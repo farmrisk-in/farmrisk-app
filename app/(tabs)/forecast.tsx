@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import {
   Header,
   CropsSection,
@@ -12,10 +13,22 @@ import {
 
 export default function ForecastTabScreen() {
   const [selectedCrop, setSelectedCrop] = useState<string>("");
+  const { refreshing, onRefresh } = useRefreshDashboard();
 
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">
-      <ScrollView className="px-4" contentContainerStyle={{ paddingBottom: 110 }}>
+      <ScrollView
+        className="px-4"
+        contentContainerStyle={{ paddingBottom: 110 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#007a55"]}
+            tintColor="#007a55"
+          />
+        }
+      >
         {/* Shared Header */}
         <Header />
 

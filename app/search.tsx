@@ -376,7 +376,7 @@ export default function SearchScreen() {
                 )}
                 <View className="flex-1">
                   <Text
-                    className="text-lg font-semibold text-foreground"
+                    className="text-sm font-semibold text-foreground"
                     numberOfLines={1}
                   >
                     Use My Location
@@ -395,7 +395,7 @@ export default function SearchScreen() {
                 <Icon icon={Location01Icon} size={25} className="text-white" />
                 <View className="flex-1">
                   <Text
-                    className="text-lg font-semibold text-white"
+                    className="text-sm font-semibold text-white"
                     numberOfLines={1}
                   >
                     Select on Map

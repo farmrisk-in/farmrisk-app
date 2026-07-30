@@ -1,26 +1,44 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Card, Text, ActivityIndicator } from "react-native-paper";
 import { useWeatherSummary } from "@/hooks/useWeatherSummary";
+import { Icon } from "../ui/Icon";
+import { AiContentGenerator01Icon } from "@hugeicons/core-free-icons";
+import { Skeleton } from "../ui/Skeleton";
 
 export function WeatherSummarySection() {
   const { data, isLoading, isError } = useWeatherSummary("en");
 
+  // if (isError) {
+  //   return null;
+  // }
+
+  if (true) {
+    return (
+      <View>
+        <Skeleton width="100%" height="20px" />
+        <Skeleton width="90%" height="20px" />
+        <Skeleton width="60%" height="20px" />
+      </View>
+    );
+  }
+
   return (
-    <Card style={styles.card} mode="elevated">
-      <Card.Content>
-        <Text variant="titleMedium" style={styles.title}>🤖 AI Weather Summary</Text>
-        {isLoading && <ActivityIndicator style={{ marginVertical: 8 }} />}
-        {isError && <Text style={styles.error}>Summary unavailable</Text>}
-        {data && <Text variant="bodyMedium" style={styles.summary}>{data}</Text>}
-      </Card.Content>
-    </Card>
+    <View>
+      <View className="w-full flex flex-row gap-2 items-center">
+        <Icon
+          icon={AiContentGenerator01Icon}
+          className="text-foreground"
+          size={22}
+        />
+        <Text
+          style={{ fontFamily: "Fraunces_600SemiBold" }}
+          className="font-fraunces-semibold text-foreground text-3xl"
+        >
+          Weather Summary
+        </Text>
+      </View>
+      <Text variant="bodyMedium">{data}</Text>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: { backgroundColor: "#f3f0ff", borderRadius: 12, marginBottom: 16 },
-  title: { fontWeight: "700", marginBottom: 6, color: "#1a1a1a" },
-  summary: { color: "#333", lineHeight: 20 },
-  error: { color: "red", marginVertical: 4 },
-});

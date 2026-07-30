@@ -23,15 +23,15 @@ export function Skeleton({
       Animated.sequence([
         Animated.timing(opacityAnim, {
           toValue: 0.85,
-          duration: 800,
+          duration: 1000,
           useNativeDriver: true,
         }),
         Animated.timing(opacityAnim, {
           toValue: 0.35,
-          duration: 800,
+          duration: 1000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     shimmerAnimation.start();
@@ -51,7 +51,7 @@ export function Skeleton({
         styles.base,
         style,
       ]}
-      className={`bg-emerald-950/40 dark:bg-emerald-900/30 ${className}`}
+      className={`bg-muted  ${className}`}
       {...props}
     />
   );

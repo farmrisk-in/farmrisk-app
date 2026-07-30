@@ -1,14 +1,28 @@
 import React from "react";
-import { ScrollView, View, Text } from "react-native";
+import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { Header, LightningRiskSection } from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 
 export default function AlertsTabScreen() {
+  const { refreshing, onRefresh } = useRefreshDashboard();
+
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">
-      <ScrollView className="px-4" contentContainerStyle={{ paddingBottom: 110 }}>
+      <ScrollView
+        className="px-4"
+        contentContainerStyle={{ paddingBottom: 110 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#007a55"]}
+            tintColor="#007a55"
+          />
+        }
+      >
         {/* Shared Header */}
         <Header />
 
