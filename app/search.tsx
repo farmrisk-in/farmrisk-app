@@ -190,7 +190,7 @@ export default function SearchScreen() {
           clearIcon={query.length > 0 ? "close" : ""}
           onClearIconPress={() => setQuery("")}
           elevation={0}
-          className="rounded-2xl bg-muted border border-border h-12 justify-center"
+          className="rounded-3xl bg-muted border border-border h-16 justify-center"
           // @ts-ignore - cssInterop mapping
           inputClassName="text-foreground text-base py-0 my-0 min-h-0 align-center"
         />
@@ -363,20 +363,20 @@ export default function SearchScreen() {
                     router.back();
                   }
                 }}
-                className="flex-1 flex-row items-center gap-2 px-5 py-3 bg-muted rounded-2xl border border-border active:opacity-80"
+                className="flex-1 flex-row items-center gap-2 px-5 py-5 bg-muted rounded-3xl border border-border active:opacity-80"
               >
                 {isResolving ? (
                   <ActivityIndicator size="small" className="text-primary" />
                 ) : (
                   <Icon
                     icon={Gps01Icon}
-                    size={20}
+                    size={25}
                     className="text-muted-foreground"
                   />
                 )}
                 <View className="flex-1">
                   <Text
-                    className="text-sm font-semibold text-foreground"
+                    className="text-lg font-semibold text-foreground"
                     numberOfLines={1}
                   >
                     Use My Location
@@ -390,12 +390,12 @@ export default function SearchScreen() {
                 onPress={() => {
                   router.push("/map");
                 }}
-                className="flex-1 flex-row items-center gap-3 py-3 px-5 bg-emerald-800 rounded-xl active:opacity-80"
+                className="flex-1 flex-row items-center gap-3 py-5 px-5 bg-emerald-800 rounded-3xl active:opacity-80"
               >
-                <Icon icon={Location01Icon} size={20} className="text-white" />
+                <Icon icon={Location01Icon} size={25} className="text-white" />
                 <View className="flex-1">
                   <Text
-                    className="text-sm font-semibold text-white"
+                    className="text-lg font-semibold text-white"
                     numberOfLines={1}
                   >
                     Select on Map

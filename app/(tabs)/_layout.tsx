@@ -22,7 +22,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: isDark ? "#4ade80" : "#007a55",
         tabBarInactiveTintColor: isDark ? "#9f9fa9" : "#71717a",
         tabBarStyle: {
-          paddingBottom: Math.max(insets.bottom, 12),
+          paddingBottom: Math.max(insets.bottom + 4, 12),
           backgroundColor: isDark ? "#18181b" : "#ffffff",
           borderTopWidth: 1,
           borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)",
