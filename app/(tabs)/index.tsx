@@ -34,11 +34,11 @@ export default function HomeScreen() {
         {/* 1. Location Search */}
         <SearchSection />
 
-        {/* 2. Current Weather Overview */}
-        <CurrentWeatherSection />
-
         {/* 3. AI Weather Summary */}
         <WeatherSummarySection />
+
+        {/* 2. Current Weather Overview */}
+        <CurrentWeatherSection />
 
         {/* 4. AI Advisory Recommendations */}
         <AIAdvisorySection crop={selectedCrop} />

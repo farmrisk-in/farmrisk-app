@@ -32,19 +32,28 @@ export default function RootLayout() {
     return null;
   }
 
+  const isDark = colorScheme === "dark";
+  const navTheme = isDark ? DarkTheme : DefaultTheme;
+
   return (
     <QueryProvider>
       <PaperProvider>
         <AuthProvider>
           <LanguageProvider>
             <LocationProvider>
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              <View
+                className={
+                  isDark ? "dark flex-1 bg-background" : "flex-1 bg-background"
+                }
               >
-                <View
-                  className={colorScheme === "dark" ? "dark flex-1" : "flex-1"}
-                >
-                  <Stack>
+                <ThemeProvider value={navTheme}>
+                  <Stack
+                    screenOptions={{
+                      contentStyle: {
+                        backgroundColor: isDark ? "#09090b" : "#ffffff",
+                      },
+                    }}
+                  >
                     <Stack.Screen
                       name="(tabs)"
                       options={{ headerShown: false }}
@@ -64,12 +73,19 @@ export default function RootLayout() {
                         headerShown: false,
                       }}
                     />
-                    <Stack.Screen name="map" options={{ headerShown: true }} />
+                    <Stack.Screen
+                      name="map"
+                      options={{
+                        presentation: "fullScreenModal",
+                        headerShown: false,
+                        title: "Map",
+                        animation: "slide_from_bottom",
+                      }}
+                    />
                   </Stack>
-
-                  {/*<StatusBar style="auto" />*/}
-                </View>
-              </ThemeProvider>
+                  <StatusBar style={isDark ? "light" : "dark"} />
+                </ThemeProvider>
+              </View>
             </LocationProvider>
           </LanguageProvider>
         </AuthProvider>
