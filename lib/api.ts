@@ -143,3 +143,20 @@ export async function getCalendar(
   }
   return res.json();
 }
+
+// 10. Risk Score
+export async function getRiskScore(payload: any): Promise<any> {
+  const baseUrl = getApiUrl();
+  const res = await fetch(`${baseUrl}/api/risk`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Risk score request failed: ${res.statusText}`);
+  }
+  return res.json();
+}

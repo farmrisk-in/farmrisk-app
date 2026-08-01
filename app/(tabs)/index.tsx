@@ -9,6 +9,7 @@ import {
   SearchSection,
   CurrentWeatherSection,
   AIAdvisorySection,
+  RiskSection,
 } from "@/components/dashboard";
 
 export default function HomeScreen() {
@@ -47,6 +48,9 @@ export default function HomeScreen() {
 
         {/* 2. Current Weather Overview */}
         <CurrentWeatherSection />
+
+        {/* 3. Risk Analysis */}
+        <RiskSection />
 
         {/* 4. AI Advisory Recommendations */}
         <AIAdvisorySection crop={selectedCrop} />
