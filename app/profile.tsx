@@ -172,21 +172,14 @@ export default function ProfileScreen() {
             style={styles.profileCard}
             className="bg-white dark:bg-gray-800"
           >
-            <View style={styles.infoRow}>
+            <View style={styles.infoRow} className="items-center">
               <Text
                 style={styles.infoLabel}
                 className="text-gray-500 dark:text-gray-400"
               >
                 Theme
               </Text>
-              <TouchableOpacity
-                onPress={toggleColorScheme}
-                className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded"
-              >
-                <Text className="text-gray-900 dark:text-white">
-                  {colorScheme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-                </Text>
-              </TouchableOpacity>
+              <ThemeToggle />
             </View>
           </View>
 
@@ -284,21 +277,14 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.profileCard} className="bg-white dark:bg-gray-800">
-          <View style={styles.infoRow}>
+          <View style={styles.infoRow} className="items-center">
             <Text
               style={styles.infoLabel}
               className="text-gray-500 dark:text-gray-400"
             >
               Theme
             </Text>
-            <TouchableOpacity
-              onPress={toggleColorScheme}
-              className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded"
-            >
-              <Text className="text-gray-900 dark:text-white">
-                {colorScheme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-              </Text>
-            </TouchableOpacity>
+            <ThemeToggle />
           </View>
         </View>
 

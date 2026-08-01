@@ -41,12 +41,8 @@ export default function RootLayout() {
         <AuthProvider>
           <LanguageProvider>
             <LocationProvider>
-              <View
-                className={
-                  isDark ? "dark flex-1 bg-background" : "flex-1 bg-background"
-                }
-              >
-                <ThemeProvider value={navTheme}>
+              <ThemeProvider value={navTheme}>
+                <View className={isDark ? "dark flex-1 bg-background" : "flex-1 bg-background"}>
                   <Stack
                     screenOptions={{
                       contentStyle: {
@@ -83,9 +79,9 @@ export default function RootLayout() {
                       }}
                     />
                   </Stack>
-                  <StatusBar style={isDark ? "light" : "dark"} />
-                </ThemeProvider>
-              </View>
+                </View>
+                <StatusBar style={isDark ? "light" : "dark"} />
+              </ThemeProvider>
             </LocationProvider>
           </LanguageProvider>
         </AuthProvider>

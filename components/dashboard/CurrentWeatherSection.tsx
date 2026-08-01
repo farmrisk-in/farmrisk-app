@@ -22,9 +22,8 @@ import {
   Compass01Icon,
   DashboardCircleIcon,
   Layers01Icon,
-  AiContentGenerator01Icon,
 } from "@hugeicons/core-free-icons";
-import useWeatherSummary from "@/hooks/useWeatherSummary";
+import { useWeatherSummary } from "@/hooks/useWeatherSummary";
 
 /**
  * Converts wind direction degrees to cardinal direction (e.g. 356° N)
@@ -65,7 +64,7 @@ function CurrentWeatherSkeleton() {
       </View>
 
       {/* Bottom 2x4 Grid Skeleton */}
-      <View className="flex-row flex-wrap mt-5 pt-4 border-t border-border/40 gap-y-3">
+      <View className="flex-row flex-wrap mt-5 pt-4 border-t border-border gap-y-3">
         {Array.from({ length: 8 }).map((_, idx) => (
           <View key={idx} className="w-1/2 flex-row items-center gap-2.5 px-1">
             <Skeleton width={32} height={32} borderRadius={10} />
