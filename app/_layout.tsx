@@ -3,10 +3,13 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { View } from "react-native";
+import { View, LogBox } from "react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "../global.css";
+
+LogBox.ignoreLogs(["Require cycle: node_modules/victory"]);
+
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { LanguageProvider } from "@/providers/LanguageProvider";
@@ -42,44 +45,42 @@ export default function RootLayout() {
           <LanguageProvider>
             <LocationProvider>
               <ThemeProvider value={navTheme}>
-                <View className={isDark ? "dark flex-1 bg-background" : "flex-1 bg-background"}>
-                  <Stack
-                    screenOptions={{
-                      contentStyle: {
-                        backgroundColor: isDark ? "#09090b" : "#ffffff",
-                      },
+                <Stack
+                  screenOptions={{
+                    contentStyle: {
+                      backgroundColor: isDark ? "#09090b" : "#ffffff",
+                    },
+                  }}
+                >
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="search"
+                    options={{
+                      presentation: "modal",
+                      animation: "fade_from_bottom",
+                      headerShown: false,
                     }}
-                  >
-                    <Stack.Screen
-                      name="(tabs)"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="search"
-                      options={{
-                        presentation: "modal",
-                        animation: "fade_from_bottom",
-                        headerShown: false,
-                      }}
-                    />
-                    <Stack.Screen
-                      name="profile"
-                      options={{
-                        presentation: "transparentModal",
-                        headerShown: false,
-                      }}
-                    />
-                    <Stack.Screen
-                      name="map"
-                      options={{
-                        presentation: "fullScreenModal",
-                        headerShown: false,
-                        title: "Map",
-                        animation: "slide_from_bottom",
-                      }}
-                    />
-                  </Stack>
-                </View>
+                  />
+                  <Stack.Screen
+                    name="profile"
+                    options={{
+                      presentation: "transparentModal",
+                      headerShown: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="map"
+                    options={{
+                      presentation: "fullScreenModal",
+                      headerShown: false,
+                      title: "Map",
+                      animation: "slide_from_bottom",
+                    }}
+                  />
+                </Stack>
                 <StatusBar style={isDark ? "light" : "dark"} />
               </ThemeProvider>
             </LocationProvider>

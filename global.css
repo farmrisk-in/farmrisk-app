@@ -47,57 +47,59 @@
   --sidebar-border: #e4e4e7;
   --sidebar-ring: #9f9fa9;
 }
-.dark {
-  --background: #09090b;
-  --foreground: #fcfcfc;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #09090b;
+    --foreground: #fcfcfc;
 
-  --card: #18181b;
-  --card-foreground: #fcfcfc;
+    --card: #18181b;
+    --card-foreground: #fcfcfc;
 
-  --popover: #18181b;
-  --popover-foreground: #fcfcfc;
+    --popover: #18181b;
+    --popover-foreground: #fcfcfc;
 
-  --primary: #006045;
-  --primary-foreground: #ecfdf5;
+    --primary: #006045;
+    --primary-foreground: #ecfdf5;
 
-  --secondary: #27272a;
-  --secondary-foreground: #fcfcfc;
+    --secondary: #27272a;
+    --secondary-foreground: #fcfcfc;
 
-  --muted: #27272a;
-  --muted-foreground: #9f9fa9;
+    --muted: #27272a;
+    --muted-foreground: #9f9fa9;
 
-  --accent: #27272a;
-  --accent-foreground: #fcfcfc;
+    --accent: #27272a;
+    --accent-foreground: #fcfcfc;
 
-  --destructive: #ff6467;
+    --destructive: #ff6467;
 
-  /* Original: oklch(1 0 0 / 10%) */
-  --border: rgba(255, 255, 255, 0.1);
+    /* Original: oklch(1 0 0 / 10%) */
+    --border: rgba(255, 255, 255, 0.1);
 
-  /* Original: oklch(1 0 0 / 15%) */
-  --input: rgba(255, 255, 255, 0.15);
+    /* Original: oklch(1 0 0 / 15%) */
+    --input: rgba(255, 255, 255, 0.15);
 
-  --ring: #71717b;
+    --ring: #71717b;
 
-  --chart-1: #5ee9b5;
-  --chart-2: #00bc7d;
-  --chart-3: #009966;
-  --chart-4: #007a55;
-  --chart-5: #006045;
+    --chart-1: #5ee9b5;
+    --chart-2: #00bc7d;
+    --chart-3: #009966;
+    --chart-4: #007a55;
+    --chart-5: #006045;
 
-  --sidebar: #18181b;
-  --sidebar-foreground: #fcfcfc;
+    --sidebar: #18181b;
+    --sidebar-foreground: #fcfcfc;
 
-  --sidebar-primary: #00bc7d;
-  --sidebar-primary-foreground: #004a32;
+    --sidebar-primary: #00bc7d;
+    --sidebar-primary-foreground: #004a32;
 
-  --sidebar-accent: #27272a;
-  --sidebar-accent-foreground: #fcfcfc;
+    --sidebar-accent: #27272a;
+    --sidebar-accent-foreground: #fcfcfc;
 
-  /* Original: oklch(1 0 0 / 10%) */
-  --sidebar-border: rgba(255, 255, 255, 0.1);
+    /* Original: oklch(1 0 0 / 10%) */
+    --sidebar-border: rgba(255, 255, 255, 0.1);
 
-  --sidebar-ring: #71717b;
+    --sidebar-ring: #71717b;
+  }
 }
 @layer base {
   * {

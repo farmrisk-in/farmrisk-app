@@ -1,12 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import Svg, {
-  Path,
-  Circle,
-  Defs,
-  LinearGradient,
-  Stop,
-} from "react-native-svg";
+import { VictoryPie } from "victory-native";
 import { useColorScheme } from "nativewind";
 import { useRiskScore } from "@/hooks/useRiskScore";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -19,6 +13,7 @@ import {
   CloudFastWindIcon,
   SnowIcon,
   SecurityWarningIcon,
+  ChevronRightIcon,
   DangerIcon,
   Alert02Icon,
   Plant01Icon,
@@ -80,58 +75,42 @@ function RiskGauge({
   const band = data.band ?? "Minimal";
   const riskcolor = getRiskColor(band);
 
-  const r = 36;
-  const cx = cardWidth / 2;
-  const cy = 60; // adjust based on arc position
-  const strokeWidth = 8;
-  const arcLength = Math.PI * r;
-  const strokeDashoffset = arcLength - (score / 100) * arcLength;
+  const chartData = [
+    { x: "score", y: score },
+    { x: "remainder", y: 100 - score },
+  ];
+
   return (
     <View
-      className="p-4 mb-4 rounded-[30px]"
-      style={{ backgroundColor: color + 20 }}
+      className="p-4 rounded-[30px] grow"
+      style={{ backgroundColor: color + 10 }}
     >
       <View className="flex-row items-center gap-2 mb-4">
         <View className="w-8 h-8 rounded-full items-center justify-center">
-          <Icon icon={icon} size={16} />
+          <Icon icon={icon} size={22} strokeWidth={2} color={color} />
         </View>
-        <Text className="text-foreground font-semibold text-sm flex-1">
+        <Text style={{ color: color }} className="font-semibold text-md flex-1">
           {hazard}
         </Text>
+        <Icon icon={ChevronRightIcon} size={22} strokeWidth={2} color={color} />
       </View>
 
-      <View className="items-center justify-center relative h-[50px]">
-        <Svg
-          width={cardWidth - 32}
-          height={r + strokeWidth}
-          viewBox={`0 0 ${cardWidth} ${r + strokeWidth}`}
-        >
-          <Defs>
-            <LinearGradient id={`grad-${hazard}`} x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0%" stopColor={riskcolor} stopOpacity="0.3" />
-              <Stop offset="100%" stopColor={riskcolor} stopOpacity="1" />
-            </LinearGradient>
-          </Defs>
-          {/* Background Arc */}
-          <Path
-            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-            stroke={isDark ? "#27272a" : "#e4e4e7"} // border color essentially
-            strokeWidth={strokeWidth}
-            fill="none"
-            strokeLinecap="round"
+      <View className="items-center justify-center relative">
+        <View style={{ marginTop: -25 }}>
+          <VictoryPie
+            data={chartData}
+            startAngle={-90}
+            endAngle={90}
+            innerRadius={28}
+            radius={36}
+            colorScale={[riskcolor, isDark ? "#27272a" : "#e4e4e7"]}
+            labels={() => null}
+            padding={0}
+            width={100}
+            height={100}
           />
-          {/* Progress Arc */}
-          <Path
-            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-            stroke={`url(#grad-${hazard})`}
-            strokeWidth={strokeWidth}
-            fill="none"
-            strokeLinecap="round"
-            strokeDasharray={arcLength}
-            strokeDashoffset={strokeDashoffset}
-          />
-        </Svg>
-        <View className="absolute bottom-0 items-center">
+        </View>
+        <View className="absolute bottom-0 items-center w-full">
           <Text className="text-foreground font-bold text-sm">{band}</Text>
         </View>
       </View>
@@ -189,42 +168,46 @@ export function RiskSection() {
       name: "Heat Stress",
       icon: SunCloud01Icon,
       scoreData: heat_stress,
-      color: "darkgreen",
+      color: "#009966",
     },
     {
       id: "pest",
       name: "Pest / Disease",
       icon: Bug01Icon,
       scoreData: pest,
-      color: "orange",
+      color: "#F54A00",
     },
     {
       id: "lightning",
       name: "Lightning",
       icon: FlashIcon,
       scoreData: lightning,
-      color: "yellow",
+      color: "#D08700",
     },
     {
       id: "wind",
       name: "High Wind",
       icon: CloudFastWindIcon,
       scoreData: wind,
-      color: "pink",
+      color: "#4F39F6",
     },
     {
       id: "frost",
       name: "Frost",
       icon: SnowIcon,
       scoreData: frost,
-      color: "violet",
+      color: "#C800DE",
     },
   ];
 
   return (
     <View>
       <View className="flex flex-row gap-2 mt-6 mb-3 px-3 items-center">
-        <Icon icon={SecurityWarningIcon} size={25} />
+        <Icon
+          icon={SecurityWarningIcon}
+          size={25}
+          className="text-foreground"
+        />
         <Text className="text-xl grow text-foreground font-fraunces-semibold">
           Agriculture Risk
         </Text>
@@ -243,17 +226,61 @@ export function RiskSection() {
       </View>
 
       {/* 2-Column Hazard Grid */}
-      <View className="flex flex-row flex-wrap justify-around">
-        {hazards.map((h) => (
+      <View className="flex gap-4 px-2">
+        <View className="flex flex-row gap-3">
           <RiskGauge
-            key={h.id}
-            hazard={h.name}
-            icon={h.icon}
-            data={h.scoreData}
+            key={hazards[0].id}
+            hazard={hazards[0].name}
+            icon={hazards[0].icon}
+            data={hazards[0].scoreData}
             isDark={isDark}
-            color={h.color}
+            color={hazards[0].color}
           />
-        ))}
+          <RiskGauge
+            key={hazards[1].id}
+            hazard={hazards[1].name}
+            icon={hazards[1].icon}
+            data={hazards[1].scoreData}
+            isDark={isDark}
+            color={hazards[1].color}
+          />
+        </View>
+        <View className="flex flex-row gap-3">
+          <RiskGauge
+            key={hazards[2].id}
+            hazard={hazards[2].name}
+            icon={hazards[2].icon}
+            data={hazards[2].scoreData}
+            isDark={isDark}
+            color={hazards[2].color}
+          />
+          <RiskGauge
+            key={hazards[3].id}
+            hazard={hazards[3].name}
+            icon={hazards[3].icon}
+            data={hazards[3].scoreData}
+            isDark={isDark}
+            color={hazards[3].color}
+          />
+        </View>
+        <View className="flex flex-row gap-3">
+          <RiskGauge
+            key={hazards[4].id}
+            hazard={hazards[4].name}
+            icon={hazards[4].icon}
+            data={hazards[4].scoreData}
+            isDark={isDark}
+            color={hazards[4].color}
+          />
+          <RiskGauge
+            key={hazards[5].id}
+            hazard={hazards[5].name}
+            icon={hazards[5].icon}
+            data={hazards[5].scoreData}
+            isDark={isDark}
+            color={hazards[5].color}
+          />
+        </View>
       </View>
     </View>
   );

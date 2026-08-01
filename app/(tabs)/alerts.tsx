@@ -3,6 +3,7 @@ import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { useColorScheme } from "nativewind";
 import { LocationRequired } from "@/components/LocationRequired";
 import { Header, LightningRiskSection } from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
