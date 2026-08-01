@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { LocationRequired } from "@/components/LocationRequired";
 import { Header, CropsSection, AIAdvisorySection } from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
 import { Wrench01Icon, DropletIcon, Calendar01Icon } from "@hugeicons/core-free-icons";
@@ -9,6 +11,15 @@ import { Wrench01Icon, DropletIcon, Calendar01Icon } from "@hugeicons/core-free-
 export default function ToolsTabScreen() {
   const [selectedCrop, setSelectedCrop] = useState<string>("");
   const { refreshing, onRefresh } = useRefreshDashboard();
+  const { location, isResolving, locationError } = useLocationContext();
+
+  if (!location && !isResolving && locationError) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <LocationRequired />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">

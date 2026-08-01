@@ -22,7 +22,9 @@ import {
   Compass01Icon,
   DashboardCircleIcon,
   Layers01Icon,
+  AiContentGenerator01Icon,
 } from "@hugeicons/core-free-icons";
+import useWeatherSummary from "@/hooks/useWeatherSummary";
 
 /**
  * Converts wind direction degrees to cardinal direction (e.g. 356° N)
@@ -83,6 +85,11 @@ export function CurrentWeatherSection() {
   const { data, isLoading, isError } = useWeather();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const {
+    data: dataWS,
+    isLoading: isLoadingWS,
+    isError: isErrorWS,
+  } = useWeatherSummary("en");
 
   if (isLoading || !data) {
     return <CurrentWeatherSkeleton />;
@@ -248,7 +255,7 @@ export function CurrentWeatherSection() {
         </View>
 
         {/* Main Weather Display Row */}
-        <View className="flex-row items-center justify-between mt-4 mb-2">
+        <View className="flex-row items-center justify-between mt-2 mb-0">
           {/* Left Column: Big Temperature & Feels Like */}
           <View className="items-start">
             <Text
@@ -270,7 +277,7 @@ export function CurrentWeatherSection() {
 
           {/* Right Column: Large Custom SVG Weather Icon & Condition Code */}
           <View className="items-center gap-2">
-            <WeatherIcon name={iconName} size={65} />
+            <WeatherIcon name={iconName} size={60} />
             <Text
               className={`text-base font-fraunces capitalize text-right ${
                 isDark ? "text-emerald-200/90" : "text-emerald-900/90"
@@ -281,9 +288,36 @@ export function CurrentWeatherSection() {
           </View>
         </View>
 
+        {/*Weather Summary*/}
+        {!isErrorWS && !isLoadingWS && (
+          <View className="border-border border rounded-3xl relative pt-5 mt-3 rounded-ss-none">
+            {/* Title Header Row */}
+            <View className="flex-row items-center gap-1 absolute left-2 -top-5 bg-background p-2 pl-0">
+              <View className="w-8 h-8 rounded-xl bg-primary/10 items-center justify-center border border-primary/20">
+                <Icon
+                  icon={AiContentGenerator01Icon}
+                  className="text-foreground"
+                  size={18}
+                />
+              </View>
+              <Text
+                style={{ fontFamily: "Fraunces_600SemiBold" }}
+                className="font-fraunces-semibold text-foreground text-md"
+              >
+                Weather Summary
+              </Text>
+            </View>
+
+            {/* Summary Text Content */}
+            <Text className="text-sm px-4 leading-relaxed text-foreground">
+              {dataWS}
+            </Text>
+          </View>
+        )}
+
         {/* Bottom Details Row: 2x4 Grid with Proper Hugeicons */}
         <View
-          className={`flex-row flex-wrap mt-5 pt-4 border-t gap-y-3 ${
+          className={`flex-row flex-wrap mt-3 pt-3 border-t gap-y-3 ${
             isDark ? "border-emerald-400/20" : "border-emerald-500/60"
           }`}
         >

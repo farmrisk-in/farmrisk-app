@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { LocationRequired } from "@/components/LocationRequired";
 import {
   Header,
   SearchSection,
@@ -13,6 +15,16 @@ import {
 export default function HomeScreen() {
   const [selectedCrop] = useState<string>("");
   const { refreshing, onRefresh } = useRefreshDashboard();
+  const { location, isResolving, locationError } = useLocationContext();
+
+  // Show location required screen when GPS failed and no location is available
+  if (!location && !isResolving && locationError) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <LocationRequired />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">

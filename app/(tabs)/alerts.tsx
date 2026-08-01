@@ -2,12 +2,23 @@ import React from "react";
 import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { LocationRequired } from "@/components/LocationRequired";
 import { Header, LightningRiskSection } from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 
 export default function AlertsTabScreen() {
   const { refreshing, onRefresh } = useRefreshDashboard();
+  const { location, isResolving, locationError } = useLocationContext();
+
+  if (!location && !isResolving && locationError) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <LocationRequired />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background mt-4">

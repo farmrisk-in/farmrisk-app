@@ -21,7 +21,11 @@ type LocationContextValue = {
   location: SelectedLocation | null;
   setLocation: (location: SelectedLocation) => void;
   isResolving: boolean;
+  /** True when location resolution finished but no location was obtained */
+  locationError: boolean;
   requestCurrentLocation: () => Promise<SelectedLocation | null>;
+  /** Retry the full init sequence (storage → recents → GPS) */
+  retryLocationInit: () => void;
 };
 
 const LocationContext = createContext<LocationContextValue | null>(null);
@@ -32,9 +36,12 @@ const RECENT_LOCATIONS_KEY = "farmrisk:recent_locations";
 export function LocationProvider({ children }: { children: ReactNode }) {
   const [location, setLocationState] = useState<SelectedLocation | null>(null);
   const [isResolving, setIsResolving] = useState<boolean>(true);
+  const [locationError, setLocationError] = useState<boolean>(false);
+  const [initTrigger, setInitTrigger] = useState(0);
 
   const setLocation = useCallback((newLoc: SelectedLocation) => {
     setLocationState(newLoc);
+    setLocationError(false);
     AsyncStorage.setItem(ACTIVE_LOCATION_KEY, JSON.stringify(newLoc)).catch(
       (err) => console.warn("Failed to persist active location:", err)
     );
@@ -42,6 +49,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
   const requestCurrentLocation = useCallback(async (): Promise<SelectedLocation | null> => {
     setIsResolving(true);
+    setLocationError(false);
     try {
       let lat: number;
       let lng: number;
@@ -94,11 +102,16 @@ export function LocationProvider({ children }: { children: ReactNode }) {
       return resolvedLoc;
     } catch (err) {
       console.warn("Failed to obtain current location:", err);
+      setLocationError(true);
       return null;
     } finally {
       setIsResolving(false);
     }
   }, [setLocation]);
+
+  const retryLocationInit = useCallback(() => {
+    setInitTrigger((prev) => prev + 1);
+  }, []);
 
   // Initial location resolution strategy:
   // 1. Check stored active location
@@ -110,6 +123,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     async function initLocation() {
       try {
         setIsResolving(true);
+        setLocationError(false);
 
         // 1. Try active stored location
         const storedActive = await AsyncStorage.getItem(ACTIVE_LOCATION_KEY);
@@ -157,11 +171,18 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     return () => {
       isMounted = false;
     };
-  }, [requestCurrentLocation, setLocation]);
+  }, [requestCurrentLocation, setLocation, initTrigger]);
 
   return (
     <LocationContext.Provider
-      value={{ location, setLocation, isResolving, requestCurrentLocation }}
+      value={{
+        location,
+        setLocation,
+        isResolving,
+        locationError,
+        requestCurrentLocation,
+        retryLocationInit,
+      }}
     >
       {children}
     </LocationContext.Provider>
@@ -172,7 +193,9 @@ const defaultLocationContext: LocationContextValue = {
   location: null,
   setLocation: () => {},
   isResolving: true,
+  locationError: false,
   requestCurrentLocation: async () => null,
+  retryLocationInit: () => {},
 };
 
 export function useLocationContext(): LocationContextValue {
