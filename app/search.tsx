@@ -216,10 +216,10 @@ export default function SearchScreen() {
         {/* No Results State */}
         {showEmpty && (
           <View className="py-12 items-center px-6">
-            <View className="w-14 h-14 rounded-2xl bg-muted items-center justify-center mb-3">
+            <View className="rounded-2xl items-center justify-center mb-3">
               <Icon
                 icon={LocationOffline01Icon}
-                size={25}
+                size={40}
                 className="text-destructive opacity-80"
               />
             </View>
@@ -430,9 +430,7 @@ export default function SearchScreen() {
                       onPress={() => handleSelectRecent(item)}
                       activeOpacity={0.7}
                       className={`flex-row items-center gap-3 p-3.5 active:bg-muted/50 ${
-                        idx < recents.length - 1
-                          ? "border-b border-border/50"
-                          : ""
+                        idx < recents.length - 1 ? "border-b border-border" : ""
                       }`}
                     >
                       <View className="w-9 h-9 rounded-xl bg-muted items-center justify-center">
