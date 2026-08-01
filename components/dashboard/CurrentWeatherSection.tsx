@@ -224,7 +224,7 @@ export function CurrentWeatherSection() {
               className={`${
                 isDark ? "text-emerald-100/90" : "text-emerald-900/90"
               }`}
-              size={22}
+              size={25}
             />
             <Text
               className={`text-sm font-medium  ${
@@ -288,28 +288,19 @@ export function CurrentWeatherSection() {
           </View>
         </View>
 
-        {/*Weather Summary*/}
+        {/*Summary Section*/}
         {!isErrorWS && !isLoadingWS && (
-          <View className="border-border border rounded-3xl relative pt-5 mt-3 rounded-ss-none">
-            {/* Title Header Row */}
-            <View className="flex-row items-center gap-1 absolute left-2 -top-5 bg-background p-2 pl-0">
-              <View className="w-8 h-8 rounded-xl bg-primary/10 items-center justify-center border border-primary/20">
-                <Icon
-                  icon={AiContentGenerator01Icon}
-                  className="text-foreground"
-                  size={18}
-                />
-              </View>
-              <Text
-                style={{ fontFamily: "Fraunces_600SemiBold" }}
-                className="font-fraunces-semibold text-foreground text-md"
-              >
-                Weather Summary
-              </Text>
-            </View>
-
+          <View
+            className={`flex-row flex-wrap mt-2 pt-2 border-t ${
+              isDark ? "border-emerald-400/20" : "border-emerald-500/60"
+            }`}
+          >
             {/* Summary Text Content */}
-            <Text className="text-sm px-4 leading-relaxed text-foreground">
+            <Text
+              className={`text-sm leading-relaxed font-semibold ${
+                isDark ? "text-emerald-200/90" : "text-emerald-900/90"
+              }`}
+            >
               {dataWS}
             </Text>
           </View>

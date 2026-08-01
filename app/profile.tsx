@@ -16,6 +16,7 @@ import { supabase } from "@/lib/supabase";
 import { Icon } from "@/components/ui/Icon";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 type Mode = "login" | "register";
 
@@ -281,6 +282,24 @@ export default function ProfileScreen() {
               color={colorScheme === "dark" ? "white" : "black"}
             />
           </TouchableOpacity>
+        </View>
+        <View style={styles.profileCard} className="bg-white dark:bg-gray-800">
+          <View style={styles.infoRow}>
+            <Text
+              style={styles.infoLabel}
+              className="text-gray-500 dark:text-gray-400"
+            >
+              Theme
+            </Text>
+            <TouchableOpacity
+              onPress={toggleColorScheme}
+              className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded"
+            >
+              <Text className="text-gray-900 dark:text-white">
+                {colorScheme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.form} className="dark:bg-gray-800">

@@ -8,7 +8,6 @@ import {
   Header,
   SearchSection,
   CurrentWeatherSection,
-  WeatherSummarySection,
   AIAdvisorySection,
 } from "@/components/dashboard";
 
@@ -45,9 +44,6 @@ export default function HomeScreen() {
 
         {/* 1. Location Search */}
         <SearchSection />
-
-        {/* 3. AI Weather Summary */}
-        <WeatherSummarySection />
 
         {/* 2. Current Weather Overview */}
         <CurrentWeatherSection />

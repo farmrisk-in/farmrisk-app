@@ -38,7 +38,7 @@ export function useSoilMoisture(
   lat: number,
   lng: number,
   crop?: string,
-  daysbefore?: number
+  daysbefore?: number,
 ) {
   return useQuery({
     queryKey: ["soil-moisture", lat, lng, crop, daysbefore],
@@ -85,6 +85,6 @@ export function useLocationSearch(q: string) {
     queryKey: ["location-search", q],
     queryFn: () => searchLocations(q),
     enabled: typeof q === "string" && q.trim().length > 2, // only search when at least 3 chars
-    staleTime: 1000 * 30,         // cache search results 30s
+    staleTime: 1000 * 30, // cache search results 30s
   });
 }
