@@ -15,11 +15,8 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { Icon } from "@/components/ui/Icon";
 import Svg from "react-native-svg";
 import {
-  RainDropIcon,
-  SunCloud01Icon,
   Bug01Icon,
   FlashIcon,
-  CloudFastWindIcon,
   SnowIcon,
   SecurityWarningIcon,
   ChevronRightIcon,
@@ -28,6 +25,9 @@ import {
   Plant01Icon,
   TractorIcon,
   Cancel01Icon,
+  ThermometerWarmIcon,
+  RainIcon,
+  Tornado02Icon,
 } from "@hugeicons/core-free-icons";
 
 const { width } = Dimensions.get("window");
@@ -127,7 +127,7 @@ function RiskGauge({
             endAngle={110}
             innerRadius={40}
             radius={60}
-            colorScale={[riskcolor, isDark ? "#27272a" : "#e4e4e7"]}
+            colorScale={[riskcolor, isDark ? "#27272a80" : "#e4e4e780"]}
             labels={() => null}
             width={100}
             height={130}
@@ -205,14 +205,14 @@ export function RiskSection() {
     {
       id: "heavy_rain",
       name: "Heavy Rain",
-      icon: RainDropIcon,
+      icon: RainIcon,
       scoreData: heavy_rain,
       color: "#00A6F4",
     },
     {
       id: "heat_stress",
       name: "Heat Stress",
-      icon: SunCloud01Icon,
+      icon: ThermometerWarmIcon,
       scoreData: heat_stress,
       color: "#009966",
     },
@@ -233,9 +233,9 @@ export function RiskSection() {
     {
       id: "wind",
       name: "High Wind",
-      icon: CloudFastWindIcon,
+      icon: Tornado02Icon,
       scoreData: wind,
-      color: "#4F39F6",
+      color: "#625FFF",
     },
     {
       id: "frost",
@@ -348,7 +348,7 @@ export function RiskSection() {
           onPressOut={() => setSelectedRisk(null)}
         >
           <TouchableWithoutFeedback>
-            <View className="bg-card w-full max-h-[80%] rounded-3xl p-5 shadow-lg">
+            <View className="bg-card w-full max-h-[80%] rounded-[35px] p-5 pb-1 shadow-lg">
               <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-row items-center gap-3">
                   <View
@@ -380,7 +380,7 @@ export function RiskSection() {
               </View>
 
               <ScrollView showsVerticalScrollIndicator={false} className="mb-2">
-                <View className="mb-5 flex-row items-center justify-between p-4 rounded-3xl border border-border gap-1">
+                <View className="mb-5 flex-row items-center justify-between p-5 rounded-3xl border border-border gap-1">
                   <Text className="grow text-muted-foreground font-semibold text-base">
                     Risk Level
                   </Text>
@@ -401,7 +401,7 @@ export function RiskSection() {
                 </View>
 
                 {selectedRisk?.majorFactor ? (
-                  <View className="mb-5">
+                  <View className="mb-5 px-3">
                     <Text className="text-base font-bold text-foreground mb-2">
                       Major Factor
                     </Text>
@@ -412,7 +412,7 @@ export function RiskSection() {
                 ) : null}
 
                 {selectedRisk?.reasons && selectedRisk.reasons.length > 0 ? (
-                  <View className="mb-2">
+                  <View className="mb-2 px-3">
                     <Text className="text-base font-bold text-foreground mb-3">
                       Analysis
                     </Text>

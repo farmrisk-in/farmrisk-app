@@ -3,10 +3,8 @@ import { View, TouchableOpacity } from "react-native";
 import { Text, Avatar } from "react-native-paper";
 import { Icon } from "@/components/ui/Icon";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
-import { DownloadButton } from "@/components/dashboard/DownloadButton";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Logo } from "@/components/Logo";
 
 export function Header() {
@@ -39,11 +37,14 @@ export function Header() {
           activeOpacity={0.8}
           className="flex-row items-center gap-3"
         >
-          <Avatar.Icon
+          <Avatar.Image
             size={45}
-            icon="account"
-            className="bg-primary"
-            color="white"
+            // label={
+            //   userName.split(" ")[0][0].toUpperCase() +
+            //   userName.split(" ")[1][0].toUpperCase()
+            // }
+            source={require("../../assets/pic5.webp")}
+            // color="white"
           />
           <View>
             <Text className="text-sm text-muted-foreground font-medium">

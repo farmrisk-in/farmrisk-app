@@ -176,7 +176,7 @@ export function CurrentWeatherSection() {
 
   return (
     <View
-      className={`my-2 rounded-3xl overflow-hidden shadow-xl elevation-6 border relative ${
+      className={`my-2 rounded-3xl overflow-hidden border relative ${
         isDark
           ? "border-emerald-500/30 bg-emerald-950"
           : "border-emerald-300/80 bg-emerald-50"
