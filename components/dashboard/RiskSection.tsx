@@ -1,10 +1,19 @@
-import React from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+  Modal,
+  TouchableWithoutFeedback,
+  ScrollView,
+} from "react-native";
 import { VictoryPie } from "victory-native";
 import { useColorScheme } from "nativewind";
 import { useRiskScore } from "@/hooks/useRiskScore";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Icon } from "@/components/ui/Icon";
+import Svg from "react-native-svg";
 import {
   RainDropIcon,
   SunCloud01Icon,
@@ -18,6 +27,7 @@ import {
   Alert02Icon,
   Plant01Icon,
   TractorIcon,
+  Cancel01Icon,
 } from "@hugeicons/core-free-icons";
 
 const { width } = Dimensions.get("window");
@@ -36,7 +46,7 @@ function getRiskColor(band: string) {
       return "#10b981"; // emerald-500
     case "minimal":
     default:
-      return "#3b82f6"; // blue-500
+      return "gray"; // blue-500
   }
 }
 
@@ -62,12 +72,14 @@ function RiskGauge({
   data,
   isDark,
   color,
+  onPress,
 }: {
   hazard: string;
   icon: any;
   data: any;
   isDark: boolean;
   color: string;
+  onPress: () => void;
 }) {
   if (!data) return null;
 
@@ -85,33 +97,47 @@ function RiskGauge({
       className="p-4 rounded-[30px] grow"
       style={{ backgroundColor: color + 10 }}
     >
-      <View className="flex-row items-center gap-2 mb-4">
-        <View className="w-8 h-8 rounded-full items-center justify-center">
-          <Icon icon={icon} size={22} strokeWidth={2} color={color} />
-        </View>
-        <Text style={{ color: color }} className="font-semibold text-md flex-1">
-          {hazard}
-        </Text>
-        <Icon icon={ChevronRightIcon} size={22} strokeWidth={2} color={color} />
-      </View>
-
-      <View className="items-center justify-center relative">
-        <View style={{ marginTop: -25 }}>
-          <VictoryPie
-            data={chartData}
-            startAngle={-90}
-            endAngle={90}
-            innerRadius={28}
-            radius={36}
-            colorScale={[riskcolor, isDark ? "#27272a" : "#e4e4e7"]}
-            labels={() => null}
-            padding={0}
-            width={100}
-            height={100}
+      <TouchableOpacity onPress={onPress}>
+        <View className="flex-row items-center gap-2 mb-4">
+          <View className="w-8 h-8 rounded-full items-center justify-center">
+            <Icon icon={icon} size={22} strokeWidth={2} color={color} />
+          </View>
+          <Text
+            style={{ color: color }}
+            className="font-semibold text-md flex-1"
+          >
+            {hazard}
+          </Text>
+          <Icon
+            icon={ChevronRightIcon}
+            size={22}
+            strokeWidth={2}
+            color={color}
           />
         </View>
-        <View className="absolute bottom-0 items-center w-full">
-          <Text className="text-foreground font-bold text-sm">{band}</Text>
+      </TouchableOpacity>
+
+      <View className="items-center justify-center relative w-full h-28">
+        <Svg viewBox="0 0 100 100" className="w-full h-full">
+          <VictoryPie
+            data={chartData}
+            standalone={false}
+            animate={true}
+            startAngle={-110}
+            endAngle={110}
+            innerRadius={40}
+            radius={60}
+            colorScale={[riskcolor, isDark ? "#27272a" : "#e4e4e7"]}
+            labels={() => null}
+            width={100}
+            height={130}
+            cornerRadius={10}
+          />
+        </Svg>
+        <View className="absolute inset-0 items-center justify-center pt-2">
+          <Text className="font-bold text-sm" style={{ color: riskcolor }}>
+            {band}
+          </Text>
         </View>
       </View>
     </View>
@@ -123,15 +149,35 @@ export function RiskSection() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
+  type SelectedRiskData = {
+    hazard: string;
+    majorFactor: string;
+    reasons: string[];
+    band: string;
+    color: string;
+    riskcolor: string;
+    icon: any;
+  };
+  const [selectedRisk, setSelectedRisk] = useState<SelectedRiskData | null>(
+    null,
+  );
+
+  const handlePress = (h: any) => {
+    setSelectedRisk({
+      hazard: h.name,
+      icon: h.icon,
+      majorFactor: h.scoreData?.major_factor ?? "",
+      reasons: h.scoreData?.reasons ?? [],
+      band: h.scoreData?.band ?? "Minimal",
+      color: h.color,
+      riskcolor: getRiskColor(h.scoreData?.band ?? "Minimal"),
+    });
+  };
+
   if (isLoading) {
     return (
       <View className="mt-6 mb-2">
-        <Text
-          style={{ fontFamily: "Fraunces_600SemiBold" }}
-          className="text-xl text-foreground mb-4 font-fraunces-semibold"
-        >
-          Agriculture Risk
-        </Text>
+        <Skeleton className="mb-4" />
         <View className="flex-row flex-wrap justify-between">
           {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton
@@ -235,6 +281,7 @@ export function RiskSection() {
             data={hazards[0].scoreData}
             isDark={isDark}
             color={hazards[0].color}
+            onPress={() => handlePress(hazards[0])}
           />
           <RiskGauge
             key={hazards[1].id}
@@ -243,6 +290,7 @@ export function RiskSection() {
             data={hazards[1].scoreData}
             isDark={isDark}
             color={hazards[1].color}
+            onPress={() => handlePress(hazards[1])}
           />
         </View>
         <View className="flex flex-row gap-3">
@@ -253,6 +301,7 @@ export function RiskSection() {
             data={hazards[2].scoreData}
             isDark={isDark}
             color={hazards[2].color}
+            onPress={() => handlePress(hazards[2])}
           />
           <RiskGauge
             key={hazards[3].id}
@@ -261,6 +310,7 @@ export function RiskSection() {
             data={hazards[3].scoreData}
             isDark={isDark}
             color={hazards[3].color}
+            onPress={() => handlePress(hazards[3])}
           />
         </View>
         <View className="flex flex-row gap-3">
@@ -271,6 +321,7 @@ export function RiskSection() {
             data={hazards[4].scoreData}
             isDark={isDark}
             color={hazards[4].color}
+            onPress={() => handlePress(hazards[4])}
           />
           <RiskGauge
             key={hazards[5].id}
@@ -279,9 +330,110 @@ export function RiskSection() {
             data={hazards[5].scoreData}
             isDark={isDark}
             color={hazards[5].color}
+            onPress={() => handlePress(hazards[5])}
           />
         </View>
       </View>
+
+      {/* Details Modal */}
+      <Modal
+        visible={!!selectedRisk}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedRisk(null)}
+      >
+        <TouchableOpacity
+          className="flex-1 bg-black/60 justify-center px-5"
+          activeOpacity={1}
+          onPressOut={() => setSelectedRisk(null)}
+        >
+          <TouchableWithoutFeedback>
+            <View className="bg-card w-full max-h-[80%] rounded-3xl p-5 shadow-lg">
+              <View className="flex-row items-center justify-between mb-4">
+                <View className="flex-row items-center gap-3">
+                  <View
+                    className="w-12 h-12 rounded-full items-center justify-center"
+                    style={{
+                      backgroundColor: (selectedRisk?.color || "#000") + "20",
+                    }}
+                  >
+                    <Icon
+                      icon={selectedRisk?.icon}
+                      size={28}
+                      color={selectedRisk?.color}
+                    />
+                  </View>
+                  <Text className="text-xl font-fraunces-bold text-foreground">
+                    {selectedRisk?.hazard}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setSelectedRisk(null)}
+                  className="p-2 bg-muted rounded-full"
+                >
+                  <Icon
+                    icon={Cancel01Icon}
+                    size={20}
+                    className="text-foreground"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false} className="mb-2">
+                <View className="mb-5 flex-row items-center justify-between p-4 rounded-3xl border border-border gap-1">
+                  <Text className="grow text-muted-foreground font-semibold text-base">
+                    Risk Level
+                  </Text>
+                  {selectedRisk?.band && (
+                    <Icon
+                      icon={getRiskIcon(selectedRisk?.band)}
+                      size={20}
+                      strokeWidth={1.5}
+                      color={getRiskColor(selectedRisk?.band)}
+                    />
+                  )}
+                  <Text
+                    className="font-bold text-md uppercase"
+                    style={{ color: selectedRisk?.riskcolor }}
+                  >
+                    {selectedRisk?.band}
+                  </Text>
+                </View>
+
+                {selectedRisk?.majorFactor ? (
+                  <View className="mb-5">
+                    <Text className="text-base font-bold text-foreground mb-2">
+                      Major Factor
+                    </Text>
+                    <Text className="text-[15px] text-muted-foreground leading-6">
+                      {selectedRisk.majorFactor}
+                    </Text>
+                  </View>
+                ) : null}
+
+                {selectedRisk?.reasons && selectedRisk.reasons.length > 0 ? (
+                  <View className="mb-2">
+                    <Text className="text-base font-bold text-foreground mb-3">
+                      Analysis
+                    </Text>
+                    {selectedRisk.reasons.map((r, i) => (
+                      <View key={i} className="flex-row gap-3 mb-3 pr-2">
+                        <View
+                          className="w-2 h-2 rounded-full mt-2"
+                          style={{ backgroundColor: selectedRisk.color }}
+                        />
+                        <Text className="text-[15px] text-muted-foreground leading-6 flex-1">
+                          {r}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : null}
+              </ScrollView>
+            </View>
+          </TouchableWithoutFeedback>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
