@@ -5,9 +5,17 @@ import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { useColorScheme } from "nativewind";
 import { LocationRequired } from "@/components/LocationRequired";
-import { Header, CropsSection, AIAdvisorySection } from "@/components/dashboard";
+import {
+  Header,
+  CropsSection,
+  AIAdvisorySection,
+} from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
-import { Wrench01Icon, DropletIcon, Calendar01Icon } from "@hugeicons/core-free-icons";
+import {
+  Wrench01Icon,
+  DropletIcon,
+  Calendar01Icon,
+} from "@hugeicons/core-free-icons";
 
 export default function ToolsTabScreen() {
   const [selectedCrop, setSelectedCrop] = useState<string>("");
@@ -23,7 +31,7 @@ export default function ToolsTabScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background mt-4">
+    <SafeAreaView edges={["top"]} className="flex-1 bg-background mt-4">
       <ScrollView
         className="px-4"
         contentContainerStyle={{ paddingBottom: 110 }}
@@ -76,7 +84,11 @@ export default function ToolsTabScreen() {
 
           <View className="flex-row gap-3">
             <View className="flex-1 bg-muted/50 p-3 rounded-xl border border-border/50">
-              <Icon icon={DropletIcon} size={20} className="text-primary mb-1.5" />
+              <Icon
+                icon={DropletIcon}
+                size={20}
+                className="text-primary mb-1.5"
+              />
               <Text className="text-sm font-semibold text-foreground">
                 Irrigation Tool
               </Text>
@@ -86,7 +98,11 @@ export default function ToolsTabScreen() {
             </View>
 
             <View className="flex-1 bg-muted/50 p-3 rounded-xl border border-border/50">
-              <Icon icon={Calendar01Icon} size={20} className="text-primary mb-1.5" />
+              <Icon
+                icon={Calendar01Icon}
+                size={20}
+                className="text-primary mb-1.5"
+              />
               <Text className="text-sm font-semibold text-foreground">
                 Sowing Planner
               </Text>

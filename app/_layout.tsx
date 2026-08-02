@@ -1,15 +1,3 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { View, LogBox } from "react-native";
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import "../global.css";
-
-LogBox.ignoreLogs(["Require cycle: node_modules/victory"]);
-
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { LanguageProvider } from "@/providers/LanguageProvider";
@@ -22,6 +10,17 @@ import {
   Fraunces_600SemiBold,
   Fraunces_700Bold,
 } from "@expo-google-fonts/fraunces";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { LogBox } from "react-native";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import "../global.css";
+
+LogBox.ignoreLogs(["Require cycle: node_modules/victory"]);
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();

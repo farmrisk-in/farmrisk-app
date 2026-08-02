@@ -3,7 +3,6 @@ import { ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { useColorScheme } from "nativewind";
 import { LocationRequired } from "@/components/LocationRequired";
 import {
   Header,
@@ -28,7 +27,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background mt-4">
+    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
       <ScrollView
         className="px-4"
         contentContainerStyle={{ paddingBottom: 110 }}
