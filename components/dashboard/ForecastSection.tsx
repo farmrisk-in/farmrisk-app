@@ -69,7 +69,7 @@ export function ForecastSection() {
       <View className="flex pb-4 flex-row gap-2 items-center">
         <Icon icon={TrendingUpDownIcon} className="text-foreground" size={26} />
         <Text
-          style={{ fontFamily: "Fraunces_600SemiBold" }}
+          
           className="grow text-xl text-foreground"
         >
           16 Day Forecast

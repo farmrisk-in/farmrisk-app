@@ -258,8 +258,8 @@ export function CurrentWeatherSection() {
           {/* Left Column: Big Temperature & Feels Like */}
           <View className="items-start">
             <Text
-              style={{ fontFamily: "Fraunces_700Bold" }}
-              className={`text-7xl tracking-tighter font-fraunces-bold ${
+              
+              className={`text-7xl tracking-tighter font-bold ${
                 isDark ? "text-white" : "text-emerald-950"
               }`}
             >
@@ -278,7 +278,7 @@ export function CurrentWeatherSection() {
           <View className="items-center gap-2">
             <WeatherIcon name={iconName} size={60} />
             <Text
-              className={`text-base font-fraunces capitalize text-right ${
+              className={`text-base font-medium capitalize text-right ${
                 isDark ? "text-emerald-200/90" : "text-emerald-900/90"
               }`}
             >

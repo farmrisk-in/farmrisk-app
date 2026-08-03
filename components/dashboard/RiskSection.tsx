@@ -254,7 +254,7 @@ export function RiskSection() {
           size={25}
           className="text-foreground"
         />
-        <Text className="text-xl grow text-foreground font-fraunces-semibold">
+        <Text className="text-xl grow text-foreground font-semibold">
           Agriculture Risk
         </Text>
         <View
@@ -363,7 +363,7 @@ export function RiskSection() {
                       color={selectedRisk?.color}
                     />
                   </View>
-                  <Text className="text-xl font-fraunces-bold text-foreground">
+                  <Text className="text-xl font-bold text-foreground">
                     {selectedRisk?.hazard}
                   </Text>
                 </View>

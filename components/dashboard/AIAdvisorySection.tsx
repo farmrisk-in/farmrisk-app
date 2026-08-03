@@ -110,7 +110,7 @@ export function AIAdvisorySection({ crop }: Props) {
           size={30}
           className="text-primary dark:text-white"
         />
-        <Text className="text-xl grow text-foreground font-fraunces-semibold">
+        <Text className="text-xl grow text-foreground font-semibold">
           AI Advisory
         </Text>
         {sources && (
@@ -168,7 +168,7 @@ export function AIAdvisorySection({ crop }: Props) {
                   <View className="w-12 h-12 rounded-full items-center justify-center bg-emerald-100 dark:bg-emerald-900/50">
                     <Icon icon={Book02Icon} size={24} color="#059669" />
                   </View>
-                  <Text className="text-xl font-fraunces-bold text-foreground">
+                  <Text className="text-xl font-bold text-foreground">
                     Data Sources
                   </Text>
                 </View>

@@ -183,11 +183,7 @@ export default function MapScreen() {
         </TouchableOpacity>
 
         <Text
-          style={{
-            fontFamily: "Fraunces_600SemiBold",
-            fontSize: 18,
-            color: isDark ? "#ffffff" : "#09090b",
-          }}
+          className="text-lg text-foreground font-bold"
         >
           Choose Location
         </Text>

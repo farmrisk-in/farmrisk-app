@@ -51,8 +51,8 @@ export function Header() {
               {getGreeting()}
             </Text>
             <Text
-              style={{ fontFamily: "Fraunces_600SemiBold" }}
-              className="text-3xl text-foreground font-fraunces-semibold"
+              
+              className="text-3xl text-foreground font-semibold"
               numberOfLines={1}
             >
               {userName}
@@ -64,8 +64,8 @@ export function Header() {
         <View className="flex-row items-center gap-2">
           <Logo size={32} />
           <Text
-            style={{ fontFamily: "Fraunces_600SemiBold", fontSize: 26 }}
-            className="text-foreground font-fraunces-semibold"
+            style={{ fontSize: 26  }}
+            className="text-foreground font-semibold"
           >
             FarmRisk
           </Text>

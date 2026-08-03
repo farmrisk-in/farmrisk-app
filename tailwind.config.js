@@ -24,12 +24,6 @@ module.exports = {
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
-      },
-      fontFamily: {
-        fraunces: ["Fraunces"],
-        "fraunces-semibold": ["Fraunces_600SemiBold"],
-        "fraunces-bold": ["Fraunces_700Bold"],
-      },
     },
   },
   plugins: [],

@@ -46,7 +46,7 @@ export function LocationRequired() {
 
       {/* Title */}
       <Text
-        style={{ fontFamily: "Fraunces_600SemiBold" }}
+        
         className="text-2xl text-foreground text-center mb-2"
       >
         Location Required

@@ -137,7 +137,7 @@ export function SoilMoistureSection({ crop }: Props) {
           className="text-foreground"
         />
         <Text
-          style={{ fontFamily: "Fraunces_600SemiBold" }}
+          
           className="grow text-xl text-foreground"
         >
           Soil Moisture
@@ -157,50 +157,6 @@ export function SoilMoistureSection({ crop }: Props) {
       </View>
 
       <View className="bg-card border border-border rounded-3xl p-3 shadow-xs">
-        {/* Legends */}
-        <View className="flex-row items-center gap-4 mb-2 justify-center flex-wrap">
-          {charts.sm_percentile && (
-            <View className="flex-row items-center gap-1.5">
-              <View className="w-3 h-3 rounded-full bg-emerald-500" />
-              <Text className="text-[11px] text-muted-foreground font-medium">
-                Moisture %
-              </Text>
-            </View>
-          )}
-          {charts.P_obs && (
-            <View className="flex-row items-center gap-1.5">
-              <View className="w-3 h-3 rounded-sm bg-blue-400" />
-              <Text className="text-[11px] text-muted-foreground font-medium">
-                Rainfall
-              </Text>
-            </View>
-          )}
-          {charts.PE && (
-            <View className="flex-row items-center gap-1.5">
-              <View className="w-3 h-3 rounded-sm bg-amber-400" />
-              <Text className="text-[11px] text-muted-foreground font-medium">
-                PE
-              </Text>
-            </View>
-          )}
-          {charts.E && (
-            <View className="flex-row items-center gap-1.5">
-              <View className="w-3 h-3 rounded-sm bg-purple-500" />
-              <Text className="text-[11px] text-muted-foreground font-medium">
-                E
-              </Text>
-            </View>
-          )}
-          {charts.R && (
-            <View className="flex-row items-center gap-1.5">
-              <View className="w-3 h-3 rounded-sm bg-rose-500" />
-              <Text className="text-[11px] text-muted-foreground font-medium">
-                R
-              </Text>
-            </View>
-          )}
-        </View>
-
         {/* Chart */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={{ width: chartWidth, height: 240, marginLeft: -10 }}>
@@ -325,7 +281,7 @@ export function SoilMoistureSection({ crop }: Props) {
           <TouchableWithoutFeedback>
             <View className="bg-card w-full rounded-3xl p-5 border border-border shadow-lg">
               <View className="flex-row items-center justify-between mb-5">
-                <Text className="text-xl font-fraunces-bold text-foreground">
+                <Text className="text-xl font-bold text-foreground">
                   Moisture Settings
                 </Text>
                 <TouchableOpacity
