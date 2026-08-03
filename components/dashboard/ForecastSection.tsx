@@ -1,54 +1,149 @@
 import React from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
-import { Card, Text, ActivityIndicator } from "react-native-paper";
+import { View, ScrollView, Text, ActivityIndicator } from "react-native";
 import { useForecast } from "@/hooks/useForecast";
+import type { ForecastRow } from "@/types/forecast";
+import { Icon } from "../ui/Icon";
+import {
+  TickDouble01Icon,
+  TrendingUpDownIcon,
+} from "@hugeicons/core-free-icons";
+import { useWeather } from "@/hooks/useWeather";
+import { WeatherIcon } from "../WeatherIcon";
+import { LinearGradient } from "expo-linear-gradient";
+
+// Helper to determine the right weather icon based on rain volume thresholds
+const getWeatherIcon = (pcp: number) => {
+  if (pcp > 5.0) return "heavy_rain.svg";
+  if (pcp > 1.0) return "showers_rain.svg";
+  if (pcp > 0.1) return "drizzle.svg";
+  return "cloud.svg";
+};
+
+// Simple day name formatting helper
+const formatDayName = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", { weekday: "short" });
+};
+
+// Simple date text formatting helper
+const formatDateText = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
+};
 
 export function ForecastSection() {
   const { forecastRows, isLoading, isError } = useForecast();
+  const { data: weatherData } = useWeather();
+  const daily = weatherData?.daily;
 
-  if (isLoading) return <ActivityIndicator style={{ marginVertical: 16 }} />;
-  if (isError && forecastRows.length === 0) return <Text style={styles.error}>Forecast unavailable</Text>;
+  const fallbackPredictions: ForecastRow[] = daily
+    ? daily.time.map((time: string | Date, idx: number) => ({
+        date: new Date(time).toISOString().split("T")[0],
+        tmax: daily.temperature_2m_max[idx],
+        tmax_corrected: daily.temperature_2m_max[idx],
+        tmin: daily.temperature_2m_min[idx],
+        tmin_corrected: daily.temperature_2m_min[idx],
+        pcp: daily.precipitation_sum[idx],
+        pcp_corrected: daily.precipitation_sum[idx],
+        is_forecast: 1 as const,
+      }))
+    : [];
+
+  const finalPredictions =
+    forecastRows.length > 0 ? forecastRows : fallbackPredictions;
+  const isFallbackUsed =
+    forecastRows.length === 0 && fallbackPredictions.length > 0;
+
+  if (isLoading)
+    return <ActivityIndicator style={{ marginVertical: 16 }} color="#007a55" />;
+  if (isError && forecastRows.length === 0)
+    return (
+      <Text className="text-muted-foreground text-center my-4">
+        Forecast unavailable
+      </Text>
+    );
   if (!forecastRows.length) return null;
 
   return (
-    <View style={styles.container}>
-      <Text variant="titleMedium" style={styles.title}>📅 16-Day Forecast</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {forecastRows.slice(0, 16).map((day: any, i: number) => {
-          const dateLabel = day.date ?? `Day ${i + 1}`;
-          const tempMax = day.tmax_corrected ?? day.tmax ?? "—";
-          const tempMin = day.tmin_corrected ?? day.tmin ?? "—";
-          const rain = day.pcp_corrected ?? day.pcp ?? "—";
+    <View className="my-6 px-3">
+      <View className="flex pb-4 flex-row gap-2 items-center">
+        <Icon icon={TrendingUpDownIcon} className="text-foreground" size={26} />
+        <Text
+          style={{ fontFamily: "Fraunces_600SemiBold" }}
+          className="grow text-xl text-foreground"
+        >
+          16 Day Forecast
+        </Text>
+        {!isFallbackUsed && (
+          <View className="px-3 flex flex-row gap-1 items-center py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+            <Icon
+              icon={TickDouble01Icon}
+              className="text-emerald-800 dark:text-emerald-300"
+              size={18}
+            />
+            <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+              Bias Corrected
+            </Text>
+          </View>
+        )}
+      </View>
 
-          return (
-            <Card key={i} style={styles.itemCard} mode="outlined">
-              <Card.Content style={styles.cardContent}>
-                <Text style={styles.date}>{String(dateLabel).slice(5, 10)}</Text>
-                <Text style={styles.maxTemp}>↑{tempMax}°</Text>
-                <Text style={styles.minTemp}>↓{tempMin}°</Text>
-                {rain !== "—" && <Text style={styles.rain}>🌧{rain}mm</Text>}
-              </Card.Content>
-            </Card>
-          );
-        })}
-      </ScrollView>
+      <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 8 }}
+        >
+          {finalPredictions.map((day: ForecastRow, idx: number) => {
+            const maxTemp = Math.round(day.tmax_corrected);
+            const minTemp = Math.round(day.tmin_corrected);
+            const rainVolume = day.pcp_corrected;
+
+            return (
+              <View
+                key={day.date}
+                className="shrink-0 w-20 flex border-r border-border last:border-0 flex-col items-center gap-1"
+              >
+                {/* Numeric Calendar Label */}
+                <Text className="text-xs text-muted-foreground font-semibold">
+                  {formatDateText(day.date)}
+                </Text>
+
+                {/* Day Word Label */}
+                <Text className="text-base font-bold text-foreground">
+                  {formatDayName(day.date)}
+                </Text>
+
+                {/* Status Graphic Icon */}
+                <View className="my-2">
+                  <WeatherIcon name={getWeatherIcon(rainVolume)} size={28} />
+                </View>
+
+                {/* Tmax Layout Digit */}
+                <Text className="text-base font-bold text-orange-600 dark:text-orange-500">
+                  {maxTemp}°
+                </Text>
+
+                {/* Height bar graphic */}
+                <LinearGradient
+                  colors={["#f97316", "#fbbf24", "#0ea5e9"]}
+                  className="w-2 h-12 my-1 rounded-xl opacity-80"
+                />
+
+                {/* Tmin Layout Digit */}
+                <Text className="text-base font-bold text-sky-600 dark:text-sky-400">
+                  {minTemp}°
+                </Text>
+
+                {/* Total Precipitation Metrics Label */}
+                <Text className="text-[11px] font-semibold text-muted-foreground font-mono mt-1">
+                  {rainVolume > 0 ? `${rainVolume.toFixed(1)}mm` : "—"}
+                </Text>
+              </View>
+            );
+          })}
+        </ScrollView>
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { marginBottom: 16 },
-  title: { fontWeight: "700", marginBottom: 8, color: "#1a1a1a" },
-  itemCard: {
-    backgroundColor: "#ffffff",
-    marginRight: 8,
-    borderRadius: 10,
-    minWidth: 64,
-  },
-  cardContent: { paddingHorizontal: 8, paddingVertical: 8, alignItems: "center" },
-  date: { fontSize: 11, color: "#555", marginBottom: 4 },
-  maxTemp: { fontSize: 14, fontWeight: "700", color: "#e74c3c" },
-  minTemp: { fontSize: 12, color: "#2980b9" },
-  rain: { fontSize: 11, color: "#3498db", marginTop: 2 },
-  error: { color: "red", marginVertical: 8 },
-});

@@ -1,59 +1,107 @@
 import React from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
-import { Text, ActivityIndicator, Card } from "react-native-paper";
+import { View, ScrollView, Text, ActivityIndicator } from "react-native";
 import { useWeather } from "@/hooks/useWeather";
+import type { HourlyWeather } from "@/types/weather";
+import { WeatherIcon } from "@/components/WeatherIcon";
+import { Icon } from "../ui/Icon";
+import { Clock01Icon } from "@hugeicons/core-free-icons";
+
+const formatHour = (dateInput: Date | string) => {
+  const date = new Date(dateInput);
+  const h = date.getUTCHours();
+  const ampm = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${String(h12).padStart(2, "0")} ${ampm}`;
+};
 
 export function HourlyWeatherSection() {
   const { data, isLoading, isError } = useWeather();
 
-  if (isLoading) return <ActivityIndicator style={{ marginVertical: 16 }} />;
-  if (isError) return <Text style={styles.error}>Failed to load hourly weather</Text>;
+  if (isLoading)
+    return <ActivityIndicator style={{ marginVertical: 16 }} color="#007a55" />;
+  if (isError)
+    return (
+      <Text className="text-muted-foreground text-center my-4">
+        Failed to load hourly weather
+      </Text>
+    );
 
-  const hourly = data?.hourly;
-  if (!hourly?.time?.length) return null;
+  const hourly: HourlyWeather = data?.hourly;
 
-  const hours = hourly.time.slice(0, 24);
+  const slots = hourly
+    ? hourly.time.map((time, idx) => ({
+        time: formatHour(time),
+        temp: Math.round(hourly.temperature_2m[idx]),
+        rainChance: hourly.precipitation_probability[idx] ?? 0,
+        windKph: Math.round(hourly.wind_speed_10m[idx]),
+        icon: hourly.icon[idx] || "clear_day.svg",
+        rainfall: hourly.rain[idx] ?? 0,
+      }))
+    : [];
+
+  if (!slots.length) return null;
 
   return (
-    <View style={styles.container}>
-      <Text variant="titleMedium" style={styles.title}>⏱ Hourly Weather</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {hours.map((time: string, i: number) => {
-          const label = new Date(time).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          return (
-            <Card key={i} style={styles.itemCard} mode="outlined">
-              <Card.Content style={styles.cardContent}>
-                <Text style={styles.time}>{label}</Text>
-                <Text style={styles.temp}>
-                  {hourly.temperature_2m?.[i] ?? "—"}°
+    <View className="my-6 px-3">
+      <View className="flex pb-4 flex-row gap-2 items-center">
+        <Icon icon={Clock01Icon} className="text-foreground" size={26} />
+        <Text
+          style={{ fontFamily: "Fraunces_600SemiBold" }}
+          className="grow text-xl text-foreground"
+        >
+          Hourly Weather
+        </Text>
+        <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+          <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+            Next 24 Hours
+          </Text>
+        </View>
+      </View>
+
+      <View className="bg-card dark:bg-muted/50 border border-border rounded-2xl overflow-hidden py-4">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 8 }}
+        >
+          {slots.map((slot, i) => {
+            return (
+              <View
+                key={i}
+                className="px-3 border-r border-border last:border-0 flex flex-col items-center gap-2 min-w-[72px]"
+              >
+                {/* 1. Time Label */}
+                <Text className="text-sm text-muted-foreground font-semibold">
+                  {slot.time}
                 </Text>
-                <Text style={styles.humidity}>
-                  💧{hourly.relative_humidity_2m?.[i] ?? "—"}%
+
+                {/* 2. Weather Icon (Above Temperature) */}
+                <WeatherIcon name={slot.icon} size={28} />
+
+                {/* 3. Temperature (Main metrics label) */}
+                <Text className="text-lg font-bold text-foreground">
+                  {slot.temp}°
                 </Text>
-              </Card.Content>
-            </Card>
-          );
-        })}
-      </ScrollView>
+
+                {/* 4. Precipitation & Wind (Below Temperature) */}
+                <View className="flex flex-col items-center gap-1 mt-1">
+                  <Text className="text-xs font-semibold text-blue-500">
+                    {slot.rainChance}%
+                  </Text>
+                  {slot.rainfall > 0 && (
+                    <Text className="text-[11px] text-muted-foreground font-medium">
+                      {slot.rainfall.toFixed(1)}mm
+                    </Text>
+                  )}
+                  <Text className="text-[11px] text-muted-foreground font-medium text-center">
+                    {slot.windKph}km/h
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
+        </ScrollView>
+      </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { marginBottom: 16 },
-  title: { fontWeight: "700", marginBottom: 8, color: "#1a1a1a" },
-  itemCard: {
-    backgroundColor: "#ffffff",
-    marginRight: 8,
-    borderRadius: 10,
-    minWidth: 70,
-  },
-  cardContent: { paddingHorizontal: 10, paddingVertical: 8, alignItems: "center" },
-  time: { fontSize: 11, color: "#555", marginBottom: 4 },
-  temp: { fontSize: 16, fontWeight: "700", color: "#1a73e8" },
-  humidity: { fontSize: 11, color: "#555", marginTop: 4 },
-  error: { color: "red", marginVertical: 8 },
-});

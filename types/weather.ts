@@ -42,6 +42,7 @@ export type HourlyWeather = {
   wind_speed_10m: number[];
   weather_code: number[];
   icon: string[];
+  rain: number[];
 };
 
 export type DailyWeather = {

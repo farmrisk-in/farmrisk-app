@@ -19,10 +19,7 @@ import {
   Location01Icon,
   Tick01Icon,
 } from "@hugeicons/core-free-icons";
-import {
-  LeafletMapView,
-  LeafletMapEvent,
-} from "@/components/LeafletMapView";
+import { LeafletMapView, LeafletMapEvent } from "@/components/LeafletMapView";
 
 export default function MapScreen() {
   const router = useRouter();
@@ -40,7 +37,7 @@ export default function MapScreen() {
   const [centerLat, setCenterLat] = useState(initialLat);
   const [centerLng, setCenterLng] = useState(initialLng);
   const [placeName, setPlaceName] = useState<string | null>(
-    location?.displayName || null
+    location?.displayName || null,
   );
   const [isGeolocating, setIsGeolocating] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -65,9 +62,7 @@ export default function MapScreen() {
           `${event.lat.toFixed(4)}, ${event.lng.toFixed(4)}`;
         setPlaceName(name);
       } catch {
-        setPlaceName(
-          `${event.lat.toFixed(4)}, ${event.lng.toFixed(4)}`
-        );
+        setPlaceName(`${event.lat.toFixed(4)}, ${event.lng.toFixed(4)}`);
       }
     }, 500);
   }, []);

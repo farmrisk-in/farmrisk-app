@@ -64,7 +64,7 @@ function buildMapHTML(options: {
     ? '&copy; <a href="https://carto.com/">CARTO</a>'
     : '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>';
 
-  const crosshairColor = isDark ? "#34d399" : "#059669";
+  const crosshairColor = isDark ? "white" : "black";
   const crosshairBg = isDark ? "rgba(9,9,11,0.6)" : "rgba(255,255,255,0.7)";
 
   return `
@@ -91,18 +91,10 @@ function buildMapHTML(options: {
       transform: translate(-50%, -50%);
       z-index: 10000; pointer-events: none;
     }
-    .crosshair-ring {
-      width: 48px; height: 48px; border-radius: 50%;
-      border: 2.5px solid ${crosshairColor};
-      opacity: 0.4;
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-    }
     .crosshair-dot {
       width: 10px; height: 10px; border-radius: 50%;
       background: ${crosshairColor};
       border: 2px solid ${isDark ? "#022c22" : "#ffffff"};
-      box-shadow: 0 0 6px ${crosshairColor};
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
     }
@@ -156,7 +148,6 @@ function buildMapHTML(options: {
     showCrosshair
       ? `
   <div class="crosshair">
-    <div class="crosshair-ring"></div>
     <div class="crosshair-dot"></div>
     <div class="crosshair-line-v"></div>
     <div class="crosshair-line-h"></div>

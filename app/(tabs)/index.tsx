@@ -10,6 +10,12 @@ import {
   CurrentWeatherSection,
   AIAdvisorySection,
   RiskSection,
+  HourlyWeatherSection,
+  ForecastSection,
+  SoilMoistureSection,
+  CropsSection,
+  CalendarSection,
+  LightningRiskSection,
 } from "@/components/dashboard";
 
 export default function HomeScreen() {
@@ -51,6 +57,14 @@ export default function HomeScreen() {
 
         {/* 3. Risk Analysis */}
         <RiskSection />
+
+        {/* TEMP */}
+        <HourlyWeatherSection />
+        <ForecastSection />
+        <SoilMoistureSection />
+        {/*<CropsSection />*/}
+        {/*<CalendarSection />*/}
+        {/*<LightningRiskSection />*/}
 
         {/* 4. AI Advisory Recommendations */}
         <AIAdvisorySection crop={selectedCrop} />
