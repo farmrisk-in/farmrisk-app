@@ -64,6 +64,13 @@ export default function RootLayout() {
                       animation: "slide_from_bottom",
                     }}
                   />
+                  <Stack.Screen
+                    name="weather-table"
+                    options={{
+                      headerShown: false,
+                      presentation: "card",
+                    }}
+                  />
                 </Stack>
                 <StatusBar style={isDark ? "light" : "dark"} />
               </ThemeProvider>

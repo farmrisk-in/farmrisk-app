@@ -1,15 +1,23 @@
 import React from "react";
-import { View, ScrollView, Text, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { useForecast } from "@/hooks/useForecast";
 import type { ForecastRow } from "@/types/forecast";
 import { Icon } from "../ui/Icon";
 import {
+  ChevronRightIcon,
   TickDouble01Icon,
   TrendingUpDownIcon,
 } from "@hugeicons/core-free-icons";
 import { useWeather } from "@/hooks/useWeather";
 import { WeatherIcon } from "../WeatherIcon";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
 // Helper to determine the right weather icon based on rain volume thresholds
 const getWeatherIcon = (pcp: number) => {
@@ -32,6 +40,7 @@ const formatDateText = (dateStr: string) => {
 };
 
 export function ForecastSection() {
+  const router = useRouter();
   const { forecastRows, isLoading, isError } = useForecast();
   const { data: weatherData } = useWeather();
   const daily = weatherData?.daily;
@@ -68,12 +77,7 @@ export function ForecastSection() {
     <View className="my-6 px-3">
       <View className="flex pb-4 flex-row gap-2 items-center">
         <Icon icon={TrendingUpDownIcon} className="text-foreground" size={26} />
-        <Text
-          
-          className="grow text-xl text-foreground"
-        >
-          16 Day Forecast
-        </Text>
+        <Text className="grow text-xl text-foreground">16 Day Forecast</Text>
         {!isFallbackUsed && (
           <View className="px-3 flex flex-row gap-1 items-center py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
             <Icon
@@ -86,6 +90,13 @@ export function ForecastSection() {
             </Text>
           </View>
         )}
+        <TouchableOpacity
+          onPress={() => {
+            router.push("/weather-table?type=forecast");
+          }}
+        >
+          <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
+        </TouchableOpacity>
       </View>
 
       <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">

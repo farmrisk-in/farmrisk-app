@@ -1,10 +1,17 @@
 import React from "react";
-import { View, ScrollView, Text, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { useWeather } from "@/hooks/useWeather";
 import type { HourlyWeather } from "@/types/weather";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { Icon } from "../ui/Icon";
-import { Clock01Icon } from "@hugeicons/core-free-icons";
+import { ChevronRightIcon, Clock01Icon } from "@hugeicons/core-free-icons";
+import { useRouter } from "expo-router";
 
 const formatHour = (dateInput: Date | string) => {
   const date = new Date(dateInput);
@@ -15,6 +22,7 @@ const formatHour = (dateInput: Date | string) => {
 };
 
 export function HourlyWeatherSection() {
+  const router = useRouter();
   const { data, isLoading, isError } = useWeather();
 
   if (isLoading)
@@ -45,17 +53,19 @@ export function HourlyWeatherSection() {
     <View className="my-6 px-3">
       <View className="flex pb-4 flex-row gap-2 items-center">
         <Icon icon={Clock01Icon} className="text-foreground" size={26} />
-        <Text
-          
-          className="grow text-xl text-foreground"
-        >
-          Hourly Weather
-        </Text>
+        <Text className="grow text-xl text-foreground">Hourly Weather</Text>
         <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
           <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
             Next 24 Hours
           </Text>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            router.push("/weather-table?type=hourly");
+          }}
+        >
+          <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
+        </TouchableOpacity>
       </View>
 
       <View className="bg-card dark:bg-muted/50 border border-border rounded-2xl overflow-hidden py-4">
