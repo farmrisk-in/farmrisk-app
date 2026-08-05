@@ -19,7 +19,7 @@ You can delete your account directly within the app:
 
 Once confirmed, your account and associated personal data will be permanently deleted from our active systems.
 
-If you are unable to access the app, you may also request deletion by emailing us at **[YOUR EMAIL]** from the phone number or contact details associated with your account.
+If you are unable to access the app, you may also request deletion by emailing us at **vegadurmin@gmail.com** from the phone number or contact details associated with your account.
 
 ## What Data Is Deleted
 
