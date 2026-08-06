@@ -1,8 +1,24 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Icon } from "@/components/ui/Icon";
-import { ArrowLeft01Icon, Clock01Icon, TrendingUpDownIcon, TickDouble01Icon } from "@hugeicons/core-free-icons";
+import {
+  ArrowLeft01Icon,
+  Clock01Icon,
+  TrendingUpDownIcon,
+  TickDouble01Icon,
+  ThermometerIcon,
+  RainDropIcon,
+  FastWindIcon,
+  Calendar01Icon,
+} from "@hugeicons/core-free-icons";
 import { useWeather } from "@/hooks/useWeather";
 import { useForecast } from "@/hooks/useForecast";
 import { WeatherIcon } from "@/components/WeatherIcon";
@@ -24,7 +40,11 @@ const getWeatherIcon = (pcp: number) => {
 
 const formatDateText = (dateStr: string) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" });
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
 };
 
 export default function WeatherTableScreen() {
@@ -34,8 +54,8 @@ export default function WeatherTableScreen() {
   const { data: weatherData, isLoading: weatherLoading } = useWeather();
   const { forecastRows, isLoading: forecastLoading } = useForecast();
 
-  const isHourly = type === 'hourly';
-  
+  const isHourly = type === "hourly";
+
   if ((isHourly && weatherLoading) || (!isHourly && forecastLoading)) {
     return (
       <SafeAreaView className="flex-1 bg-background justify-center items-center">
@@ -49,20 +69,29 @@ export default function WeatherTableScreen() {
       <View className="px-5 pt-6 pb-4">
         {/* Row 1: Back Button */}
         <View className="mb-6 flex-row">
-          <TouchableOpacity onPress={() => router.back()} className="p-2.5 rounded-full bg-muted/70 border border-border/50">
-            <Icon icon={ArrowLeft01Icon} size={22} className="text-foreground" />
+          <TouchableOpacity onPress={() => router.back()}>
+            <Icon
+              icon={ArrowLeft01Icon}
+              size={32}
+              className="text-foreground"
+            />
           </TouchableOpacity>
         </View>
-        
+
         {/* Row 2: Title and Badge */}
         <View className="flex-row items-center justify-between">
           {isHourly ? (
             <>
               <View className="flex-row items-center gap-3">
-                <View className="p-2 bg-blue-100/50 dark:bg-blue-900/30 rounded-xl">
-                  <Icon icon={Clock01Icon} size={28} className="text-blue-600 dark:text-blue-400" />
-                </View>
-                <Text className="text-2xl font-bold text-foreground">Hourly Weather</Text>
+                <Icon
+                  icon={Clock01Icon}
+                  size={28}
+                  strokeWidth={2}
+                  className="text-foreground"
+                />
+                <Text className="text-2xl font-bold text-foreground">
+                  Hourly Weather
+                </Text>
               </View>
               <View className="px-3 py-1.5 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50 shadow-sm">
                 <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
@@ -73,13 +102,22 @@ export default function WeatherTableScreen() {
           ) : (
             <>
               <View className="flex-row items-center gap-3">
-                <View className="p-2 bg-orange-100/50 dark:bg-orange-900/30 rounded-xl">
-                  <Icon icon={TrendingUpDownIcon} size={28} className="text-orange-600 dark:text-orange-400" />
-                </View>
-                <Text className="text-2xl font-bold text-foreground">Forecast</Text>
+                <Icon
+                  icon={TrendingUpDownIcon}
+                  size={28}
+                  strokeWidth={2}
+                  className="text-foreground"
+                />
+                <Text className="text-2xl font-bold text-foreground">
+                  Forecast
+                </Text>
               </View>
               <View className="px-3 flex-row gap-1 items-center py-1.5 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50 shadow-sm">
-                <Icon icon={TickDouble01Icon} size={16} className="text-emerald-800 dark:text-emerald-300" />
+                <Icon
+                  icon={TickDouble01Icon}
+                  size={16}
+                  className="text-emerald-800 dark:text-emerald-300"
+                />
                 <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
                   Bias Corrected
                 </Text>
@@ -105,28 +143,82 @@ export default function WeatherTableScreen() {
     }));
 
     return (
-      <View className="bg-card border border-border/50 rounded-3xl mx-4 my-2 overflow-hidden shadow-sm">
+      <View className="bg-card border border-border rounded-xl mx-4 my-2 overflow-hidden shadow-sm">
         {/* Table Header */}
-        <View className="flex-row items-center border-b border-border/60 bg-muted/40 p-5">
-          <Text className="flex-[1.2] text-xs font-bold text-muted-foreground uppercase tracking-wider">Time</Text>
-          <Text className="flex-1 text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">Temp</Text>
-          <Text className="flex-1 text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">Rain</Text>
-          <Text className="flex-1 text-xs font-bold text-muted-foreground uppercase tracking-wider text-right">Wind</Text>
+        <View className="flex-row items-center border-b border-border bg-muted p-5">
+          <View className="flex-[0.5]" />
+          <View className="flex-[1.2] flex-row items-center justify-start gap-1.5 pl-2">
+            <Icon
+              icon={Clock01Icon}
+              size={15}
+              className="text-muted-foreground"
+            />
+            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Time
+            </Text>
+          </View>
+          <View className="flex-1 flex-row items-center justify-center gap-1.5">
+            <Icon
+              icon={ThermometerIcon}
+              size={15}
+              className="text-muted-foreground"
+            />
+            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Temp
+            </Text>
+          </View>
+          <View className="flex-1 flex-row items-center justify-center gap-1.5">
+            <Icon
+              icon={RainDropIcon}
+              size={15}
+              className="text-muted-foreground"
+            />
+            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Rain
+            </Text>
+          </View>
+          <View className="flex-1 flex-row items-center justify-end gap-1.5">
+            <Icon
+              icon={FastWindIcon}
+              size={15}
+              className="text-muted-foreground"
+            />
+            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Wind
+            </Text>
+          </View>
         </View>
 
         {/* Rows */}
         {slots.map((slot: any, i: number) => (
-          <View key={i} className="flex-row items-center border-b border-border/30 p-5 last:border-0">
-            <View className="flex-[1.2] flex-row items-center gap-3">
+          <View
+            key={i}
+            className="flex-row items-center border-b border-border p-5 last:border-0"
+          >
+            <View className="flex-[0.5] items-center justify-center">
               <WeatherIcon name={slot.icon} size={32} />
-              <Text className="text-base font-bold text-foreground">{slot.time}</Text>
             </View>
-            <Text className="flex-1 text-xl font-bold text-foreground text-center">{slot.temp}°</Text>
+            <View className="flex-[1.2] justify-center pl-2">
+              <Text className="text-base font-bold text-foreground">
+                {slot.time}
+              </Text>
+            </View>
+            <Text className="flex-1 text-xl font-bold text-foreground text-center">
+              {slot.temp}°
+            </Text>
             <View className="flex-1 items-center justify-center">
-               <Text className="text-sm font-bold text-blue-500">{slot.rainChance}%</Text>
-               {slot.rainfall > 0 && <Text className="text-xs font-medium text-muted-foreground mt-0.5">{slot.rainfall.toFixed(1)} mm</Text>}
+              <Text className="text-sm font-bold text-blue-500">
+                {slot.rainChance}%
+              </Text>
+              {slot.rainfall > 0 && (
+                <Text className="text-xs font-medium text-muted-foreground mt-0.5">
+                  {slot.rainfall.toFixed(1)} mm
+                </Text>
+              )}
             </View>
-            <Text className="flex-1 text-sm font-semibold text-muted-foreground text-right">{slot.windKph} km/h</Text>
+            <Text className="flex-1 text-sm font-semibold text-muted-foreground text-right">
+              {slot.windKph} km/h
+            </Text>
           </View>
         ))}
       </View>
@@ -151,12 +243,40 @@ export default function WeatherTableScreen() {
     if (!finalPredictions.length) return null;
 
     return (
-      <View className="bg-card border border-border/50 rounded-3xl mx-4 my-2 overflow-hidden shadow-sm">
+      <View className="bg-card border border-border rounded-xl mx-4 my-2 overflow-hidden shadow-sm">
         {/* Table Header */}
-        <View className="flex-row items-center border-b border-border/60 bg-muted/40 p-5">
-          <Text className="flex-[1.5] text-xs font-bold text-muted-foreground uppercase tracking-wider">Date</Text>
-          <Text className="flex-1 text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">High / Low</Text>
-          <Text className="flex-1 text-xs font-bold text-muted-foreground uppercase tracking-wider text-right">Rain</Text>
+        <View className="flex-row items-center border-b border-border bg-muted p-5">
+          <View className="flex-[0.5]" />
+          <View className="flex-[1.5] flex-row items-center justify-start gap-1.5 pl-2">
+            <Icon
+              icon={Calendar01Icon}
+              size={15}
+              className="text-muted-foreground"
+            />
+            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Date
+            </Text>
+          </View>
+          <View className="flex-1 flex-row items-center justify-center gap-1.5">
+            <Icon
+              icon={ThermometerIcon}
+              size={15}
+              className="text-muted-foreground"
+            />
+            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              High / Low
+            </Text>
+          </View>
+          <View className="flex-1 flex-row items-center justify-end gap-1.5">
+            <Icon
+              icon={RainDropIcon}
+              size={15}
+              className="text-muted-foreground"
+            />
+            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+              Rain
+            </Text>
+          </View>
         </View>
 
         {/* Rows */}
@@ -166,15 +286,28 @@ export default function WeatherTableScreen() {
           const rainVolume = day.pcp_corrected;
 
           return (
-            <View key={day.date} className="flex-row items-center border-b border-border/30 p-5 last:border-0">
-              <View className="flex-[1.5] flex-row items-center gap-4">
+            <View
+              key={day.date}
+              className="flex-row items-center border-b border-border p-5 last:border-0"
+            >
+              <View className="flex-[0.5] items-center justify-center">
                 <WeatherIcon name={getWeatherIcon(rainVolume)} size={36} />
-                <Text className="text-base font-bold text-foreground">{formatDateText(day.date)}</Text>
+              </View>
+              <View className="flex-[1.5] justify-center pl-2">
+                <Text className="text-base font-bold text-foreground">
+                  {formatDateText(day.date)}
+                </Text>
               </View>
               <View className="flex-1 flex-row items-center justify-center gap-1.5">
-                <Text className="text-base font-bold text-orange-600 dark:text-orange-500">{maxTemp}°</Text>
-                <Text className="text-sm text-muted-foreground/60 font-medium">/</Text>
-                <Text className="text-base font-bold text-sky-600 dark:text-sky-400">{minTemp}°</Text>
+                <Text className="text-base font-bold text-orange-600 dark:text-orange-500">
+                  {maxTemp}°
+                </Text>
+                <Text className="text-sm text-muted-foreground/60 font-medium">
+                  /
+                </Text>
+                <Text className="text-base font-bold text-sky-600 dark:text-sky-400">
+                  {minTemp}°
+                </Text>
               </View>
               <Text className="flex-1 text-sm font-bold text-muted-foreground text-right">
                 {rainVolume > 0 ? `${rainVolume.toFixed(1)} mm` : "—"}
@@ -189,7 +322,7 @@ export default function WeatherTableScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       {renderHeader()}
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {isHourly ? renderHourlyRows() : renderForecastRows()}
       </ScrollView>
     </SafeAreaView>

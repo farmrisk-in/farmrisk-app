@@ -52,33 +52,37 @@ export function HourlyWeatherSection() {
   return (
     <View className="my-6 px-3">
       <View className="flex pb-4 flex-row gap-2 items-center">
-        <Icon icon={Clock01Icon} className="text-foreground" size={26} />
-        <Text className="grow text-xl text-foreground">Hourly Weather</Text>
-        <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
-          <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-            Next 24 Hours
-          </Text>
-        </View>
+        <Icon
+          icon={Clock01Icon}
+          className="text-foreground"
+          strokeWidth={2}
+          size={26}
+        />
+        <Text className="grow text-xl text-foreground font-semibold">
+          Hourly Weather
+        </Text>
         <TouchableOpacity
+          className="flex-row flex gap-1 items-center"
           onPress={() => {
             router.push("/weather-table?type=hourly");
           }}
         >
+          <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+            <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+              Next 24 Hours
+            </Text>
+          </View>
           <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
         </TouchableOpacity>
       </View>
 
-      <View className="bg-card dark:bg-muted/50 border border-border rounded-2xl overflow-hidden py-4">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 8 }}
-        >
+      <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {slots.map((slot, i) => {
             return (
               <View
                 key={i}
-                className="px-3 border-r border-border last:border-0 flex flex-col items-center gap-2 min-w-[72px]"
+                className={`px-3 border-r border-border last:border-0 flex flex-col items-center gap-2 min-w-[72px]`}
               >
                 {/* 1. Time Label */}
                 <Text className="text-sm text-muted-foreground font-semibold">
@@ -111,7 +115,13 @@ export function HourlyWeatherSection() {
             );
           })}
         </ScrollView>
+
+        {/* Floating Scroll Indicator */}
       </View>
+      <View
+        pointerEvents="none"
+        className="absolute right-0 top-0 bottom-0 w-8 justify-center items-center bg-card/60 dark:bg-background/60"
+      ></View>
     </View>
   );
 }

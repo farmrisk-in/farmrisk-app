@@ -12,4 +12,5 @@ export { AIAdvisorySection } from "./AIAdvisorySection";
 export { SoilMoistureSection } from "./SoilMoistureSection";
 export { CropsSection } from "./CropsSection";
 export { CalendarSection } from "./CalendarSection";
+export { CropCalendarSection } from "./CropCalendarSection";
 export { RiskSection } from "./RiskSection";

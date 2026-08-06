@@ -252,9 +252,10 @@ export function RiskSection() {
         <Icon
           icon={SecurityWarningIcon}
           size={25}
+          strokeWidth={2}
           className="text-foreground"
         />
-        <Text className="text-xl grow text-foreground font-light">
+        <Text className="text-xl grow text-foreground font-semibold">
           Agriculture Risk
         </Text>
         <View

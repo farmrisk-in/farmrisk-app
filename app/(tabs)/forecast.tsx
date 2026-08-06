@@ -12,6 +12,7 @@ import {
   ForecastSection,
   SoilMoistureSection,
   CalendarSection,
+  CropCalendarSection,
 } from "@/components/dashboard";
 
 export default function ForecastTabScreen() {
@@ -60,7 +61,7 @@ export default function ForecastTabScreen() {
         <SoilMoistureSection crop={selectedCrop} />
 
         {/* Crop Calendar */}
-        <CalendarSection crop={selectedCrop} />
+        <CropCalendarSection crop={selectedCrop} />
       </ScrollView>
     </SafeAreaView>
   );

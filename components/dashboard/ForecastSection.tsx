@@ -76,35 +76,39 @@ export function ForecastSection() {
   return (
     <View className="my-6 px-3">
       <View className="flex pb-4 flex-row gap-2 items-center">
-        <Icon icon={TrendingUpDownIcon} className="text-foreground" size={26} />
-        <Text className="grow text-xl text-foreground">16 Day Forecast</Text>
-        {!isFallbackUsed && (
-          <View className="px-3 flex flex-row gap-1 items-center py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
-            <Icon
-              icon={TickDouble01Icon}
-              className="text-emerald-800 dark:text-emerald-300"
-              size={18}
-            />
-            <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-              Bias Corrected
-            </Text>
-          </View>
-        )}
+        <Icon
+          icon={TrendingUpDownIcon}
+          className="text-foreground"
+          strokeWidth={2}
+          size={26}
+        />
+        <Text className="grow text-xl text-foreground font-semibold">
+          16 Day Forecast
+        </Text>
         <TouchableOpacity
+          className="flex-row flex gap-1 items-center"
           onPress={() => {
             router.push("/weather-table?type=forecast");
           }}
         >
+          {!isFallbackUsed && (
+            <View className="px-3 flex flex-row gap-1 items-center py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+              <Icon
+                icon={TickDouble01Icon}
+                className="text-emerald-800 dark:text-emerald-300"
+                size={18}
+              />
+              <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+                Bias Corrected
+              </Text>
+            </View>
+          )}
           <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
         </TouchableOpacity>
       </View>
 
-      <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 8 }}
-        >
+      <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {finalPredictions.map((day: ForecastRow, idx: number) => {
             const maxTemp = Math.round(day.tmax_corrected);
             const minTemp = Math.round(day.tmin_corrected);
@@ -138,7 +142,8 @@ export function ForecastSection() {
                 {/* Height bar graphic */}
                 <LinearGradient
                   colors={["#f97316", "#fbbf24", "#0ea5e9"]}
-                  className="w-2 h-12 my-1 rounded-xl opacity-80"
+                  className="w-2 h-12 my-1 opacity-80 rounded-xl"
+                  style={{ borderRadius: 20 }}
                 />
 
                 {/* Tmin Layout Digit */}
@@ -154,6 +159,8 @@ export function ForecastSection() {
             );
           })}
         </ScrollView>
+
+        {/* Floating Scroll Indicator */}
       </View>
     </View>
   );
