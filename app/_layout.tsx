@@ -3,6 +3,7 @@ import { AuthProvider } from "@/providers/AuthProvider";
 import { LanguageProvider } from "@/providers/LanguageProvider";
 import { LocationProvider } from "@/providers/LocationProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { CropProvider } from "@/providers/CropProvider";
 import { PaperProvider } from "react-native-paper";
 import {
   DarkTheme,
@@ -28,7 +29,8 @@ export default function RootLayout() {
         <AuthProvider>
           <LanguageProvider>
             <LocationProvider>
-              <ThemeProvider value={navTheme}>
+              <CropProvider>
+                <ThemeProvider value={navTheme}>
                 <Stack
                   screenOptions={{
                     contentStyle: {
@@ -80,7 +82,8 @@ export default function RootLayout() {
                   />
                 </Stack>
                 <StatusBar style={isDark ? "light" : "dark"} />
-              </ThemeProvider>
+                </ThemeProvider>
+              </CropProvider>
             </LocationProvider>
           </LanguageProvider>
         </AuthProvider>

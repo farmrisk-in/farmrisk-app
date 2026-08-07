@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,6 +18,8 @@ import { Icon } from "@/components/ui/Icon";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useCropContext } from "@/providers/CropProvider";
+import { useCrops } from "@/hooks/useCrops";
 
 type Mode = "login" | "register";
 
@@ -24,6 +27,13 @@ export default function ProfileScreen() {
   const { user, loading, signOut } = useAuth();
   const [mode, setMode] = useState<Mode>("login");
   const router = useRouter();
+  
+  const { colorScheme, toggleColorScheme } = useColorScheme();
+  
+  // Crop selection hooks
+  const { selectedCrop, setSelectedCrop } = useCropContext();
+  const { crops } = useCrops();
+  const [cropModalVisible, setCropModalVisible] = useState(false);
 
   // Form Fields
   const [firstName, setFirstName] = useState("");
@@ -119,8 +129,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const { colorScheme, toggleColorScheme } = useColorScheme();
-
   if (loading) {
     return (
       <View style={styles.center} className="bg-gray-50 dark:bg-gray-900">
@@ -133,6 +141,9 @@ export default function ProfileScreen() {
     const meta = user.user_metadata || {};
     const name = [meta.first_name, meta.last_name].filter(Boolean).join(" ");
     const phoneNo = meta.phone || user.email?.split("@")[0] || "";
+
+    // Helper to get nice name
+    const selectedCropName = crops.find((c: any) => (c.id || c.name?.toLowerCase()) === selectedCrop)?.name || "Default";
 
     return (
       <SafeAreaView
@@ -181,7 +192,65 @@ export default function ProfileScreen() {
               </Text>
               <ThemeToggle />
             </View>
+
+            {/* Crop Selector Dropdown */}
+            <View style={[styles.infoRow, { borderBottomWidth: 0 }]} className="items-center">
+              <Text
+                style={styles.infoLabel}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                Active Crop
+              </Text>
+              <TouchableOpacity
+                onPress={() => setCropModalVisible(true)}
+                className="bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl"
+              >
+                <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
+                  {selectedCrop ? selectedCropName : "Select Crop"} ▾
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
+          
+          {/* Crop Selector Modal */}
+          <Modal visible={cropModalVisible} transparent animationType="slide" onRequestClose={() => setCropModalVisible(false)}>
+            <TouchableOpacity className="flex-1 bg-black/50 justify-end" activeOpacity={1} onPressOut={() => setCropModalVisible(false)}>
+              <View className="bg-white dark:bg-gray-800 rounded-t-3xl p-6 pb-12 max-h-[70%]">
+                <Text className="text-xl font-bold text-gray-900 dark:text-white mb-4">Select Active Crop</Text>
+                <ScrollView>
+                  <TouchableOpacity
+                    className={`py-4 border-b border-gray-100 dark:border-gray-700 flex-row justify-between items-center ${!selectedCrop ? 'bg-gray-50 dark:bg-gray-700/30' : ''}`}
+                    onPress={() => {
+                      setSelectedCrop("");
+                      setCropModalVisible(false);
+                    }}
+                  >
+                    <Text className="text-base text-gray-900 dark:text-white font-medium">None / Default</Text>
+                    {!selectedCrop && <Text className="text-emerald-600">✓</Text>}
+                  </TouchableOpacity>
+                  {crops.map((c: any) => {
+                    const cid = c.id || c.name?.toLowerCase();
+                    const isSel = selectedCrop === cid;
+                    return (
+                      <TouchableOpacity
+                        key={cid}
+                        className={`py-4 border-b border-gray-100 dark:border-gray-700 flex-row justify-between items-center px-2 ${isSel ? 'bg-emerald-50 dark:bg-emerald-900/20' : ''}`}
+                        onPress={() => {
+                          setSelectedCrop(cid);
+                          setCropModalVisible(false);
+                        }}
+                      >
+                        <Text className="text-base text-gray-900 dark:text-white font-medium">
+                          {c.name} <Text className="text-xs text-gray-500">({c.area} ha)</Text>
+                        </Text>
+                        {isSel && <Text className="text-emerald-600 font-bold">✓</Text>}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            </TouchableOpacity>
+          </Modal>
 
           <View
             style={styles.profileCard}

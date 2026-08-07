@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { useColorScheme } from "nativewind";
 import { LocationRequired } from "@/components/LocationRequired";
+import { useCropContext } from "@/providers/CropProvider";
 import {
   Header,
-  CropsSection,
   AIAdvisorySection,
 } from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
@@ -18,7 +18,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export default function ToolsTabScreen() {
-  const [selectedCrop, setSelectedCrop] = useState<string>("");
+  const { selectedCrop } = useCropContext();
   const { refreshing, onRefresh } = useRefreshDashboard();
   const { location, isResolving, locationError } = useLocationContext();
 
@@ -56,12 +56,6 @@ export default function ToolsTabScreen() {
             AI crop advisory, field calculators, and local crop area analytics
           </Text>
         </View>
-
-        {/* Crop Selection Tool */}
-        <CropsSection
-          selectedCrop={selectedCrop}
-          onSelectCrop={setSelectedCrop}
-        />
 
         {/* AI Advisory RAG Tool */}
         <AIAdvisorySection crop={selectedCrop} />
