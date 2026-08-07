@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
+import { View, ScrollView, Text, TouchableOpacity } from "react-native";
 import { useForecast } from "@/hooks/useForecast";
 import type { ForecastRow } from "@/types/forecast";
 import { Icon } from "../ui/Icon";
