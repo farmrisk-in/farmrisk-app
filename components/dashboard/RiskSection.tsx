@@ -176,7 +176,18 @@ export function RiskSection() {
 
   if (isLoading) {
     return (
-      <View className="mt-6 mb-2">
+      <View>
+        <View className="flex flex-row gap-2 mt-6 mb-3 px-3 items-center">
+          <Icon
+            icon={SecurityWarningIcon}
+            size={25}
+            strokeWidth={2}
+            className="text-foreground"
+          />
+          <Text className="text-xl grow text-foreground font-semibold">
+            Agriculture Risk
+          </Text>
+        </View>
         <Skeleton className="mb-4" />
         <View className="flex-row flex-wrap justify-between">
           {Array.from({ length: 6 }).map((_, i) => (

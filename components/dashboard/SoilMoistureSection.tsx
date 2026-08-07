@@ -19,12 +19,10 @@ import {
   SoilMoistureFieldIcon,
   Calendar03Icon,
   ChevronRightIcon,
-  CrossFreeIcons,
-  CrossIcon,
-  XingIcon,
-  XlsIcon,
   Cancel,
+  CloudOffIcon,
 } from "@hugeicons/core-free-icons";
+import { Skeleton } from "@/components/ui/Skeleton";
 import {
   VictoryChart,
   VictoryLine,
@@ -162,14 +160,59 @@ export function SoilMoistureSection({ crop }: Props) {
   const hideTooltip = () => setTooltip((t) => ({ ...t, visible: false }));
 
   // ── guards ────────────────────────────────────────────────────────────────
-  if (isLoading && !chartData.length)
-    return <ActivityIndicator style={{ marginVertical: 16 }} color="#007a55" />;
-  if (isError && !chartData.length)
+  if (isLoading && !chartData.length) {
     return (
-      <Text className="text-muted-foreground text-center my-4">
-        Soil moisture data unavailable
-      </Text>
+      <View className="my-6 px-4">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={SoilMoistureFieldIcon}
+            size={28}
+            strokeWidth={1.5}
+            className="text-foreground"
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            Soil Moisture
+          </Text>
+        </View>
+        <View className="bg-card dark:bg-muted/20 rounded-3xl overflow-hidden pt-4 pb-5 px-4 h-[240px] justify-end">
+          <View className="flex-row items-end justify-between w-full h-[180px] gap-2">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <Skeleton
+                key={i}
+                width={36}
+                height={Math.max(40, Math.random() * 160)}
+                borderRadius={6}
+              />
+            ))}
+          </View>
+        </View>
+      </View>
     );
+  }
+
+  if (isError && !chartData.length) {
+    return (
+      <View className="my-6 px-4">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={SoilMoistureFieldIcon}
+            size={28}
+            strokeWidth={1.5}
+            className="text-foreground"
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            Soil Moisture
+          </Text>
+        </View>
+        <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl p-6 items-center justify-center h-[240px]">
+          <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
+          <Text className="mt-4 text-muted-foreground font-medium">
+            Soil moisture data unavailable
+          </Text>
+        </View>
+      </View>
+    );
+  }
   if (!chartData.length)
     return (
       <View className="my-6 px-3">

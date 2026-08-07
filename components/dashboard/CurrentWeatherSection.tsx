@@ -41,7 +41,7 @@ function getWindDirectionCardinal(deg?: number): string {
  */
 function CurrentWeatherSkeleton() {
   return (
-    <View className="rounded-3xl border border-border bg-card p-6 my-2">
+    <View className="rounded-3xl bg-card p-6 my-2">
       {/* Location Header Row */}
       <View className="flex-row items-center justify-between mb-4">
         <Skeleton width={140} height={18} borderRadius={6} />
@@ -258,7 +258,6 @@ export function CurrentWeatherSection() {
           {/* Left Column: Big Temperature & Feels Like */}
           <View className="items-start">
             <Text
-              
               className={`text-7xl tracking-tighter font-bold ${
                 isDark ? "text-white" : "text-emerald-950"
               }`}

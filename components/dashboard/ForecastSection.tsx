@@ -13,7 +13,9 @@ import {
   ChevronRightIcon,
   TickDouble01Icon,
   TrendingUpDownIcon,
+  CloudOffIcon,
 } from "@hugeicons/core-free-icons";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useWeather } from "@/hooks/useWeather";
 import { WeatherIcon } from "../WeatherIcon";
 import { LinearGradient } from "expo-linear-gradient";
@@ -63,14 +65,81 @@ export function ForecastSection() {
   const isFallbackUsed =
     forecastRows.length === 0 && fallbackPredictions.length > 0;
 
-  if (isLoading)
-    return <ActivityIndicator style={{ marginVertical: 16 }} color="#007a55" />;
-  if (isError && forecastRows.length === 0)
+  if (isLoading) {
     return (
-      <Text className="text-muted-foreground text-center my-4">
-        Forecast unavailable
-      </Text>
+      <View className="my-6 px-3">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={TrendingUpDownIcon}
+            className="text-foreground"
+            strokeWidth={2}
+            size={26}
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            16 Day Forecast
+          </Text>
+        </View>
+        <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <View
+                key={i}
+                className="shrink-0 w-20 flex border-r border-border last:border-0 flex-col items-center gap-1"
+              >
+                <Skeleton width={36} height={12} borderRadius={4} />
+                <Skeleton width={32} height={18} borderRadius={4} />
+                <Skeleton
+                  width={28}
+                  height={28}
+                  borderRadius={14}
+                  className="my-2"
+                />
+                <Skeleton width={24} height={18} borderRadius={4} />
+                <Skeleton
+                  width={8}
+                  height={48}
+                  borderRadius={4}
+                  className="my-1"
+                />
+                <Skeleton width={24} height={18} borderRadius={4} />
+                <Skeleton
+                  width={28}
+                  height={12}
+                  borderRadius={4}
+                  className="mt-1"
+                />
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      </View>
     );
+  }
+
+  if (isError && forecastRows.length === 0) {
+    return (
+      <View className="my-6 px-3">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={TrendingUpDownIcon}
+            className="text-foreground"
+            strokeWidth={2}
+            size={26}
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            16 Day Forecast
+          </Text>
+        </View>
+        <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl p-6 items-center justify-center">
+          <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
+          <Text className="mt-4 text-muted-foreground font-medium">
+            Forecast unavailable
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   if (!forecastRows.length) return null;
 
   return (

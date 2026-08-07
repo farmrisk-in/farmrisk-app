@@ -4,8 +4,13 @@ import { Text } from "react-native-paper";
 import { useWeather } from "@/hooks/useWeather";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Icon } from "@/components/ui/Icon";
-import { CloudLightningIcon, CloudOffIcon } from "@hugeicons/core-free-icons";
+import {
+  CloudLightningIcon,
+  CloudOffIcon,
+  Lightning,
+} from "@hugeicons/core-free-icons";
 import { WebView } from "react-native-webview";
+import { useColorScheme } from "nativewind";
 
 const getLightningDetails = (category: string | undefined) => {
   switch (category) {
@@ -32,12 +37,25 @@ const getLightningDetails = (category: string | undefined) => {
       return {
         color: "#006045",
         advisory: "Low risk of lightning.",
-        zoom: 14,
+        zoom: 10.5,
       };
   }
 };
 
-const generateMapHtml = (lat: number, lng: number, zoom: number, color: string) => `
+const generateMapHtml = (
+  lat: number,
+  lng: number,
+  zoom: number,
+  color: string,
+  isDark: boolean,
+) => {
+  const lightTile =
+    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+  const darkTile =
+    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+  const tileUrl = isDark ? darkTile : lightTile;
+
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,7 +63,7 @@ const generateMapHtml = (lat: number, lng: number, zoom: number, color: string) 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
-    body { padding: 0; margin: 0; background-color: #f3f4f6; }
+    body { padding: 0; margin: 0; background-color: ${isDark ? "#09090b" : "#ffffff"}; }
     #map { height: 100vh; width: 100vw; }
     .leaflet-control-attribution { display: none !important; }
   </style>
@@ -62,13 +80,13 @@ const generateMapHtml = (lat: number, lng: number, zoom: number, color: string) 
       boxZoom: false,
       keyboard: false,
     }).setView([${lat}, ${lng}], ${zoom});
-    
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+
+    L.tileLayer('${tileUrl}', {
       attribution: '&copy; OpenStreetMap'
     }).addTo(map);
-    
+
     const radius = ${zoom} === 11 ? 25000 : ${zoom} === 12 ? 15000 : ${zoom} === 13 ? 8000 : 4000;
-    
+
     L.circle([${lat}, ${lng}], {
       color: '${color}',
       fillColor: '${color}',
@@ -80,25 +98,36 @@ const generateMapHtml = (lat: number, lng: number, zoom: number, color: string) 
 </body>
 </html>
 `;
+};
 
 export function LightningRiskSection() {
   const { data, isLoading, isError } = useWeather();
   const { location, isResolving } = useLocationContext();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const lightning = data?.lightning;
 
   if (isResolving || isLoading) {
     return (
-      <View className="w-full bg-card border border-border text-foreground rounded-2xl shadow-sm p-5 pb-0 mb-4 overflow-hidden">
-        <View className="flex-row items-center gap-2 border-b border-border mb-3 pb-3">
-          <Icon icon={CloudLightningIcon} size={18} className="text-foreground" />
-          <Text className="text-foreground text-xs font-bold uppercase tracking-wider">
-            LIGHTNING RISK
+      <View className="my-6 px-3">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={Lightning}
+            className="text-foreground"
+            strokeWidth={2}
+            size={26}
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            Lightning Risk
           </Text>
         </View>
-        <View className="w-full h-48 items-center justify-center gap-2">
+        <View
+          className="w-full h-64 rounded-3xl overflow-hidden flex justify-center items-center
+          border border-border relative"
+        >
           <ActivityIndicator color="#007a55" />
-          <Text className="text-sm font-medium text-muted-foreground">
+          <Text className="text-sm font-medium mt-4 text-muted-foreground">
             Fetching Lightning Risk Data...
           </Text>
         </View>
@@ -108,17 +137,26 @@ export function LightningRiskSection() {
 
   if (isError || !lightning || !location) {
     return (
-      <View className="w-full bg-card border border-border text-foreground rounded-2xl shadow-sm p-5 pb-0 mb-4 overflow-hidden">
-        <View className="flex-row items-center gap-2 border-b border-border mb-3 pb-3">
-          <Icon icon={CloudLightningIcon} size={18} className="text-foreground" />
-          <Text className="text-foreground text-xs font-bold uppercase tracking-wider">
-            LIGHTNING RISK
+      <View className="my-6 px-3">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={Lightning}
+            className="text-foreground"
+            strokeWidth={2}
+            size={26}
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            Lightning Risk
           </Text>
         </View>
-        <View className="w-full h-48 items-center justify-center gap-2">
-          <Icon icon={CloudOffIcon} size={28} className="text-muted-foreground" />
-          <Text className="text-sm font-medium text-muted-foreground mt-2">
-            Something went wrong
+
+        <View
+          className="w-full h-64 rounded-3xl overflow-hidden flex justify-center items-center
+        border border-border relative"
+        >
+          <Icon icon={CloudOffIcon} className="text-destructive" size={32} />
+          <Text className="text-sm font-medium mt-4 text-muted-foreground">
+            Error Loading Lighning Data...
           </Text>
         </View>
       </View>
@@ -128,35 +166,43 @@ export function LightningRiskSection() {
   const { color, advisory, zoom } = getLightningDetails(lightning.category);
 
   return (
-    <View className="w-full bg-card border border-border text-foreground rounded-2xl shadow-sm p-5 pb-5 mb-4">
-      <View className="flex-row items-center gap-2 border-b border-border mb-4 pb-3">
-        <Icon icon={CloudLightningIcon} size={18} className="text-foreground" />
-        <Text className="text-foreground text-xs font-bold uppercase tracking-wider">
-          LIGHTNING RISK
+    <View className="my-6 px-3">
+      <View className="flex pb-4 flex-row gap-2 items-center">
+        <Icon
+          icon={Lightning}
+          className="text-foreground"
+          strokeWidth={2}
+          size={26}
+        />
+        <Text className="grow text-xl text-foreground font-semibold">
+          Lightning Risk
         </Text>
+        <View className="flex-row flex gap-1 items-center">
+          <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+            <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+              {advisory}
+            </Text>
+          </View>
+        </View>
       </View>
-      
-      <View className="w-full h-64 rounded-xl overflow-hidden border border-border relative bg-muted/20">
+
+      <View className="w-full h-64 rounded-3xl overflow-hidden border border-border relative bg-muted">
         <WebView
-          source={{ html: generateMapHtml(location.lat, location.lng, zoom, color) }}
-          style={{ flex: 1, backgroundColor: 'transparent' }}
+          source={{
+            html: generateMapHtml(
+              location.lat,
+              location.lng,
+              zoom,
+              color,
+              isDark,
+            ),
+          }}
+          style={{ flex: 1, backgroundColor: "transparent" }}
           scrollEnabled={false}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           pointerEvents="none"
         />
-        
-        {/* Bottom Left Badge */}
-        <View className="absolute bottom-3 left-3 flex-row pointer-events-none">
-          <View
-            className="px-3 py-1.5 rounded-md flex-row items-center justify-center"
-            style={{ backgroundColor: color }}
-          >
-            <Text className="text-white text-xs font-bold">
-              {advisory}
-            </Text>
-          </View>
-        </View>
       </View>
     </View>
   );

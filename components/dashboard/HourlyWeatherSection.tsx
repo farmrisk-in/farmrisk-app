@@ -10,7 +10,12 @@ import { useWeather } from "@/hooks/useWeather";
 import type { HourlyWeather } from "@/types/weather";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { Icon } from "../ui/Icon";
-import { ChevronRightIcon, Clock01Icon } from "@hugeicons/core-free-icons";
+import {
+  ChevronRightIcon,
+  Clock01Icon,
+  CloudOffIcon,
+} from "@hugeicons/core-free-icons";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useRouter } from "expo-router";
 
 const formatHour = (dateInput: Date | string) => {
@@ -25,14 +30,70 @@ export function HourlyWeatherSection() {
   const router = useRouter();
   const { data, isLoading, isError } = useWeather();
 
-  if (isLoading)
-    return <ActivityIndicator style={{ marginVertical: 16 }} color="#007a55" />;
-  if (isError)
+  if (isLoading) {
     return (
-      <Text className="text-muted-foreground text-center my-4">
-        Failed to load hourly weather
-      </Text>
+      <View className="my-6 px-3">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={Clock01Icon}
+            className="text-foreground"
+            strokeWidth={2}
+            size={26}
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            Hourly Weather
+          </Text>
+        </View>
+        <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <View
+                key={i}
+                className="px-3 border-r border-border last:border-0 flex flex-col items-center gap-2 min-w-[72px]"
+              >
+                <Skeleton width={40} height={16} borderRadius={4} />
+                <Skeleton
+                  width={28}
+                  height={28}
+                  borderRadius={14}
+                  className="my-1"
+                />
+                <Skeleton width={32} height={24} borderRadius={4} />
+                <View className="flex flex-col items-center gap-1 mt-1">
+                  <Skeleton width={24} height={12} borderRadius={2} />
+                  <Skeleton width={36} height={12} borderRadius={2} />
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      </View>
     );
+  }
+
+  if (isError) {
+    return (
+      <View className="my-6 px-3">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={Clock01Icon}
+            className="text-foreground"
+            strokeWidth={2}
+            size={26}
+          />
+          <Text className="grow text-xl text-foreground font-semibold">
+            Hourly Weather
+          </Text>
+        </View>
+        <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl p-6 items-center justify-center">
+          <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
+          <Text className="mt-4 text-muted-foreground font-medium">
+            Failed to load hourly weather
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   const hourly: HourlyWeather = data?.hourly;
 
