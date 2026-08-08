@@ -1,0 +1,10 @@
+{
+  "cropCalendar": "फसल कैलेंडर",
+  "sowing": "बुवाई",
+  "growing": "वृद्धि",
+  "harvesting": "कटाई",
+  "selectCropCalendar": "इसका मौसमी कैलेंडर देखने के लिए फसल चुनें",
+  "calendarLoadError": "कैलेंडर डेटा लोड करने में विफल।",
+  "noCalendarFor": "इस क्षेत्र में {{crop}} के लिए कोई कैलेंडर नहीं मिला।",
+  "season": "मौसम"
+}

@@ -1,0 +1,10 @@
+{
+  "cropCalendar": "પાક કેલેન્ડર",
+  "sowing": "વાવણી",
+  "growing": "વૃદ્ધિ",
+  "harvesting": "લણણી",
+  "selectCropCalendar": "તેનું મોસમી કેલેન્ડર જોવા માટે પાક પસંદ કરો",
+  "calendarLoadError": "કેલેન્ડર ડેટા લોડ કરવામાં નિષ્ફળ.",
+  "noCalendarFor": "આ પ્રદેશમાં {{crop}} માટે કોઈ કેલેન્ડર મળ્યું નથી.",
+  "season": "મોસમ"
+}

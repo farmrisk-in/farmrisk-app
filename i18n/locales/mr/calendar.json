@@ -1,0 +1,10 @@
+{
+  "cropCalendar": "पीक कॅलेंडर",
+  "sowing": "पेरणी",
+  "growing": "वाढ",
+  "harvesting": "कापणी",
+  "selectCropCalendar": "त्याचा हंगामी कॅलेंडर पाहण्यासाठी पीक निवडा",
+  "calendarLoadError": "कॅलेंडर डेटा लोड करण्यात अयशस्वी.",
+  "noCalendarFor": "या प्रदेशात {{crop}} साठी कोणतेही कॅलेंडर सापडले नाही.",
+  "season": "हंगाम"
+}

@@ -1,0 +1,143 @@
+{
+  "landing": {
+    "needCustom": "Need custom crop advisory models?",
+    "customDesc": "We provide agri-tech integrations and custom API portals for NGOs and FPOs.",
+    "contactTeam": "Contact Integration Team",
+    "freeTierNote": "Free tier supports village search. Farmland satellite mapping requires SaaS credentials.",
+    "processEyebrow": "Pipeline Architecture",
+    "processTitle": "From raw satellites to the field in three steps.",
+    "processDesc": "Our backend aggregates petabytes of environmental information, running automated QA checks and LLM engines to create targeted agricultural guidance.",
+    "step1Title": "Multi-Source Ingestion",
+    "step1Desc": "We ingest weather predictions from IMD, satellite vegetation records from NASA & ESA, and geography datasets from ISRO.",
+    "step2Title": "AI Advisory Generation",
+    "step2Desc": "Our RAG-LLM mapping engine checks weather trends against crop stages, farming guidelines, and current humidity to formulate targeted recommendations.",
+    "step3Title": "Multilingual Distribution",
+    "step3Desc": "Advisories are translated through our localization pipeline into English, Hindi, Marathi, and Tamil. Dispatched via web, app, and future SMS/WhatsApp integrations.",
+    "ctaEyebrow": "Platform Access",
+    "ctaHeading": "Start monitoring your farmland risk today.",
+    "ctaSubheading": "Verify if advisory forecasts are active for your village. Type your town or village below to run a micro-location compatibility check.",
+    "ctaPlaceholder": "Enter village name (e.g. Kalyan, Karur, Kota)...",
+    "coverageTitle": "Active advisory coverage confirmed.",
+    "coverageDesc": "High-resolution forecasts and lightning monitoring are active for {{village}} ({{state}}). Advisories are available in {{language}}.",
+    "searchAnother": "Search another village",
+    "ctaExplore": "Explore {{village}} Dashboard",
+    "ctaLaunch": "Launch Free Dashboard",
+    "ctaTechSpecs": "Technical Specifications",
+    "footerDesc": "Agro-meteorological decision support platform. Translating complex weather intelligence and remote sensing data into actionable recommendations for farmers and agri-tech companies.",
+    "footerRights": "© 2026 FarmRisk Platform. All rights reserved.",
+    "activeUsers": "Active Users",
+    "joinThousands": "Join thousands of satisfied users"
+  },
+  "problem": {
+    "badge": "The Challenge",
+    "headingPart1": "Farmers face ",
+    "headingHighlight": "climate uncertainty",
+    "headingPart2": " every day",
+    "description": "Without reliable, localized weather information and actionable insights, farmers struggle to make critical decisions that directly impact their livelihood.",
+    "metrics": [
+      {
+        "label": "CROP AREA LOST",
+        "value": "69 Mn ha",
+        "impact": "damaged in 6 years",
+        "description": "Between 2015 and 2021, India lost 33.9 million hectares of crops to floods/excess rain and 35 million hectares to drought — a combined 69 million hectares of cropland destroyed.",
+        "link": "https://www.weforum.org/stories/2024/08/income-insurance-india-climate-resilience/"
+      },
+      {
+        "label": "ANTICIPATION VARIANCE",
+        "value": "2.5 weeks",
+        "impact": "monsoon timing guesswork",
+        "description": "An NBER study across 250 villages in Telangana found farmers' predictions of monsoon onset varied by more than 2.5 weeks between optimistic and pessimistic farmers — with no official local forecast available.",
+        "link": "https://www.nber.org/digest/202406/weather-forecasts-and-farming-practices-india"
+      },
+      {
+        "label": "DOCUMENTED LOSS",
+        "value": "₹2.5 Lakh",
+        "impact": "lost to a single weather event",
+        "description": "A farmer in Delhi NCR who actively followed weather updates on DD Kisan and ICAR WhatsApp groups still suffered losses of up to ₹2.5 lakh on peas and onion crops due to a sudden downpour and hailstorm.",
+        "link": "https://india.mongabay.com/2025/06/weather-forecasting-improves-but-access-remains-uneven-for-farmers/"
+      }
+    ],
+    "impactEyebrow": "The Cost of Uncertainty",
+    "impactTitle": "₹13 trillion+ losses over 30 Years",
+    "impactDesc": "Between 1993 and 2022, India suffered $180 billion (~₹15 lakh crore) in economic losses from over 400 extreme weather events. In just six years (2015–2021), floods destroyed 33.9 million hectares and drought destroyed 35 million hectares of cropland. In 2025 alone, extreme weather damaged 17.4 million hectares of crops and claimed 4,419 lives. With 50% of India's cropped area dependent on rain and 80% of farmers being smallholders with less than 2 hectares, unpredictable weather patterns don't just reduce yields — they threaten survival.",
+    "impactBtnSolution": "Discover the Solution",
+    "impactBtnLearnMore": "Learn More",
+    "goToSource": "Go to source"
+  },
+  "solution": {
+    "badge": "The Solution",
+    "headingPart1": "Empowering agriculture with ",
+    "headingHighlight": "climate intelligence",
+    "headingPart2": "",
+    "description": "FarmRisk bridges the gap between complex atmospheric science and daily farming decisions, translating real-time satellite telemetry and weather models into localized, high-yield actions.",
+    "pillars": [
+      {
+        "id": "precision",
+        "title": "Hyper-Local Precision",
+        "description": "GPS-targeted, village-level weather forecasts customized for your specific coordinates.",
+        "icon": "Locate"
+      },
+      {
+        "id": "actionable",
+        "title": "Actionable Advisories",
+        "description": "AI-driven farm advisories converting complex forecasts into clear agricultural actions.",
+        "icon": "BrainCircuit"
+      },
+      {
+        "id": "alerts",
+        "title": "Real-Time Hazard Alerts",
+        "description": "Instant, real-time alerts for lightning strikes, extreme storms, and frost risks.",
+        "icon": "Zap"
+      },
+      {
+        "id": "multilingual",
+        "title": "Local Language Support",
+        "description": "Entire interface and crop advisories translated natively into regional Indian languages.",
+        "icon": "Languages"
+      }
+    ],
+    "stats": [
+      {
+        "value": "99.2%",
+        "label": "Forecast Accuracy"
+      },
+      {
+        "value": "10-Day",
+        "label": "Weather Outlook"
+      },
+      {
+        "value": "4+",
+        "label": "Languages Supported"
+      },
+      {
+        "value": "24/7",
+        "label": "Real-Time Updates"
+      }
+    ]
+  },
+  "choice": {
+    "free": {
+      "badge": "Free Access",
+      "title": "Standard Dashboard",
+      "description": "Access hyper-local weather snapshots and regional forecasts directly.",
+      "points": [
+        "Real-time weather telemetry data",
+        "16-day general weather outlook"
+      ],
+      "buttonText": "Go to Free Dashboard"
+    },
+    "personalized": {
+      "badge": "Personalized Access",
+      "title": "Personalized Dashboard",
+      "description": "Unlock full GPS-mapped field advisories and custom AI crop recommendations.",
+      "points": [
+        "Hyper-local GPS field boundary mapping",
+        "AI crop-specific recommendations and calendar alerts",
+        "Root-zone soil moisture monitoring overlays",
+        "Real-time lightning and extreme weather SMS alerts",
+        "100% personalized advisory and secure profile history"
+      ],
+      "buttonText": "Access Personalized Dashboard"
+    }
+  }
+}
