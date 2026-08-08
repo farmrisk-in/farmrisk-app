@@ -34,6 +34,7 @@
 | [`06-api.md`](./06-api.md) | Backend API endpoints, request/response shapes, `lib/` helpers |
 | [`07-types.md`](./07-types.md) | All TypeScript interfaces and types |
 | [`08-theme-i18n.md`](./08-theme-i18n.md) | Design tokens, dark mode, i18n (en/hi/mr/ta/gu) |
+| [`language.md`](./language.md) | **i18next setup, how translations work, checklists for adding a component / a language** |
 | [`09-config-build.md`](./09-config-build.md) | Config files, env vars, EAS builds, CI/CD, deployment |
 | [`10-data-flow.md`](./10-data-flow.md) | End-to-end data flow, screen-by-screen behavior |
 

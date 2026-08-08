@@ -11,32 +11,39 @@ import {
 } from "@hugeicons/core-free-icons";
 import { WebView } from "react-native-webview";
 import { useColorScheme } from "nativewind";
+import { useTranslation } from "react-i18next";
+
+type LightningAdvisoryKey =
+  | "lowRisk"
+  | "moderateRisk"
+  | "highRisk"
+  | "severeRisk";
 
 const getLightningDetails = (category: string | undefined) => {
   switch (category) {
     case "Severe":
       return {
         color: "#FF040E",
-        advisory: "Severe risk of lightning.",
+        advisory: "severeRisk" as LightningAdvisoryKey,
         zoom: 11,
       };
     case "High":
       return {
         color: "#FF4116",
-        advisory: "High risk of lightning.",
+        advisory: "highRisk" as LightningAdvisoryKey,
         zoom: 12,
       };
     case "Moderate":
       return {
         color: "#FF9C04",
-        advisory: "Moderate risk of lightning.",
+        advisory: "moderateRisk" as LightningAdvisoryKey,
         zoom: 13,
       };
     case "Low":
     default:
       return {
         color: "#006045",
-        advisory: "Low risk of lightning.",
+        advisory: "lowRisk" as LightningAdvisoryKey,
         zoom: 10.5,
       };
   }
@@ -101,6 +108,7 @@ const generateMapHtml = (
 };
 
 export function LightningRiskSection() {
+  const { t } = useTranslation(["weather"]);
   const { data, isLoading, isError } = useWeather();
   const { location, isResolving } = useLocationContext();
   const { colorScheme } = useColorScheme();
@@ -119,7 +127,7 @@ export function LightningRiskSection() {
             size={26}
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            Lightning Risk
+            {t("lightningRisk")}
           </Text>
         </View>
         <View
@@ -128,7 +136,7 @@ export function LightningRiskSection() {
         >
           <ActivityIndicator color="#007a55" />
           <Text className="text-sm font-medium mt-4 text-muted-foreground">
-            Fetching Lightning Risk Data...
+            {t("fetchingLightningRisk")}
           </Text>
         </View>
       </View>
@@ -146,7 +154,7 @@ export function LightningRiskSection() {
             size={26}
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            Lightning Risk
+            {t("lightningRisk")}
           </Text>
         </View>
 
@@ -156,7 +164,7 @@ export function LightningRiskSection() {
         >
           <Icon icon={CloudOffIcon} className="text-destructive" size={32} />
           <Text className="text-sm font-medium mt-4 text-muted-foreground">
-            Error Loading Lighning Data...
+            {t("lightningLoadError")}
           </Text>
         </View>
       </View>
@@ -175,12 +183,12 @@ export function LightningRiskSection() {
           size={26}
         />
         <Text className="grow text-xl text-foreground font-semibold">
-          Lightning Risk
+          {t("lightningRisk")}
         </Text>
         <View className="flex-row flex gap-1 items-center">
           <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
             <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-              {advisory}
+              {t(advisory)}
             </Text>
           </View>
         </View>

@@ -77,5 +77,6 @@
   "moistureDry": "सूखा",
   "moistureModerate": "मध्यम",
   "moistureWet": "गीला",
-  "daysOfData": "{{count}} दिनों का डेटा · {{date}} तक"
+  "daysOfData": "{{count}} दिनों का डेटा · {{date}} तक",
+  "percentMoisture": "{{value}}% नमी"
 }

@@ -239,6 +239,7 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       moistureModerate: "Moderate",
       moistureWet: "Wet",
       daysOfData: "{{count}} days of data · up to {{date}}",
+      percentMoisture: "{{value}}% moisture",
     },
     search: {
       searchPrompt: "Search city, district...",

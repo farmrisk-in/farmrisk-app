@@ -77,5 +77,6 @@
   "moistureDry": "कोरडे",
   "moistureModerate": "मध्यम",
   "moistureWet": "ओलसर",
-  "daysOfData": "{{count}} दिवसांचा डेटा · {{date}} पर्यंत"
+  "daysOfData": "{{count}} दिवसांचा डेटा · {{date}} पर्यंत",
+  "percentMoisture": "{{value}}% ओलावा"
 }

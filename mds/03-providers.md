@@ -49,21 +49,24 @@ interface AuthContextType {
 
 ## 3. `LanguageProvider` — `providers/LanguageProvider.tsx`
 
-i18n provider for 5 languages: **en, hi, mr, ta, gu** (loaded from `constants/languages/*` via `constants/content.ts`).
+Bootstraps the **i18next** engine (5 languages × 8 namespaces) and hydrates the user's language choice before rendering the app.
 
 ```ts
 interface LanguageContextProps {
   language: LanguageCode;                    // "en" | "hi" | "mr" | "ta" | "gu"
-  setLanguage: (lang: LanguageCode) => void; // persists to AsyncStorage "farmrisk-language"
-  t: TranslationType;                        // the dictionary object (content[language])
+  setLanguage: (lang: LanguageCode) => void; // changeAppLanguage: persists + switches instantly
+  t: AppTFunction;                           // typed t() over ALL namespaces
+  ready: boolean;
 }
 ```
 
 **Behavior:**
-- On mount reads AsyncStorage key `farmrisk-language`; defaults to `"en"`.
-- `setLanguage` writes through to AsyncStorage.
-- **Returns `null` while loading** — the entire app below this provider doesn't render until language is hydrated.
+- On mount calls `initI18n()` from `i18n/index.ts`, which resolves language in this order: **AsyncStorage** (`farmrisk-language`) → **device language** (expo-localization) → fallback `en`.
+- **Returns `null` while loading** — the entire app below this provider doesn't render until language hydration completes (no wrong-language flash).
+- Subscribes with `useTranslation([...ALL_NAMESPACES])` so the context value (`language`, `t`) stays fresh on every switch.
+- `setLanguage` = `changeAppLanguage(lang)` → writes AsyncStorage + calls `i18n.changeLanguage()`; every `useTranslation()` consumer re-renders instantly, no app reload.
 - Access via `useLanguage()` (throws if used outside provider).
+- All translation content lives in `i18n/locales/<lang>/*.json` (see `mds/language.md`).
 
 ---
 

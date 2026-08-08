@@ -77,5 +77,6 @@
   "moistureDry": "Dry",
   "moistureModerate": "Moderate",
   "moistureWet": "Wet",
-  "daysOfData": "{{count}} days of data · up to {{date}}"
+  "daysOfData": "{{count}} days of data \u00b7 up to {{date}}",
+  "percentMoisture": "{{value}}% moisture"
 }

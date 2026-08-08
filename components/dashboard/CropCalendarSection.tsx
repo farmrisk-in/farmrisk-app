@@ -8,6 +8,7 @@ import {
   WheatIcon,
 } from "@hugeicons/core-free-icons";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   crop?: string;
@@ -121,11 +122,12 @@ function MonthBar({
 
 // ── Season Card
 function SeasonCard({ entry }: { entry: any }) {
+  const { t } = useTranslation(["calendar"]);
   const sowFrom = entry.sowFromMon || entry.sow_from_mon;
   const sowTo = entry.sowToMon || entry.sow_to_mon;
   const harvFrom = entry.harvFromMon || entry.harv_from_mon;
   const harvTo = entry.harvToMon || entry.harv_to_mon;
-  const season = entry.season || "Season";
+  const season = entry.season || t("season");
 
   const COLS = 12;
   const colW = 100 / COLS;
@@ -157,7 +159,7 @@ function SeasonCard({ entry }: { entry: any }) {
             className="text-[10px] font-bold mb-1 uppercase tracking-wider"
             style={{ color: PHASE_COLORS.sowing.text }}
           >
-            Sowing
+            {t("sowing")}
           </Text>
           <View className="h-7 rounded-full overflow-hidden bg-white/5 relative">
             {MONTHS_SHORT.map((_, i) => (
@@ -190,7 +192,7 @@ function SeasonCard({ entry }: { entry: any }) {
             className="text-[10px] font-bold mb-1 uppercase tracking-wider"
             style={{ color: PHASE_COLORS.growing.text }}
           >
-            Growing
+            {t("growing")}
           </Text>
           <View className="h-7 rounded-full overflow-hidden bg-white/5 relative">
             {MONTHS_SHORT.map((_, i) => (
@@ -223,7 +225,7 @@ function SeasonCard({ entry }: { entry: any }) {
             className="text-[10px] font-bold mb-1 uppercase tracking-wider"
             style={{ color: PHASE_COLORS.harvesting.text }}
           >
-            Harvesting
+            {t("harvesting")}
           </Text>
           <View className="h-7 rounded-full overflow-hidden bg-white/5 relative">
             {MONTHS_SHORT.map((_, i) => (
@@ -255,6 +257,7 @@ function SeasonCard({ entry }: { entry: any }) {
 
 // ── main component ────────────────────────────────────────────────────────────
 export function CropCalendarSection({ crop }: Props) {
+  const { t } = useTranslation(["calendar"]);
   const { calendar, isLoading, isError } = useCalendar(crop);
 
   // ── loading ──
@@ -269,7 +272,7 @@ export function CropCalendarSection({ crop }: Props) {
             className="text-foreground"
           />
           <Text className="grow text-xl font-semibold text-foreground">
-            Crop Calendar
+            {t("cropCalendar")}
           </Text>
         </View>
         <View className="bg-card dark:bg-muted/20 rounded-3xl p-6 my-2 h-[200px] justify-center">
@@ -304,7 +307,7 @@ export function CropCalendarSection({ crop }: Props) {
             className="text-foreground"
           />
           <Text className="grow text-xl font-semibold text-foreground">
-            Crop Calendar
+            {t("cropCalendar")}
           </Text>
         </View>
         <View className="bg-card border border-border/50 rounded-3xl p-6 items-center gap-2">
@@ -315,7 +318,7 @@ export function CropCalendarSection({ crop }: Props) {
             className="text-foreground"
           />
           <Text className="text-sm text-muted-foreground text-center">
-            Select a crop to see its seasonal calendar
+            {t("selectCropCalendar")}
           </Text>
         </View>
       </View>
@@ -334,15 +337,15 @@ export function CropCalendarSection({ crop }: Props) {
             className="text-foreground"
           />
           <Text className="grow text-xl font-semibold text-foreground">
-            Crop Calendar
+            {t("cropCalendar")}
           </Text>
         </View>
         <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-6 items-center justify-center">
           <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
           <Text className="mt-4 text-sm text-muted-foreground font-medium text-center">
             {isError
-              ? "Failed to load calendar data."
-              : `No calendar found for ${crop} in this region.`}
+              ? t("calendarLoadError")
+              : t("noCalendarFor", { crop })}
           </Text>
         </View>
       </View>
@@ -359,7 +362,7 @@ export function CropCalendarSection({ crop }: Props) {
           size={26}
         />
         <Text className="grow text-xl text-foreground font-semibold">
-          Crop Calendar
+          {t("cropCalendar")}
         </Text>
         <View className="flex-row flex gap-1 items-center">
           <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
@@ -373,9 +376,9 @@ export function CropCalendarSection({ crop }: Props) {
       {/* ── Legend ── */}
       <View className="flex-row gap-4 mb-5">
         {[
-          { label: "Sowing", color: PHASE_COLORS.sowing.bar },
-          { label: "Growing", color: PHASE_COLORS.growing.bar },
-          { label: "Harvesting", color: PHASE_COLORS.harvesting.bar },
+          { label: t("sowing"), color: PHASE_COLORS.sowing.bar },
+          { label: t("growing"), color: PHASE_COLORS.growing.bar },
+          { label: t("harvesting"), color: PHASE_COLORS.harvesting.bar },
         ].map(({ label, color }) => (
           <View key={label} className="flex-row items-end gap-1.5">
             <View

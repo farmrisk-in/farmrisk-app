@@ -313,6 +313,6 @@ Supabase also persists its auth session via the custom AsyncStorage wrapper (key
 - **Add a new backend endpoint** → add a function in `lib/api.ts`, add types in `types/`, add a query hook in `hooks/` (context- or param-based), consume it in a section component.
 - **Add a new dashboard section** → new file in `components/dashboard/`, export from `components/dashboard/index.ts`, render it in the desired tab screen.
 - **Add a new tab** → new file in `app/(tabs)/`, register in `app/(tabs)/_layout.tsx` (`Tabs.Screen` + icon).
-- **Wire a new language** → `constants/languages/xx.ts` + register in `constants/content.ts`.
+- **Wire a new language** → new `i18n/locales/<code>/` + register in `i18n/index.ts` and `i18n/resources.ts` (full checklist in `mds/language.md`).
 - **Change when data refreshes** → adjust `staleTime`/`refetchInterval` on the hook's `useQuery` options (not in `lib/api.ts`).
 - **Change what triggers a refresh** → the query key (include whatever data affects the result, e.g. `forecastHash`).

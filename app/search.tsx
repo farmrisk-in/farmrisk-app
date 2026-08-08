@@ -20,6 +20,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Searchbar } from "react-native-paper";
 import { cssInterop, useColorScheme } from "nativewind";
@@ -65,6 +66,7 @@ export default function SearchScreen() {
   const router = useRouter();
   const { setLocation, requestCurrentLocation, isResolving } =
     useLocationContext();
+  const { t } = useTranslation(["search"]);
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -181,7 +183,7 @@ export default function SearchScreen() {
         {/* Paper Searchbar styled with NativeWind using built-in arrow-left back button */}
         <Searchbar
           ref={searchbarRef}
-          placeholder="Search city, district, state..."
+          placeholder={t("searchBarPlaceholder")}
           onChangeText={setQuery}
           value={query}
           loading={false}
@@ -208,7 +210,7 @@ export default function SearchScreen() {
           <View className="py-12 items-center">
             <ActivityIndicator size="large" className="text-primary" />
             <Text className="mt-3 text-md text-muted-foreground">
-              Searching locations...
+              {t("searchingLocations")}
             </Text>
           </View>
         )}
@@ -224,11 +226,10 @@ export default function SearchScreen() {
               />
             </View>
             <Text className="text-lg font-semibold text-foreground text-center">
-              No results found
+              {t("noResults")}
             </Text>
             <Text className="text-md text-muted-foreground text-center mt-1">
-              We couldn&apos;t find any location matching &quot;{debouncedQuery}
-              &quot;.
+              {t("noResultsQuery", { q: debouncedQuery })}
             </Text>
           </View>
         )}
@@ -379,7 +380,7 @@ export default function SearchScreen() {
                     className="text-sm font-semibold text-foreground"
                     numberOfLines={1}
                   >
-                    Use My Location
+                    {t("useMyLocation")}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -398,7 +399,7 @@ export default function SearchScreen() {
                     className="text-sm font-semibold text-white"
                     numberOfLines={1}
                   >
-                    Select on Map
+                    {t("selectOnMap")}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -409,7 +410,7 @@ export default function SearchScreen() {
               <View className="mt-6 px-4">
                 <View className="flex-row items-center justify-between mb-2.5 px-1">
                   <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    Recent Searches
+                    {t("recentSearches")}
                   </Text>
                   <TouchableOpacity
                     onPress={async () => {
@@ -418,7 +419,7 @@ export default function SearchScreen() {
                     }}
                   >
                     <Text className="text-xs font-semibold text-primary">
-                      Clear all
+                      {t("clearAll")}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -482,10 +483,10 @@ export default function SearchScreen() {
                   />
                 </View>
                 <Text className="text-base font-semibold text-foreground">
-                  Search for a city or district
+                  {t("emptySearch")}
                 </Text>
                 <Text className="text-sm text-muted-foreground text-center mt-1">
-                  Your recent location searches will appear here.
+                  {t("emptySearchDesc")}
                 </Text>
               </View>
             )}

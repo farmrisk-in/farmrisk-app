@@ -77,5 +77,6 @@
   "moistureDry": "સૂકું",
   "moistureModerate": "મધ્યમ",
   "moistureWet": "ભીનું",
-  "daysOfData": "{{count}} દિવસનો ડેટા · {{date}} સુધી"
+  "daysOfData": "{{count}} દિવસનો ડેટા · {{date}} સુધી",
+  "percentMoisture": "{{value}}% ભેજ"
 }

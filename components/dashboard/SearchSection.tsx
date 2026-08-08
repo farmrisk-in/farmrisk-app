@@ -8,9 +8,12 @@ import { useRouter } from "expo-router";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Icon } from "@/components/ui/Icon";
 import { Search01Icon, Gps01Icon, Location01Icon } from "@hugeicons/core-free-icons";
+import { useTranslation } from "react-i18next";
 
 export function SearchSection() {
   const router = useRouter();
+  const { t } = useTranslation(["search"]);
+  const { t: tCommon } = useTranslation(["common"]);
   const { location, requestCurrentLocation, isResolving } =
     useLocationContext();
 
@@ -42,7 +45,7 @@ export function SearchSection() {
             </>
           ) : (
             <Text className="text-xl text-foreground opacity-80">
-              Search city, district...
+              {t("searchPrompt")}
             </Text>
           )}
         </View>
@@ -52,7 +55,7 @@ export function SearchSection() {
           activeOpacity={0.75}
           className="justify-center p-1"
           accessibilityRole="button"
-          accessibilityLabel="Use Current Location"
+          accessibilityLabel={tCommon("useCurrentLocation")}
           hitSlop={{ top: 15, bottom: 15, left: 10, right: 10 }}
         >
           {isResolving ? (
@@ -73,7 +76,7 @@ export function SearchSection() {
         activeOpacity={0.75}
         className="aspect-square rounded-3xl bg-emerald-800 items-center justify-center"
         accessibilityRole="button"
-        accessibilityLabel="Select from map"
+        accessibilityLabel={t("selectOnMap")}
       >
         <Icon icon={Location01Icon} size={25} className="text-primary-foreground" />
       </TouchableOpacity>

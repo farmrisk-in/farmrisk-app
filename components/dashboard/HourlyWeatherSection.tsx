@@ -17,6 +17,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 const formatHour = (dateInput: Date | string) => {
   const date = new Date(dateInput);
@@ -28,6 +29,7 @@ const formatHour = (dateInput: Date | string) => {
 
 export function HourlyWeatherSection() {
   const router = useRouter();
+  const { t } = useTranslation(["dashboard", "weather"]);
   const { data, isLoading, isError } = useWeather();
 
   if (isLoading) {
@@ -41,7 +43,7 @@ export function HourlyWeatherSection() {
             size={26}
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            Hourly Weather
+            {t("hourlyTitle")}
           </Text>
         </View>
         <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
@@ -82,13 +84,13 @@ export function HourlyWeatherSection() {
             size={26}
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            Hourly Weather
+            {t("hourlyTitle")}
           </Text>
         </View>
         <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl p-6 items-center justify-center">
           <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
           <Text className="mt-4 text-muted-foreground font-medium">
-            Failed to load hourly weather
+            {t("failedToLoadHourly")}
           </Text>
         </View>
       </View>
@@ -120,7 +122,7 @@ export function HourlyWeatherSection() {
           size={26}
         />
         <Text className="grow text-xl text-foreground font-semibold">
-          Hourly Weather
+          {t("hourlyTitle")}
         </Text>
         <TouchableOpacity
           className="flex-row flex gap-1 items-center"
@@ -130,7 +132,7 @@ export function HourlyWeatherSection() {
         >
           <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
             <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-              Next 24 Hours
+              {t("next24Hours")}
             </Text>
           </View>
           <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />

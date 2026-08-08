@@ -6,18 +6,20 @@ import { Menu01Icon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 import { Logo } from "@/components/Logo";
+import { useTranslation } from "react-i18next";
 
 export function Header() {
   const router = useRouter();
   const { user } = useAuth();
+  const { t } = useTranslation(["common"]);
 
   // Time-based greeting helper
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning,";
-    if (hour < 17) return "Good afternoon,";
-    if (hour < 21) return "Good evening,";
-    return "Good night,";
+    if (hour < 12) return t("goodMorning");
+    if (hour < 17) return t("goodAfternoon");
+    if (hour < 21) return t("goodEvening");
+    return t("goodNight");
   };
 
   // Extract user's name if logged in
@@ -26,7 +28,7 @@ export function Header() {
     [meta.first_name, meta.last_name].filter(Boolean).join(" ") ||
     meta.name ||
     user?.email?.split("@")[0] ||
-    "Farmer";
+    t("defaultUserName");
 
   return (
     <View className="flex-row items-center justify-between py-1">
@@ -77,7 +79,7 @@ export function Header() {
         <TouchableOpacity
           onPress={() => router.push("/profile")}
           accessibilityRole="button"
-          accessibilityLabel="Profile & Settings"
+          accessibilityLabel={t("profileSettings")}
         >
           <Icon icon={Menu01Icon} size={30} className="text-foreground" />
         </TouchableOpacity>

@@ -9,6 +9,7 @@ import {
   RotateClockwiseIcon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons";
+import { useTranslation } from "react-i18next";
 
 /**
  * LocationRequired — Renders a full-screen prompt when no location is
@@ -24,6 +25,7 @@ import {
 export function LocationRequired() {
   const router = useRouter();
   const { retryLocationInit, isResolving } = useLocationContext();
+  const { t } = useTranslation(["common"]);
 
   const openSettings = () => {
     if (Platform.OS === "ios") {
@@ -49,13 +51,12 @@ export function LocationRequired() {
         
         className="text-2xl text-foreground text-center mb-2"
       >
-        Location Required
+        {t("locationRequired")}
       </Text>
 
       {/* Description */}
       <Text className="text-sm text-muted-foreground text-center leading-relaxed mb-8 max-w-[300px]">
-        FarmRisk needs your location to show weather, forecasts, and crop
-        advisories. Please enable location access or search for your area.
+        {t("locationRequiredDesc")}
       </Text>
 
       {/* Action Buttons */}
@@ -68,7 +69,7 @@ export function LocationRequired() {
         >
           <Icon icon={Search01Icon} size={20} color="#ffffff" />
           <Text className="text-white font-bold text-base">
-            Search Location
+            {t("searchLocation")}
           </Text>
         </TouchableOpacity>
 
@@ -84,7 +85,7 @@ export function LocationRequired() {
             className="text-foreground"
           />
           <Text className="text-foreground font-semibold text-base">
-            Open Settings
+            {t("openSettings")}
           </Text>
         </TouchableOpacity>
 
@@ -101,7 +102,7 @@ export function LocationRequired() {
             className="text-muted-foreground"
           />
           <Text className="text-muted-foreground font-medium text-sm">
-            {isResolving ? "Retrying…" : "Retry"}
+            {isResolving ? t("retrying") : t("retry")}
           </Text>
         </TouchableOpacity>
       </View>

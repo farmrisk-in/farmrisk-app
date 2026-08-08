@@ -14,6 +14,8 @@ import { useRiskScore } from "@/hooks/useRiskScore";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Icon } from "@/components/ui/Icon";
 import Svg from "react-native-svg";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import {
   Bug01Icon,
   FlashIcon,
@@ -33,6 +35,30 @@ import {
 const { width } = Dimensions.get("window");
 // 2 columns with padding
 const cardWidth = (width - 32 - 16) / 2;
+
+// Risk band keys (dashboard ns) for the four translatable bands.
+// API bands outside this set (e.g. "Extreme", "Minimal") pass through as-is.
+type RiskBandKey = "riskLow" | "riskModerate" | "riskHigh" | "riskSevere";
+
+const getBandKey = (band: string): RiskBandKey | null => {
+  switch (band?.toLowerCase()) {
+    case "low":
+      return "riskLow";
+    case "moderate":
+      return "riskModerate";
+    case "high":
+      return "riskHigh";
+    case "severe":
+      return "riskSevere";
+    default:
+      return null;
+  }
+};
+
+const formatBand = (t: TFunction<"dashboard">, band: string): string => {
+  const key = getBandKey(band);
+  return key ? t(key) : band;
+};
 
 function getRiskColor(band: string) {
   switch (band?.toLowerCase()) {
@@ -81,6 +107,7 @@ function RiskGauge({
   color: string;
   onPress: () => void;
 }) {
+  const { t } = useTranslation(["dashboard"]);
   if (!data) return null;
 
   const score = data.score ?? 0;
@@ -136,7 +163,7 @@ function RiskGauge({
         </Svg>
         <View className="absolute inset-0 items-center justify-center pt-2">
           <Text className="font-bold text-sm" style={{ color: riskcolor }}>
-            {band}
+            {formatBand(t, band)}
           </Text>
         </View>
       </View>
@@ -145,6 +172,8 @@ function RiskGauge({
 }
 
 export function RiskSection() {
+  const { t } = useTranslation(["dashboard"]);
+  const { t: tW } = useTranslation(["weather"]);
   const { data, isLoading, isError } = useRiskScore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -185,7 +214,7 @@ export function RiskSection() {
             className="text-foreground"
           />
           <Text className="text-xl grow text-foreground font-semibold">
-            Agriculture Risk
+            {t("agricultureRisk")}
           </Text>
         </View>
         <Skeleton className="mb-4" />
@@ -215,42 +244,42 @@ export function RiskSection() {
   const hazards = [
     {
       id: "heavy_rain",
-      name: "Heavy Rain",
+      name: t("heavyRain"),
       icon: RainIcon,
       scoreData: heavy_rain,
       color: "#00A6F4",
     },
     {
       id: "heat_stress",
-      name: "Heat Stress",
+      name: t("heatStress"),
       icon: ThermometerWarmIcon,
       scoreData: heat_stress,
       color: "#009966",
     },
     {
       id: "pest",
-      name: "Pest / Disease",
+      name: t("pestDisease"),
       icon: Bug01Icon,
       scoreData: pest,
       color: "#F54A00",
     },
     {
       id: "lightning",
-      name: "Lightning",
+      name: tW("lightning"),
       icon: FlashIcon,
       scoreData: lightning,
       color: "#D08700",
     },
     {
       id: "wind",
-      name: "High Wind",
+      name: t("highWind"),
       icon: Tornado02Icon,
       scoreData: wind,
       color: "#625FFF",
     },
     {
       id: "frost",
-      name: "Frost",
+      name: t("frost"),
       icon: SnowIcon,
       scoreData: frost,
       color: "#C800DE",
@@ -267,7 +296,7 @@ export function RiskSection() {
           className="text-foreground"
         />
         <Text className="text-xl grow text-foreground font-semibold">
-          Agriculture Risk
+          {t("agricultureRisk")}
         </Text>
         <View
           style={{ backgroundColor: overallColor + 20 }}
@@ -278,7 +307,7 @@ export function RiskSection() {
             style={{ color: overallColor }}
             className="font-semibold text-sm uppercase"
           >
-            {overall.band.toUpperCase()}
+            {formatBand(t, overall.band).toUpperCase()}
           </Text>
         </View>
       </View>
@@ -394,7 +423,7 @@ export function RiskSection() {
               <ScrollView showsVerticalScrollIndicator={false} className="mb-2">
                 <View className="mb-5 flex-row items-center justify-between p-5 rounded-3xl border border-border gap-1">
                   <Text className="grow text-muted-foreground font-semibold text-base">
-                    Risk Level
+                    {tW("riskLevel")}
                   </Text>
                   {selectedRisk?.band && (
                     <Icon
@@ -408,14 +437,14 @@ export function RiskSection() {
                     className="font-bold text-md uppercase"
                     style={{ color: selectedRisk?.riskcolor }}
                   >
-                    {selectedRisk?.band}
+                    {selectedRisk?.band && formatBand(t, selectedRisk.band)}
                   </Text>
                 </View>
 
                 {selectedRisk?.majorFactor ? (
                   <View className="mb-5 px-3">
                     <Text className="text-base font-bold text-foreground mb-2">
-                      Major Factor
+                      {t("majorFactor")}
                     </Text>
                     <Text className="text-[15px] text-muted-foreground leading-6">
                       {selectedRisk.majorFactor}
@@ -426,7 +455,7 @@ export function RiskSection() {
                 {selectedRisk?.reasons && selectedRisk.reasons.length > 0 ? (
                   <View className="mb-2 px-3">
                     <Text className="text-base font-bold text-foreground mb-3">
-                      Analysis
+                      {t("analysis")}
                     </Text>
                     {selectedRisk.reasons.map((r, i) => (
                       <View key={i} className="flex-row gap-3 mb-3 pr-2">

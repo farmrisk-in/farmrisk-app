@@ -82,9 +82,12 @@ farmrisk-app/
 │   ├── Logo.tsx            # FarmRisk SVG logo
 │   └── WeatherIcon.tsx     # Maps names → weather SVG assets
 ├── constants/
-│   ├── theme.ts            # Colors (light/dark) + Fonts
-│   ├── content.ts          # i18n registry (content map + types)
-│   └── languages/          # en.ts, hi.ts, mr.ts, ta.ts, gu.ts
+│   └── theme.ts            # Colors (light/dark) + Fonts (legacy — mostly dead)
+├── i18n/                   # i18next engine (see 08-theme-i18n.md + language.md)
+│   ├── index.ts            # Init, storage, device detection, changeAppLanguage
+│   ├── resources.ts        # Static import of all language × namespace JSON
+│   ├── keys.d.ts           # Strict t() typing (en = source of truth)
+│   └── locales/            # en/ hi/ mr/ ta/ gu/ × 8 namespaces each
 ├── hooks/                  # All custom hooks (see 04-hooks.md)
 ├── lib/
 │   ├── api.ts              # All backend fetch functions
@@ -151,7 +154,8 @@ QueryProvider            (TanStack QueryClient — retry 2, stale 5m, gc 10m)
 | `lib/supabase.ts` | Supabase client singleton |
 | `components/dashboard/` | Composable dashboard "sections" (data + UI in one) |
 | `components/ui/` | Presentational primitives |
-| `constants/` | Theme tokens + i18n dictionaries |
+| `i18n/` | i18next engine + per-language JSON namespaces (5 langs × 8 ns) |
+| `constants/` | Theme tokens (legacy `theme.ts` only) |
 | `types/` | Shared TypeScript contracts (mirror backend API shapes) |
 
 ---

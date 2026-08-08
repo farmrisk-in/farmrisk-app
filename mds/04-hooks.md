@@ -125,6 +125,16 @@ Derived auth helper:
 ### `useLanguage()` — `hooks/useLanguage.ts`
 Reads `LanguageContext`; **throws** if used outside `LanguageProvider`.
 
+```ts
+const { language, setLanguage, t, ready } = useLanguage();
+// language: "en" | "hi" | "mr" | "ta" | "gu" (active code)
+// setLanguage: (lang) => Promise<void>  — persists + switches instantly
+// t: typed t() across ALL 8 namespaces (common, dashboard, weather, …)
+// ready: true once initI18n() resolved
+```
+
+> Prefer `useTranslation(["<namespace>"])` from `react-i18next` inside components — it's the idiomatic hook and also re-renders on switch. `useLanguage()` is used where the language *code* or `setLanguage` is needed (e.g. `app/profile.tsx` language picker).
+
 ### `useRefreshDashboard()` — `hooks/useRefreshDashboard.ts`
 Pull-to-refresh with 10-second spam cooldown:
 ```ts

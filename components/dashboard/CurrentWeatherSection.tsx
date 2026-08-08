@@ -24,6 +24,8 @@ import {
   Layers01Icon,
 } from "@hugeicons/core-free-icons";
 import { useWeatherSummary } from "@/hooks/useWeatherSummary";
+import { i18n } from "@/i18n";
+import { useTranslation } from "react-i18next";
 
 /**
  * Converts wind direction degrees to cardinal direction (e.g. 356° N)
@@ -80,6 +82,7 @@ function CurrentWeatherSkeleton() {
 }
 
 export function CurrentWeatherSection() {
+  const { t } = useTranslation(["weather"]);
   const { location } = useLocationContext();
   const { data, isLoading, isError } = useWeather();
   const { colorScheme } = useColorScheme();
@@ -88,7 +91,7 @@ export function CurrentWeatherSection() {
     data: dataWS,
     isLoading: isLoadingWS,
     isError: isErrorWS,
-  } = useWeatherSummary("en");
+  } = useWeatherSummary(i18n.language);
 
   if (isLoading || !data) {
     return <CurrentWeatherSkeleton />;
@@ -98,7 +101,7 @@ export function CurrentWeatherSection() {
     return (
       <View className="rounded-3xl border border-border p-5 my-2">
         <Text className="text-destructive font-semibold text-center">
-          Failed to load current weather data
+          {t("failedCurrentWeather")}
         </Text>
       </View>
     );
@@ -111,7 +114,7 @@ export function CurrentWeatherSection() {
   const feelsLike = Math.round(
     current.apparent_temperature ?? current.feels_like ?? temp + 1,
   );
-  const conditionText = current.condition?.en || "Overcast";
+  const conditionText = current.condition?.en || t("conditionFallback");
   const iconName = current.icon;
 
   const windDirDeg = current.wind_direction_10m ?? 356;
@@ -120,42 +123,42 @@ export function CurrentWeatherSection() {
   // 8 Weather Metrics for the 2x4 Grid
   const gridMetrics = [
     {
-      label: "Rainfall",
+      label: t("rainfall"),
       value: `${current.precipitation ?? 0} mm`,
       icon: RainDropIcon,
     },
     {
-      label: "Wind",
+      label: t("wind"),
       value: `${current.wind_speed_10m ?? 3} km/h`,
       icon: CloudFastWindIcon,
     },
     {
-      label: "Clouds",
+      label: t("clouds"),
       value: `${current.cloud_cover ?? current.cloudcover ?? 74}%`,
       icon: CloudIcon,
     },
     {
-      label: "Humidity",
+      label: t("humidity"),
       value: `${current.relative_humidity_2m ?? 94}%`,
       icon: DropletIcon,
     },
     {
-      label: "Gusts",
+      label: t("gusts"),
       value: `${current.wind_gusts_10m ?? 5} km/h`,
       icon: WindPowerIcon,
     },
     {
-      label: "Direction",
+      label: t("direction"),
       value: `${windDirDeg}° ${windCardinal}`,
       icon: Compass01Icon,
     },
     {
-      label: "Pressure (MSL)",
+      label: t("pressureMsl"),
       value: `${current.pressure_msl ?? 1002} hPa`,
       icon: DashboardCircleIcon,
     },
     {
-      label: "Press (Surf)",
+      label: t("pressureSurf"),
       value: `${current.surface_pressure ?? 935} hPa`,
       icon: Layers01Icon,
     },
@@ -231,7 +234,7 @@ export function CurrentWeatherSection() {
               }`}
               numberOfLines={1}
             >
-              Current Weather
+              {t("currentWeather")}
             </Text>
           </View>
           <View
@@ -269,7 +272,7 @@ export function CurrentWeatherSection() {
                 isDark ? "text-emerald-200/90" : "text-emerald-800/90"
               }`}
             >
-              Feels like {feelsLike}°C
+              {t("feelsLike", { temp: feelsLike })}
             </Text>
           </View>
 

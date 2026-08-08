@@ -77,5 +77,6 @@
   "moistureDry": "வறண்ட",
   "moistureModerate": "மிதமான",
   "moistureWet": "ஈரமான",
-  "daysOfData": "{{count}} நாட்கள் தரவு · {{date}} வரை"
+  "daysOfData": "{{count}} நாட்கள் தரவு · {{date}} வரை",
+  "percentMoisture": "{{value}}% ஈரப்பதம்"
 }

@@ -11,13 +11,16 @@ import {
 import { useAI } from "@/hooks/useAI";
 import { Icon } from "../ui/Icon";
 import { Book02Icon, BotIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
+import { i18n } from "@/i18n";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   crop?: string;
 }
 
 export function AIAdvisorySection({ crop }: Props) {
-  const { data, sources, isLoading, isError } = useAI(crop, "en");
+  const { t } = useTranslation(["dashboard"]);
+  const { data, sources, isLoading, isError } = useAI(crop, i18n.language);
   const [modalVisible, setModalVisible] = useState(false);
   let padMax = 0;
   if (sources && sources.length > 0) {
@@ -111,7 +114,7 @@ export function AIAdvisorySection({ crop }: Props) {
           className="text-primary dark:text-white"
         />
         <Text className="text-xl grow text-foreground font-semibold">
-          AI Advisory
+          {t("aiTitle")}
         </Text>
         {sources && (
           <TouchableOpacity
@@ -121,7 +124,7 @@ export function AIAdvisorySection({ crop }: Props) {
             <View className="flex flex-row rounded-xl gap-1 px-3 py-1.5 items-center bg-emerald-100 dark:bg-emerald-900/50">
               <Icon icon={Book02Icon} size={15} color="#059669" />
               <Text className="font-bold text-[11px] uppercase text-emerald-700 dark:text-emerald-300">
-                Sources
+                {t("sources")}
               </Text>
             </View>
           </TouchableOpacity>
@@ -133,14 +136,14 @@ export function AIAdvisorySection({ crop }: Props) {
           <View className="py-6 items-center">
             <ActivityIndicator size="large" color="#059669" />
             <Text className="text-muted-foreground mt-3 text-sm font-medium">
-              Generating advisory...
+              {t("generatingAdvisory")}
             </Text>
           </View>
         )}
         {isError && (
           <View className="py-4 bg-red-50 dark:bg-red-950/30 rounded-2xl px-4 border border-red-200 dark:border-red-900/50">
             <Text className="text-red-600 dark:text-red-400 font-medium">
-              Advisory request failed. Please try again later.
+              {t("advisoryFailed")}
             </Text>
           </View>
         )}
@@ -169,7 +172,7 @@ export function AIAdvisorySection({ crop }: Props) {
                     <Icon icon={Book02Icon} size={24} color="#059669" />
                   </View>
                   <Text className="text-xl font-bold text-foreground">
-                    Data Sources
+                    {t("dataSources")}
                   </Text>
                 </View>
                 <TouchableOpacity
@@ -195,7 +198,7 @@ export function AIAdvisorySection({ crop }: Props) {
                         </Text>
                         {sourceObj.page && (
                           <Text className="text-[15px] text-muted-foreground">
-                            Page{" "}
+                            {t("page")}{" "}
                             {sourceObj.page.toString().padStart(padMax, "0")}
                           </Text>
                         )}
@@ -204,7 +207,7 @@ export function AIAdvisorySection({ crop }: Props) {
                   })}
                   {(!sources || sources.length === 0) && (
                     <Text className="text-muted-foreground text-center py-4">
-                      No specific sources cited for this advisory.
+                      {t("noSources")}
                     </Text>
                   )}
                 </View>

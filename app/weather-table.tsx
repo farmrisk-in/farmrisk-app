@@ -22,6 +22,7 @@ import {
 import { useWeather } from "@/hooks/useWeather";
 import { useForecast } from "@/hooks/useForecast";
 import { WeatherIcon } from "@/components/WeatherIcon";
+import { useTranslation } from "react-i18next";
 
 const formatHour = (dateInput: Date | string) => {
   const date = new Date(dateInput);
@@ -48,6 +49,8 @@ const formatDateText = (dateStr: string) => {
 };
 
 export default function WeatherTableScreen() {
+  const { t } = useTranslation(["weather"]);
+  const { t: tDash } = useTranslation(["dashboard"]);
   const { type } = useLocalSearchParams<{ type: string }>();
   const router = useRouter();
 
@@ -90,12 +93,12 @@ export default function WeatherTableScreen() {
                   className="text-foreground"
                 />
                 <Text className="text-2xl font-bold text-foreground">
-                  Hourly Weather
+                  {tDash("hourlyTitle")}
                 </Text>
               </View>
               <View className="px-3 py-1.5 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50 shadow-sm">
                 <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-                  Next 24 Hours
+                  {tDash("next24Hours")}
                 </Text>
               </View>
             </>
@@ -109,7 +112,7 @@ export default function WeatherTableScreen() {
                   className="text-foreground"
                 />
                 <Text className="text-2xl font-bold text-foreground">
-                  Forecast
+                  {t("forecast")}
                 </Text>
               </View>
               <View className="px-3 flex-row gap-1 items-center py-1.5 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50 shadow-sm">
@@ -119,7 +122,7 @@ export default function WeatherTableScreen() {
                   className="text-emerald-800 dark:text-emerald-300"
                 />
                 <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-                  Bias Corrected
+                  {tDash("biasCorrected")}
                 </Text>
               </View>
             </>
@@ -154,7 +157,7 @@ export default function WeatherTableScreen() {
               className="text-muted-foreground"
             />
             <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Time
+              {t("timeCol")}
             </Text>
           </View>
           <View className="flex-1 flex-row items-center justify-center gap-1.5">
@@ -164,7 +167,7 @@ export default function WeatherTableScreen() {
               className="text-muted-foreground"
             />
             <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Temp
+              {t("tempCol")}
             </Text>
           </View>
           <View className="flex-1 flex-row items-center justify-center gap-1.5">
@@ -174,7 +177,7 @@ export default function WeatherTableScreen() {
               className="text-muted-foreground"
             />
             <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Rain
+              {t("rainCol")}
             </Text>
           </View>
           <View className="flex-1 flex-row items-center justify-end gap-1.5">
@@ -184,7 +187,7 @@ export default function WeatherTableScreen() {
               className="text-muted-foreground"
             />
             <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Wind
+              {t("windCol")}
             </Text>
           </View>
         </View>
@@ -254,7 +257,7 @@ export default function WeatherTableScreen() {
               className="text-muted-foreground"
             />
             <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Date
+              {t("dateCol")}
             </Text>
           </View>
           <View className="flex-1 flex-row items-center justify-center gap-1.5">
@@ -264,7 +267,7 @@ export default function WeatherTableScreen() {
               className="text-muted-foreground"
             />
             <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              High / Low
+              {t("highLowCol")}
             </Text>
           </View>
           <View className="flex-1 flex-row items-center justify-end gap-1.5">
@@ -274,7 +277,7 @@ export default function WeatherTableScreen() {
               className="text-muted-foreground"
             />
             <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              Rain
+              {t("rainCol")}
             </Text>
           </View>
         </View>

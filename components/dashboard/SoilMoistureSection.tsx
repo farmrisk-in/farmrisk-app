@@ -30,6 +30,7 @@ import {
   VictoryAxis,
   VictoryScatter,
 } from "victory-native";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   crop?: string;
@@ -72,6 +73,8 @@ const formatShortDate = (raw: string): string => {
 // ── component ────────────────────────────────────────────────────────────────
 export function SoilMoistureSection({ crop }: Props) {
   const router = useRouter();
+  const { t } = useTranslation(["dashboard"]);
+  const { t: tW } = useTranslation(["weather"]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [irrigationOpen, setIrrigationOpen] = useState(false);
   const [daysbeforeInput, setDaysbeforeInput] = useState("");
@@ -171,7 +174,7 @@ export function SoilMoistureSection({ crop }: Props) {
             className="text-foreground"
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            Soil Moisture
+            {tW("soilMoisture")}
           </Text>
         </View>
         <View className="bg-card dark:bg-muted/20 rounded-3xl overflow-hidden pt-4 pb-5 px-4 h-[240px] justify-end">
@@ -201,13 +204,13 @@ export function SoilMoistureSection({ crop }: Props) {
             className="text-foreground"
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            Soil Moisture
+            {tW("soilMoisture")}
           </Text>
         </View>
         <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl p-6 items-center justify-center h-[240px]">
           <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
           <Text className="mt-4 text-muted-foreground font-medium">
-            Soil moisture data unavailable
+            {t("soilMoistureUnavailable")}
           </Text>
         </View>
       </View>
@@ -218,7 +221,7 @@ export function SoilMoistureSection({ crop }: Props) {
       <View className="my-6 px-3">
         <View className="bg-card border border-border/50 rounded-2xl p-4 items-center">
           <Text className="text-muted-foreground">
-            No recent soil moisture data.
+            {t("noRecentSoilMoisture")}
           </Text>
         </View>
       </View>
@@ -245,7 +248,7 @@ export function SoilMoistureSection({ crop }: Props) {
           className="text-foreground"
         />
         <Text className="grow text-xl text-foreground font-semibold">
-          Soil Moisture
+          {tW("soilMoisture")}
         </Text>
         <View className="flex-row items-center gap-1">
           <TouchableOpacity
@@ -258,7 +261,7 @@ export function SoilMoistureSection({ crop }: Props) {
               className="text-emerald-800 dark:text-emerald-300"
             />
             <Text className="text-sm text-emerald-800 dark:text-emerald-300 font-bold">
-              Irrigation
+              {t("irrigation")}
             </Text>
             {daysbefore !== undefined && (
               <View className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -543,7 +546,7 @@ export function SoilMoistureSection({ crop }: Props) {
                     <Text
                       style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}
                     >
-                      {Math.round(tooltip.datum.sm_percentile)}% moisture
+                      {tW("percentMoisture", { value: Math.round(tooltip.datum.sm_percentile) })}
                     </Text>
                   </View>
                   {charts.P_obs && tooltip.datum.P_obs > 0 && (
@@ -564,7 +567,9 @@ export function SoilMoistureSection({ crop }: Props) {
                         }}
                       />
                       <Text style={{ color: "#d1d5db", fontSize: 11 }}>
-                        Rain : {tooltip.datum.P_obs.toFixed(1)} mm
+                        {tW("rainTooltip", {
+                          mm: tooltip.datum.P_obs.toFixed(1),
+                        })}
                       </Text>
                     </View>
                   )}
@@ -591,7 +596,7 @@ export function SoilMoistureSection({ crop }: Props) {
             <View className="bg-card w-full rounded-3xl p-5 border border-border shadow-lg">
               <View className="flex-row items-center justify-between mb-5">
                 <Text className="text-xl font-bold text-foreground">
-                  Moisture Settings
+                  {t("moistureSettings")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => setSettingsOpen(false)}
@@ -601,28 +606,32 @@ export function SoilMoistureSection({ crop }: Props) {
                 </TouchableOpacity>
               </View>
               <Text className="text-xs font-bold uppercase text-muted-foreground mb-3 tracking-wider">
-                Metrics to Display
+                {t("metricsToDisplay")}
               </Text>
               <View className="gap-3 py-4">
                 {(
                   [
                     {
                       key: "sm_percentile",
-                      label: "Soil Percentile (%)",
+                      label: t("soilPercentile"),
                       color: "#10b981",
                     },
                     {
                       key: "P_obs",
-                      label: "Precipitation (mm)",
+                      label: t("precipitationMm"),
                       color: "#60a5fa",
                     },
                     {
                       key: "PE",
-                      label: "Potential Evap (PE)",
+                      label: t("potentialEvap"),
                       color: "#fbbf24",
                     },
-                    { key: "E", label: "Actual Evap (E)", color: "#a855f7" },
-                    { key: "R", label: "Runoff (R)", color: "#f43f5e" },
+                    {
+                      key: "E",
+                      label: t("actualEvap"),
+                      color: "#a855f7",
+                    },
+                    { key: "R", label: t("runoff"), color: "#f43f5e" },
                   ] as const
                 ).map(({ key, label, color }) => (
                   <View
@@ -680,7 +689,7 @@ export function SoilMoistureSection({ crop }: Props) {
                     />
                   </View>
                   <Text className="text-xl font-bold text-foreground">
-                    Irrigation Log
+                    {t("irrigationLog")}
                   </Text>
                 </View>
                 <TouchableOpacity
@@ -691,18 +700,17 @@ export function SoilMoistureSection({ crop }: Props) {
                 </TouchableOpacity>
               </View>
               <Text className="text-sm text-muted-foreground mb-4">
-                Recalibrate the AI model&apos;s moisture predictions by logging
-                when you last watered your crop.
+                {t("irrigationDesc")}
               </Text>
               <View className="py-4">
                 <Text className="text-xs font-bold uppercase text-foreground mb-3 tracking-wider">
-                  Days Since Last Irrigation
+                  {t("daysSinceLastIrrigation")}
                 </Text>
                 <View className="flex-row items-center gap-3">
                   <TextInput
                     value={daysbeforeInput}
                     onChangeText={setDaysbeforeInput}
-                    placeholder="e.g. 5"
+                    placeholder={t("daysPlaceholder")}
                     keyboardType="number-pad"
                     className="flex-1 border-2 border-emerald-500/30 bg-background rounded-xl px-4 py-3.5 text-foreground font-bold text-lg"
                     placeholderTextColor="#71717a"
@@ -711,7 +719,9 @@ export function SoilMoistureSection({ crop }: Props) {
                     onPress={applyIrrigation}
                     className="bg-emerald-600 px-6 py-4 rounded-xl"
                   >
-                    <Text className="text-white font-bold text-base">Save</Text>
+                    <Text className="text-white font-bold text-base">
+                      {t("save")}
+                    </Text>
                   </TouchableOpacity>
                 </View>
                 {daysbefore !== undefined && (
@@ -724,7 +734,7 @@ export function SoilMoistureSection({ crop }: Props) {
                     className="mt-4 pt-4 border-t border-border/60 items-center"
                   >
                     <Text className="text-rose-500 font-bold text-sm">
-                      Remove Irrigation Entry
+                      {t("removeIrrigationEntry")}
                     </Text>
                   </TouchableOpacity>
                 )}

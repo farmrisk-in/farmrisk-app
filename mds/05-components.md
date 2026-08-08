@@ -24,7 +24,7 @@ Barrel file `components/dashboard/index.ts` exports:
 - Map button → `router.push("/map")`.
 
 ### `CurrentWeatherSection`
-- Uses `useWeather()` + `useWeatherSummary("en")` + `useLocationContext()`.
+- Uses `useWeather()` + `useWeatherSummary(i18n.language)` + `useLocationContext()`.
 - Gradient spotlight card (SVG radial gradient, emerald theme, dark/light variants).
 - Shows: location coords badge, big temp, "Feels like", `WeatherIcon`, condition text, **AI weather summary** text (from `useWeatherSummary`), and an 8-metric 2×4 grid (Rainfall, Wind, Clouds, Humidity, Gusts, Direction, Pressure MSL, Pressure Surf).
 - Loading → `CurrentWeatherSkeleton` (matching layout).
@@ -69,7 +69,7 @@ Barrel file `components/dashboard/index.ts` exports:
 - **Currently unused by screens** (crop selection moved to Profile).
 
 ### `AIAdvisorySection`
-- Props: `{ crop?: string }`. Uses `useAI(crop, "en")`.
+- Props: `{ crop?: string }`. Uses `useAI(crop, i18n.language)`.
 - Renders AI advisory markdown-lite: headers (`#`), bullets (`-`/`*`), **bold**, *italic* → styled RN Text.
 - "Sources" button → modal listing `sources` (`{ source, page }`).
 - Loading/error states.
@@ -95,6 +95,12 @@ Barrel file `components/dashboard/index.ts` exports:
 - Animated shimmer placeholder (opacity loop 0.35 ↔ 0.85, 1s each way, native driver).
 - Props: `{ width?, height?, borderRadius = 12, className?, style?, ...ViewProps }`.
 - Background `bg-muted`.
+
+### `LanguageSelector` — `LanguageSelector.tsx`
+- Bottom-sheet `Modal` language picker. Props: `{ visible, onClose }`.
+- Renders one row per `SUPPORTED_LANGUAGES` entry, showing each language's name in its **own script** (`LANGUAGE_NAMES` from `@/i18n`); active language gets a tick.
+- On press → `changeAppLanguage(code)` (persists to AsyncStorage + switches instantly) then `onClose()`.
+- Mounted from `app/profile.tsx` (Profile → Language row).
 
 ### `ThemeToggle` — `ThemeToggle.tsx`
 - Uses `useColorScheme()` from nativewind (`toggleColorScheme`).

@@ -14,6 +14,7 @@ import { useWeather } from "@/hooks/useWeather";
 import { WeatherIcon } from "../WeatherIcon";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 // Helper to determine the right weather icon based on rain volume thresholds
 const getWeatherIcon = (pcp: number) => {
@@ -23,10 +24,13 @@ const getWeatherIcon = (pcp: number) => {
   return "cloud.svg";
 };
 
-// Simple day name formatting helper
+// Day-of-week keys, indexed by JS Date#getDay() (0 = Sunday … 6 = Saturday)
+const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
+
+// Simple day name formatting helper (returns a translation key)
 const formatDayName = (dateStr: string) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString("en-US", { weekday: "short" });
+  return DAY_KEYS[date.getDay()];
 };
 
 // Simple date text formatting helper
@@ -37,6 +41,8 @@ const formatDateText = (dateStr: string) => {
 
 export function ForecastSection() {
   const router = useRouter();
+  const { t: tDash } = useTranslation(["dashboard"]);
+  const { t: tWeather } = useTranslation(["weather"]);
   const { forecastRows, isLoading, isError } = useForecast();
   const { data: weatherData } = useWeather();
   const daily = weatherData?.daily;
@@ -70,7 +76,7 @@ export function ForecastSection() {
             size={26}
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            16 Day Forecast
+            {tDash("forecast16Day")}
           </Text>
         </View>
         <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
@@ -121,13 +127,13 @@ export function ForecastSection() {
             size={26}
           />
           <Text className="grow text-xl text-foreground font-semibold">
-            16 Day Forecast
+            {tDash("forecast16Day")}
           </Text>
         </View>
         <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl p-6 items-center justify-center">
           <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
           <Text className="mt-4 text-muted-foreground font-medium">
-            Forecast unavailable
+            {tDash("forecastUnavailable")}
           </Text>
         </View>
       </View>
@@ -146,7 +152,7 @@ export function ForecastSection() {
           size={26}
         />
         <Text className="grow text-xl text-foreground font-semibold">
-          16 Day Forecast
+          {tDash("forecast16Day")}
         </Text>
         <TouchableOpacity
           className="flex-row flex gap-1 items-center"
@@ -162,7 +168,7 @@ export function ForecastSection() {
                 size={18}
               />
               <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-                Bias Corrected
+                {tDash("biasCorrected")}
               </Text>
             </View>
           )}
@@ -189,7 +195,7 @@ export function ForecastSection() {
 
                 {/* Day Word Label */}
                 <Text className="text-base font-bold text-foreground">
-                  {formatDayName(day.date)}
+                  {tWeather(formatDayName(day.date))}
                 </Text>
 
                 {/* Status Graphic Icon */}

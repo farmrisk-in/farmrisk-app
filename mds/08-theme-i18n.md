@@ -6,8 +6,8 @@ This app has **two separate theming systems** and **two separate i18n layers**:
 |---|---|---|
 | **NativeWind theme** (authoritative) | CSS variables in `global.css` mapped to Tailwind color names in `tailwind.config.js`. **This is what all real screens use.** | `global.css`, `tailwind.config.js` |
 | **Legacy `Colors`/`Fonts`** | Old shadcn-style constants. Only used by `components/ui/collapsible.tsx` and the `useThemeColor` hook. Mostly dead code. | `constants/theme.ts` |
-| **App i18n (authoritative)** | Nested per-screen dictionaries in 5 languages, consumed via `LanguageProvider` + `useLanguage()` hook (`t` function). | `constants/content.ts`, `constants/languages/` |
-| **Weather conditions i18n** | WMO condition strings per language inside `types/weather.ts` (`WmoEntry.condition`, `CurrentWeather.condition`). | `types/weather.ts`, used by `components/WeatherIcon.tsx` |
+| **App i18n (authoritative)** | **i18next + react-i18next** engine with 5 languages × 8 domain namespaces, JSON files under `i18n/locales/`. Consumed via `useTranslation()` / `useLanguage()`. Full guide + checklists in [`language.md`](./language.md). | `i18n/` |
+| **Weather conditions i18n** | WMO condition strings per language inside `types/weather.ts` (`WmoEntry.condition`, `CurrentWeather.condition`). Separate from the i18next dictionary — translated per record. | `types/weather.ts`, used by `components/WeatherIcon.tsx` |
 
 ---
 
@@ -119,67 +119,63 @@ The default tint (`#0a7ea4` blue) does **not** match the app's green brand — e
 
 ---
 
-## 3. App i18n (`constants/content.ts` + `constants/languages/`)
+## 3. App i18n (i18next — `i18n/` directory)
 
-### Structure
+> **Full guide + step-by-step checklists: [`language.md`](./language.md).** This section is the quick overview.
 
-```ts
-// constants/content.ts
-import { en } from "./languages/en";
-import { hi } from "./languages/hi";
-import { mr } from "./languages/mr";
-import { ta } from "./languages/ta";
-import { gu } from "./languages/gu";
+### Stack
 
-export const content = { en, hi, mr, ta, gu };
-export type LanguageCode = keyof typeof content;        // "en" | "hi" | "mr" | "ta" | "gu"
-export type TranslationType = typeof content.en;        // structural type: en is the source of truth
-```
+- **i18next** + **react-i18next** — translation engine & React binding.
+- **expo-localization** — auto-detects the device's native language on first launch.
+- **@react-native-async-storage/async-storage** — persists the user's choice across restarts.
 
-### Languages
+### Languages & namespaces
 
-| Code | Language | File |
+| Code | Language | Own-script name |
 |---|---|---|
-| `en` | English | `constants/languages/en.ts` |
-| `hi` | Hindi | `constants/languages/hi.ts` |
-| `mr` | Marathi | `constants/languages/mr.ts` |
-| `ta` | Tamil | `constants/languages/ta.ts` |
-| `gu` | Gujarati | `constants/languages/gu.ts` |
+| `en` | English | English |
+| `hi` | Hindi | हिन्दी |
+| `mr` | Marathi | मराठी |
+| `ta` | Tamil | தமிழ் |
+| `gu` | Gujarati | ગુજરાતી |
 
-**`en` is the schema.** `TranslationType = typeof content.en` means every other language must match English's shape exactly (TypeScript enforces this at compile time — a missing key in `hi.ts` is a type error).
+Each language has **8 domain namespaces** as JSON files under `i18n/locales/<code>/`:
 
-### Dictionary shape (nested per screen)
-
-The `en` dictionary has these top-level sections:
-
-| Section | Covers |
+| Namespace | Covers |
 |---|---|
-| `title`, `description`, `hero*`, `version` | App identity + landing hero |
-| `nav` | Navigation labels (dashboard, sign in/out...) |
-| `sidebar` | Sidebar labels (scaffolding) |
-| `landing` | Landing page copy (pipeline steps, CTA, footer) |
-| `dashboard` | **The main screen**: weather conditions, risk levels, soil moisture bands, AI advisory strings, crop names, loading/error text |
-| `profile` | Profile form labels |
-| `problem` | Problem/landing section with metrics + links |
-| `solution` | Solution pillars + stats |
-| `choice` | Free vs Personalized pricing blocks |
-| `locationSearchBar` | Search/map screen strings (village search, GPS, map) |
+| `common` (defaultNS) | Tab titles, greetings, generic buttons, errors, `chooseLanguage` |
+| `dashboard` | Dashboard sections, risk/hazard labels, tools/alerts copy |
+| `weather` | Weather conditions, metrics grid, lightning risk, soil-moisture bands |
+| `search` | Village search, GPS, map screen, recents |
+| `profile` | Profile form, theme/crop/language rows |
 | `auth` | Sign in/register forms + validation errors |
+| `calendar` | Crop calendar phase names |
+| `landing` | Legacy landing/hero copy |
 
-Note: some strings contain `{placeholder}` template slots (e.g. `heroHeading: "Farmers face climate {Uncertainty} almost every day"`, `landing.coverageDesc`). Check call sites — some are formatted with a small helper or inline `replace()`, some are displayed as-is.
+### Resolution order (first launch)
+
+1. **AsyncStorage** override (`farmrisk-language`) → 2. **device language** via expo-localization (if supported) → 3. fallback `en`.
 
 ### Consumption
 
-- `providers/LanguageProvider.tsx` stores the current `LanguageCode` in AsyncStorage (`farmrisk-language`) and provides `t` — a typed accessor like `t("dashboard.rainChance")` (or similar — see `03-providers.md`).
-- `hooks/useLanguage.ts` re-exports the context (`language`, `setLanguage`, `t`).
-- Screens pass `t("...")` strings to components; components themselves are not language-aware.
+```tsx
+import { useTranslation } from "react-i18next";
+const { t } = useTranslation(["dashboard"]); // typed against en resources
+// …
+<Text>{t("riskHigh")}</Text>
+```
+
+- Components use `useTranslation()`; the whole tree re-renders instantly on switch (no reload).
+- `useLanguage()` (`hooks/useLanguage.ts`) exposes `{ language, setLanguage, t, ready }` for code that needs the code + setter (e.g. the profile picker).
+- Switching is done by `changeAppLanguage(code)` (`i18n/index.ts`) — persists to AsyncStorage and calls `i18n.changeLanguage()`.
+- **Typing:** `i18n/keys.d.ts` augments `CustomTypeOptions` with the English resources — `t("…")` autocompletes, misspelled keys and missing interpolation vars fail `tsc`.
 
 ### How to add a string
 
-1. Add the key to `constants/languages/en.ts` in the right section (or create a section).
-2. Add the same key to `hi.ts`, `mr.ts`, `ta.ts`, `gu.ts` — TypeScript will error until all five match.
-3. Use it in the UI via `t("section.key")`.
-4. Never change `en`'s shape without updating all four other files in the same change.
+1. Add the key to `i18n/locales/en/<namespace>.json` (English is the source of truth).
+2. Add the same key to the matching file in `hi`, `mr`, `ta`, `gu` — missing keys silently fall back to English, so complete all five.
+3. Use it via `t("<namespace>:key")` or, for `common`, plain `t("key")`.
+4. Use `{{var}}` syntax for interpolation: `t("weather:feelsLike", { temp: 32 })`.
 
 ---
 
@@ -202,7 +198,9 @@ type WmoEntry = { condition: { en, hi, mr, ta, gu }, icon: { day: string, night?
 |---|---|
 | Change a color used by screens | `global.css` (+ keep `tailwind.config.js` mapping) |
 | Add a new Tailwind color name | `tailwind.config.js` + `global.css` variable |
-| Change UI text | `constants/languages/*.ts` (all 5) |
-| Add a language | new file in `constants/languages/` + register in `constants/content.ts` |
-| Localize a weather condition | API/backend + `WmoEntry` in `types/weather.ts` |
+| Change UI text | `i18n/locales/<lang>/<namespace>.json` (all 5 languages) — see [`language.md`](./language.md) |
+| Add a language | new `i18n/locales/<code>/` + register in `i18n/index.ts` + `i18n/resources.ts` — checklist in [`language.md`](./language.md) |
+| Add a namespace | new `i18n/locales/en/<ns>.json` (×5 langs) + register in `resources.ts`, `index.ts`, `keys.d.ts`, `LanguageProvider.tsx` |
+| Change the language picker | `components/ui/LanguageSelector.tsx` |
+| Localize a weather condition | API/backend + `WmoEntry` in `types/weather.ts` (per-record, not via dictionary) |
 | Legacy blue/white Colors | `constants/theme.ts` (avoid for new work) |

@@ -10,6 +10,7 @@ import { WebView } from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColorScheme } from "nativewind";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import * as Location from "expo-location";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { reverseGeocode } from "@/lib/api";
@@ -22,6 +23,7 @@ import {
 import { LeafletMapView, LeafletMapEvent } from "@/components/LeafletMapView";
 
 export default function MapScreen() {
+  const { t } = useTranslation(["search"]);
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
@@ -107,7 +109,7 @@ export default function MapScreen() {
         geo.district ||
         geo.state ||
         displayName.split(",")[0] ||
-        "Selected Location";
+        t("selectedLocation");
 
       setLocation({
         lat: centerLat,
@@ -129,7 +131,7 @@ export default function MapScreen() {
     } finally {
       setIsConfirming(false);
     }
-  }, [centerLat, centerLng, setLocation, router]);
+  }, [centerLat, centerLng, setLocation, router, t]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -185,7 +187,7 @@ export default function MapScreen() {
         <Text
           className="text-lg text-foreground font-bold"
         >
-          Choose Location
+          {t("chooseLocation")}
         </Text>
 
         <TouchableOpacity
@@ -236,7 +238,7 @@ export default function MapScreen() {
                 { color: isDark ? "#a1a1aa" : "#71717a" },
               ]}
             >
-              Coordinates
+              {t("coordinates")}
             </Text>
             <Text
               style={[
@@ -277,7 +279,7 @@ export default function MapScreen() {
             ) : (
               <>
                 <Icon icon={Tick01Icon} size={20} color="#ffffff" />
-                <Text style={styles.confirmButtonText}>Confirm</Text>
+                <Text style={styles.confirmButtonText}>{t("confirm")}</Text>
               </>
             )}
           </TouchableOpacity>

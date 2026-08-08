@@ -14,6 +14,8 @@ import {
   SoilMoistureFieldIcon,
 } from "@hugeicons/core-free-icons";
 import { useSoilMoisture } from "@/hooks/useSoilMoisture";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const MONTHS = [
@@ -46,11 +48,12 @@ const shortDate = (raw: string) => {
 const moistureColor = (v: number) =>
   v <= 30 ? "#ef4444" : v <= 70 ? "#94a3b8" : "#3b82f6";
 
-const moistureLabel = (v: number) =>
-  v <= 30 ? "Dry" : v <= 70 ? "Moderate" : "Wet";
+const moistureLabel = (t: TFunction<"weather">, v: number) =>
+  v <= 30 ? t("moistureDry") : v <= 70 ? t("moistureModerate") : t("moistureWet");
 
 // ── table row ─────────────────────────────────────────────────────────────────
 function TableRow({ item, isEven }: { item: any; isEven: boolean }) {
+  const { t } = useTranslation(["weather"]);
   const sm = item.sm_percentile ?? 0;
   const color = moistureColor(sm);
   return (
@@ -68,7 +71,7 @@ function TableRow({ item, isEven }: { item: any; isEven: boolean }) {
       <View style={{ flex: 1, marginHorizontal: 8, gap: 3 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text className="text-foreground text-sm font-semibold">
-            {moistureLabel(sm)}
+            {moistureLabel(t, sm)}
           </Text>
           <Text style={{ fontSize: 11, fontWeight: "800", color }}>
             {Math.round(sm)}%
@@ -114,6 +117,8 @@ function TableRow({ item, isEven }: { item: any; isEven: boolean }) {
 export default function SoilDetailScreen() {
   const router = useRouter();
   const { data, isLoading, isError } = useSoilMoisture();
+  const { t } = useTranslation(["weather"]);
+  const { t: tDash } = useTranslation(["dashboard"]);
 
   const rawArray = Array.isArray(data) ? data : (data?.soil_moisture ?? []);
 
@@ -145,10 +150,10 @@ export default function SoilDetailScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background items-center justify-center px-6">
         <Text className="text-muted-foreground text-center text-base">
-          Soil moisture data unavailable.
+          {tDash("soilMoistureUnavailable")}
         </Text>
         <TouchableOpacity onPress={() => router.back()} className="mt-6">
-          <Text className="text-emerald-600 font-bold">← Go Back</Text>
+          <Text className="text-emerald-600 font-bold">← {tDash("goBack")}</Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -174,11 +179,13 @@ export default function SoilDetailScreen() {
           </View>
           <View>
             <Text className="text-2xl font-bold text-foreground">
-              Soil Moisture
+              {t("soilMoisture")}
             </Text>
             <Text className="text-sm text-muted-foreground">
-              {allData.length} days of data · up to{" "}
-              {allData[allData.length - 1]?.date}
+              {t("daysOfData", {
+                count: allData.length,
+                date: allData[allData.length - 1]?.date ?? "",
+              })}
             </Text>
           </View>
         </View>
@@ -193,16 +200,16 @@ export default function SoilDetailScreen() {
         {/* Table header */}
         <View className="flex flex-row items-center py-3 px-3 bg-sky-200/50 dark:bg-sky-900/50 border-y border-border">
           <Text className="text-md pr-10 font-bold text-foreground uppercase">
-            Date
+            {t("dateCol")}
           </Text>
           <Text className="grow font-bold text-md text-foreground uppercase">
-            Moisture
+            {t("moistureCol")}
           </Text>
           <Text className="text-md px-4 font-bold text-foreground uppercase">
-            Rain
+            {t("rainCol")}
           </Text>
           <Text className="text-md pl-4 font-bold text-foreground uppercase ">
-            PE
+            {t("peCol")}
           </Text>
         </View>
 
