@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { useColorScheme } from "nativewind";
@@ -18,6 +19,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export default function ToolsTabScreen() {
+  const { t } = useTranslation(["dashboard"]);
   const { selectedCrop } = useCropContext();
   const { refreshing, onRefresh } = useRefreshDashboard();
   const { location, isResolving, locationError } = useLocationContext();
@@ -50,10 +52,10 @@ export default function ToolsTabScreen() {
         {/* Section Title */}
         <View className="my-3">
           <Text className="text-xl font-bold text-foreground">
-            Farming & Field Tools
+            {t("toolsTitle")}
           </Text>
           <Text className="text-xs text-muted-foreground mt-0.5">
-            AI crop advisory, field calculators, and local crop area analytics
+            {t("toolsSubtitle")}
           </Text>
         </View>
 
@@ -68,10 +70,10 @@ export default function ToolsTabScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-base font-semibold text-foreground">
-                Smart Field Utilities
+                {t("smartUtilities")}
               </Text>
               <Text className="text-xs text-muted-foreground">
-                Additional agricultural decision support tools
+                {t("smartUtilitiesDesc")}
               </Text>
             </View>
           </View>
@@ -84,10 +86,10 @@ export default function ToolsTabScreen() {
                 className="text-primary mb-1.5"
               />
               <Text className="text-sm font-semibold text-foreground">
-                Irrigation Tool
+                {t("irrigationTool")}
               </Text>
               <Text className="text-xs text-muted-foreground mt-0.5">
-                Water requirement guide
+                {t("irrigationToolDesc")}
               </Text>
             </View>
 
@@ -98,10 +100,10 @@ export default function ToolsTabScreen() {
                 className="text-primary mb-1.5"
               />
               <Text className="text-sm font-semibold text-foreground">
-                Sowing Planner
+                {t("sowingPlanner")}
               </Text>
               <Text className="text-xs text-muted-foreground mt-0.5">
-                Crop season timeline
+                {t("sowingPlannerDesc")}
               </Text>
             </View>
           </View>

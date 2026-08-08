@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, View, Text, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { useColorScheme } from "nativewind";
@@ -10,6 +11,7 @@ import { Icon } from "@/components/ui/Icon";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 
 export default function AlertsTabScreen() {
+  const { t } = useTranslation(["dashboard"]);
   const { refreshing, onRefresh } = useRefreshDashboard();
   const { location, isResolving, locationError } = useLocationContext();
 
@@ -41,10 +43,10 @@ export default function AlertsTabScreen() {
         {/* Section Title */}
         <View className="my-3">
           <Text className="text-xl font-bold text-foreground">
-            Risk & Weather Alerts
+            {t("alertsTitle")}
           </Text>
           <Text className="text-xs text-muted-foreground mt-0.5">
-            Real-time severe weather warnings and lightning risk models
+            {t("alertsSubtitle")}
           </Text>
         </View>
 
@@ -59,10 +61,10 @@ export default function AlertsTabScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-base font-semibold text-foreground">
-                Active Weather Hazards
+                {t("activeHazards")}
               </Text>
               <Text className="text-xs text-muted-foreground">
-                Monitored via Open-Meteo & ML Early Warning System
+                {t("activeHazardsDesc")}
               </Text>
             </View>
           </View>
@@ -70,28 +72,28 @@ export default function AlertsTabScreen() {
           <View className="bg-muted/50 rounded-xl p-3 border border-border/50 gap-2">
             <View className="flex-row items-center justify-between">
               <Text className="text-sm font-medium text-foreground">
-                Heavy Rainfall Risk
+                {t("heavyRainfallRisk")}
               </Text>
               <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                Normal
+                {t("hazardNormal")}
               </Text>
             </View>
 
             <View className="flex-row items-center justify-between pt-1 border-t border-border/40">
               <Text className="text-sm font-medium text-foreground">
-                Heatwave Warning
+                {t("heatwaveWarning")}
               </Text>
               <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                Low Risk
+                {t("hazardLowRisk")}
               </Text>
             </View>
 
             <View className="flex-row items-center justify-between pt-1 border-t border-border/40">
               <Text className="text-sm font-medium text-foreground">
-                Frost & Freeze Alert
+                {t("frostFreezeAlert")}
               </Text>
               <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                None
+                {t("hazardNone")}
               </Text>
             </View>
           </View>

@@ -1,5 +1,6 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { useColorScheme } from "nativewind";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "@/components/ui/Icon";
@@ -11,6 +12,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 export default function TabLayout() {
+  const { t } = useTranslation(["common"]);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -39,7 +41,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: t("tabHome"),
           tabBarIcon: ({ color, size }) => (
             <Icon icon={Home01Icon} size={size || 22} color={color} />
           ),
@@ -50,7 +52,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="forecast"
         options={{
-          title: "Forecast",
+          title: t("tabForecast"),
           tabBarIcon: ({ color, size }) => (
             <Icon icon={SunCloud01Icon} size={size || 22} color={color} />
           ),
@@ -61,7 +63,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tools"
         options={{
-          title: "Tools",
+          title: t("tabTools"),
           tabBarIcon: ({ color, size }) => (
             <Icon icon={Wrench01Icon} size={size || 22} color={color} />
           ),
@@ -72,7 +74,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="alerts"
         options={{
-          title: "Alerts",
+          title: t("tabAlerts"),
           tabBarIcon: ({ color, size }) => (
             <Icon icon={Notification01Icon} size={size || 22} color={color} />
           ),

@@ -18,13 +18,17 @@ import { Icon } from "@/components/ui/Icon";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useCropContext } from "@/providers/CropProvider";
 import { useCrops } from "@/hooks/useCrops";
+import { useLanguage } from "@/hooks/useLanguage";
+import { LANGUAGE_NAMES } from "@/i18n";
 
 type Mode = "login" | "register";
 
 export default function ProfileScreen() {
   const { user, loading, signOut } = useAuth();
+  const { t, language } = useLanguage();
   const [mode, setMode] = useState<Mode>("login");
   const router = useRouter();
   
@@ -34,6 +38,7 @@ export default function ProfileScreen() {
   const { selectedCrop, setSelectedCrop } = useCropContext();
   const { crops } = useCrops();
   const [cropModalVisible, setCropModalVisible] = useState(false);
+  const [languageModalVisible, setLanguageModalVisible] = useState(false);
 
   // Form Fields
   const [firstName, setFirstName] = useState("");
@@ -52,32 +57,32 @@ export default function ProfileScreen() {
 
     const normalizedPhone = normalizePhoneNumber(phone);
     if (!normalizedPhone) {
-      setError("Please enter a valid 10-digit Indian phone number.");
+      setError(t("errorPhoneText"));
       return;
     }
 
     const email = `${normalizedPhone}@farmrisk.app`;
 
     if (!password) {
-      setError("Password is required.");
+      setError(t("errorPasswordRequired"));
       return;
     }
 
     if (mode === "register") {
       if (!firstName.trim()) {
-        setError("First name is required.");
+        setError(t("errorFirstName"));
         return;
       }
       if (!lastName.trim()) {
-        setError("Last name is required.");
+        setError(t("errorLastName"));
         return;
       }
       if (password.length < 6) {
-        setError("Password must be at least 6 characters long.");
+        setError(t("errorPasswordLength"));
         return;
       }
       if (password !== confirmPassword) {
-        setError("Passwords do not match.");
+        setError(t("errorPasswordMatch"));
         return;
       }
     }
@@ -101,7 +106,7 @@ export default function ProfileScreen() {
         if (signUpError) {
           setError(signUpError.message);
         } else {
-          setSuccess("Registration successful! You are now logged in.");
+          setSuccess(t("registrationSuccess"));
           // Clear inputs
           setFirstName("");
           setLastName("");
@@ -118,12 +123,13 @@ export default function ProfileScreen() {
         if (signInError) {
           setError(signInError.message);
         } else {
-          setSuccess("Logged in successfully!");
+          setSuccess(t("loginSuccess"));
           setPassword("");
         }
       }
     } catch (err: any) {
-      setError(err?.message || "An unexpected error occurred.");
+      console.error("Auth error", err);
+      setError(err?.message || t("errorUnexpected"));
     } finally {
       setSubmitting(false);
     }
@@ -143,7 +149,7 @@ export default function ProfileScreen() {
     const phoneNo = meta.phone || user.email?.split("@")[0] || "";
 
     // Helper to get nice name
-    const selectedCropName = crops.find((c: any) => (c.id || c.name?.toLowerCase()) === selectedCrop)?.name || "Default";
+    const selectedCropName = crops.find((c: any) => (c.id || c.name?.toLowerCase()) === selectedCrop)?.name || t("noneDefault");
 
     return (
       <SafeAreaView
@@ -157,13 +163,13 @@ export default function ProfileScreen() {
                 style={styles.title}
                 className="text-gray-900 dark:text-white"
               >
-                Your Profile
+                {t("yourProfile")}
               </Text>
               <Text
                 style={styles.subtitle}
                 className="text-gray-600 dark:text-gray-400 text-left"
               >
-                Premium Dashboard Active
+                {t("premiumActive")}
               </Text>
             </View>
             <TouchableOpacity
@@ -188,9 +194,28 @@ export default function ProfileScreen() {
                 style={styles.infoLabel}
                 className="text-gray-500 dark:text-gray-400"
               >
-                Theme
+                {t("theme")}
               </Text>
               <ThemeToggle />
+            </View>
+
+            {/* Language Selector Row */}
+            <View style={styles.infoRow} className="items-center">
+              <Text
+                style={styles.infoLabel}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                {t("language")}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setLanguageModalVisible(true)}
+                className="bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl"
+                accessibilityRole="button"
+              >
+                <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
+                  {LANGUAGE_NAMES[language]} ▾
+                </Text>
+              </TouchableOpacity>
             </View>
 
             {/* Crop Selector Dropdown */}
@@ -199,14 +224,14 @@ export default function ProfileScreen() {
                 style={styles.infoLabel}
                 className="text-gray-500 dark:text-gray-400"
               >
-                Active Crop
+                {t("activeCrop")}
               </Text>
               <TouchableOpacity
                 onPress={() => setCropModalVisible(true)}
                 className="bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl"
               >
                 <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
-                  {selectedCrop ? selectedCropName : "Select Crop"} ▾
+                  {selectedCrop ? selectedCropName : t("selectCrop")} ▾
                 </Text>
               </TouchableOpacity>
             </View>
@@ -216,7 +241,7 @@ export default function ProfileScreen() {
           <Modal visible={cropModalVisible} transparent animationType="slide" onRequestClose={() => setCropModalVisible(false)}>
             <TouchableOpacity className="flex-1 bg-black/50 justify-end" activeOpacity={1} onPressOut={() => setCropModalVisible(false)}>
               <View className="bg-white dark:bg-gray-800 rounded-t-3xl p-6 pb-12 max-h-[70%]">
-                <Text className="text-xl font-bold text-gray-900 dark:text-white mb-4">Select Active Crop</Text>
+                <Text className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t("cropPickerTitle")}</Text>
                 <ScrollView>
                   <TouchableOpacity
                     className={`py-4 border-b border-gray-100 dark:border-gray-700 flex-row justify-between items-center ${!selectedCrop ? 'bg-gray-50 dark:bg-gray-700/30' : ''}`}
@@ -261,13 +286,13 @@ export default function ProfileScreen() {
                 style={styles.infoLabel}
                 className="text-gray-500 dark:text-gray-400"
               >
-                Name
+                {t("name")}
               </Text>
               <Text
                 style={styles.infoValue}
                 className="text-gray-900 dark:text-white"
               >
-                {name || "Farmer"}
+                {name || t("defaultUserName")}
               </Text>
             </View>
 
@@ -276,7 +301,7 @@ export default function ProfileScreen() {
                 style={styles.infoLabel}
                 className="text-gray-500 dark:text-gray-400"
               >
-                Phone
+                {t("phone")}
               </Text>
               <Text
                 style={styles.infoValue}
@@ -291,7 +316,7 @@ export default function ProfileScreen() {
                 style={styles.infoLabel}
                 className="text-gray-500 dark:text-gray-400"
               >
-                Email Login
+                {t("emailLogin")}
               </Text>
               <Text
                 style={styles.infoValue}
@@ -303,9 +328,15 @@ export default function ProfileScreen() {
           </View>
 
           <TouchableOpacity style={styles.buttonLogout} onPress={signOut}>
-            <Text style={styles.buttonText}>Sign Out</Text>
+            <Text style={styles.buttonText}>{t("nav.signOut")}</Text>
           </TouchableOpacity>
         </ScrollView>
+
+        {/* Language Selector Modal */}
+        <LanguageSelector
+          visible={languageModalVisible}
+          onClose={() => setLanguageModalVisible(false)}
+        />
       </SafeAreaView>
     );
   }
@@ -322,15 +353,15 @@ export default function ProfileScreen() {
               style={styles.title}
               className="text-gray-900 dark:text-white"
             >
-              {mode === "login" ? "Sign In" : "Register"}
+              {mode === "login" ? t("signInTitle") : t("registerTitle")}
             </Text>
             <Text
               style={styles.subtitle}
               className="text-gray-600 dark:text-gray-400 text-left"
             >
               {mode === "login"
-                ? "Access your personalized paid dashboard"
-                : "Create an account for remote field sensing & AI advice"}
+                ? t("authSubLogin")
+                : t("authSubRegister")}
             </Text>
           </View>
           <TouchableOpacity
@@ -351,7 +382,7 @@ export default function ProfileScreen() {
               style={styles.infoLabel}
               className="text-gray-500 dark:text-gray-400"
             >
-              Theme
+              {t("theme")}
             </Text>
             <ThemeToggle />
           </View>
@@ -363,53 +394,53 @@ export default function ProfileScreen() {
 
           {mode === "register" && (
             <>
-              <Text style={styles.label}>First Name</Text>
+              <Text style={styles.label}>{t("firstName")}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter first name"
+                placeholder={t("firstNamePlaceholder")}
                 value={firstName || ""}
-                onChangeText={(t) => setFirstName(t || "")}
+                onChangeText={(text) => setFirstName(text || "")}
                 autoCapitalize="words"
               />
 
-              <Text style={styles.label}>Last Name</Text>
+              <Text style={styles.label}>{t("lastName")}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter last name"
+                placeholder={t("lastNamePlaceholder")}
                 value={lastName || ""}
-                onChangeText={(t) => setLastName(t || "")}
+                onChangeText={(text) => setLastName(text || "")}
                 autoCapitalize="words"
               />
             </>
           )}
 
-          <Text style={styles.label}>Mobile Number (10-digit)</Text>
+          <Text style={styles.label}>{t("mobileLabel")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. 9876543210"
+            placeholder={t("mobilePlaceholder")}
             keyboardType="phone-pad"
             value={phone || ""}
-            onChangeText={(t) => setPhone(t || "")}
+            onChangeText={(text) => setPhone(text || "")}
           />
 
-          <Text style={styles.label}>Password</Text>
+          <Text style={styles.label}>{t("passwordLabel")}</Text>
           <TextInput
             style={styles.input}
-            placeholder="Min 6 characters"
+            placeholder={t("passwordHint")}
             secureTextEntry
             value={password || ""}
-            onChangeText={(t) => setPassword(t || "")}
+            onChangeText={(text) => setPassword(text || "")}
           />
 
           {mode === "register" && (
             <>
-              <Text style={styles.label}>Confirm Password</Text>
+              <Text style={styles.label}>{t("confirmPasswordLabel")}</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Repeat password"
+                placeholder={t("confirmPlaceholder")}
                 secureTextEntry
                 value={confirmPassword || ""}
-                onChangeText={(t) => setConfirmPassword(t || "")}
+                onChangeText={(text) => setConfirmPassword(text || "")}
               />
             </>
           )}
@@ -423,7 +454,7 @@ export default function ProfileScreen() {
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={styles.buttonText}>
-                {mode === "login" ? "Sign In" : "Register"}
+                {mode === "login" ? t("signInBtn") : t("registerBtn")}
               </Text>
             )}
           </TouchableOpacity>
@@ -438,8 +469,8 @@ export default function ProfileScreen() {
           >
             <Text style={styles.switchText}>
               {mode === "login"
-                ? "Don't have an account? Sign Up"
-                : "Already have an account? Sign In"}
+                ? t("switchToRegister")
+                : t("haveAccount")}
             </Text>
           </TouchableOpacity>
         </View>
