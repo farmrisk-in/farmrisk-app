@@ -22,5 +22,13 @@
   "name": "பெயர்",
   "phone": "தொலைபேசி",
   "emailLogin": "மின்னஞ்சல் உள்நுழைவு",
-  "myFarms": "என் பண்ணைகள்"
+  "myFarms": "என் பண்ணைகள்",
+  "downloadImage": "டாஷ்போர்டு படத்தை ஏற்றுமதி செய்க",
+  "downloadGenerating": "உருவாக்குகிறது...",
+  "downloadPermissionTitle": "அனுமதி தேவை",
+  "downloadPermissionMsg": "படத்தை உங்கள் கேலரியில் சேமிக்க சேமிப்பக அனுமதி தேவை.",
+  "downloadSuccessTitle": "சேமிக்கப்பட்டது!",
+  "downloadSuccessMsg": "டாஷ்போர்டு அறிக்கை உங்கள் கேலரியில் ஃபார்ம்ரிஸ்க் ஆல்பத்தில் சேமிக்கப்பட்டது.",
+  "downloadErrorTitle": "ஏற்றுமதி தோல்வியடைந்தது",
+  "downloadErrorMsg": "படத்தை சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
 }

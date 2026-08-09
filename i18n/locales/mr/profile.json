@@ -22,5 +22,13 @@
   "name": "नाव",
   "phone": "फोन",
   "emailLogin": "ईमेल लॉगिन",
-  "myFarms": "माझी शेते"
+  "myFarms": "माझी शेते",
+  "downloadImage": "डॅशबोर्ड प्रतिमा एक्सपोर्ट करा",
+  "downloadGenerating": "तयार होत आहे...",
+  "downloadPermissionTitle": "परवानगी आवश्यक",
+  "downloadPermissionMsg": "प्रतिमा तुमच्या गॅलरीत जतन करण्यासाठी स्टोरेज परवानगी आवश्यक आहे.",
+  "downloadSuccessTitle": "जतन झाले!",
+  "downloadSuccessMsg": "डॅशबोर्ड अहवाल तुमच्या गॅलरीत फार्मरिस्क अल्बममध्ये जतन केला आहे.",
+  "downloadErrorTitle": "एक्सपोर्ट अयशस्वी",
+  "downloadErrorMsg": "प्रतिमा जतन करता आली नाही. कृपया पुन्हा प्रयत्न करा."
 }

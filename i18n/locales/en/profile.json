@@ -22,5 +22,13 @@
   "name": "Name",
   "phone": "Phone",
   "emailLogin": "Email Login",
-  "myFarms": "My Farms"
+  "myFarms": "My Farms",
+  "downloadImage": "Export Dashboard Image",
+  "downloadGenerating": "Generating...",
+  "downloadPermissionTitle": "Permission Required",
+  "downloadPermissionMsg": "Storage permission is needed to save the image to your gallery.",
+  "downloadSuccessTitle": "Saved!",
+  "downloadSuccessMsg": "Dashboard report saved to your gallery in the FarmRisk album.",
+  "downloadErrorTitle": "Export Failed",
+  "downloadErrorMsg": "Could not save the image. Please try again."
 }

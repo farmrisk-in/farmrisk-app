@@ -13,7 +13,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/hooks/useAuth";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { supabase } from "@/lib/supabase";
 import { Icon } from "@/components/ui/Icon";
 import {
@@ -32,7 +31,9 @@ import { useRouter } from "expo-router";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useCropContext } from "@/providers/CropProvider";
+import { useFarmContext } from "@/providers/FarmProvider";
 import { useCrops } from "@/hooks/useCrops";
+import DownloadButton from "@/components/dashboard/DownloadButton";
 import { useLanguage } from "@/hooks/useLanguage";
 import { LANGUAGE_NAMES } from "@/i18n";
 import { Avatar } from "react-native-paper";
@@ -45,10 +46,9 @@ export default function ProfileScreen() {
   const [mode, setMode] = useState<Mode>("login");
   const router = useRouter();
 
-  const { colorScheme } = useColorScheme();
-
   // Crop selection hooks
   const { selectedCrop, setSelectedCrop } = useCropContext();
+  const { selectedFarm } = useFarmContext();
   const { crops } = useCrops();
   const [cropModalVisible, setCropModalVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
@@ -259,6 +259,13 @@ export default function ProfileScreen() {
                 </View>
               </View>
             </View>
+          </View>
+        )}
+
+        {/* ── Export Dashboard Image (Logged-in) ── */}
+        {user && (
+          <View className="mb-5">
+            <DownloadButton selectedFarm={selectedFarm} />
           </View>
         )}
 

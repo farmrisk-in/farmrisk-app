@@ -22,5 +22,13 @@
   "name": "નામ",
   "phone": "ફોન",
   "emailLogin": "ઇમેઇલ લોગિન",
-  "myFarms": "મારા ખેતો"
+  "myFarms": "મારા ખેતો",
+  "downloadImage": "ડેશબોર્ડ છબી નિકાસ કરો",
+  "downloadGenerating": "બનાવવામાં આવી રહ્યું છે...",
+  "downloadPermissionTitle": "પરવાનગી જરૂરી",
+  "downloadPermissionMsg": "છબી તમારી ગેલેરીમાં સાચવવા માટે સ્ટોરેજ પરવાનગી જરૂરી છે.",
+  "downloadSuccessTitle": "સાચવેલ!",
+  "downloadSuccessMsg": "ડેશબોર્ડ રિપોર્ટ તમારી ગેલેરીમાં ફાર્મરિસ્ક આલ્બમમાં સાચવેલ છે.",
+  "downloadErrorTitle": "નિકાસ નિષ્ફળ",
+  "downloadErrorMsg": "છબી સાચવી શકાઈ નહીં. કૃપા કરીને ફરી પ્રયાસ કરો."
 }
