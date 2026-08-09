@@ -158,16 +158,12 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       tabAlerts: "Alerts",
     },
     dashboard: {
-      toolsTitle: "Farming & Field Tools",
-      toolsSubtitle: "AI crop advisory, field calculators, and local crop area analytics",
       smartUtilities: "Smart Field Utilities",
       smartUtilitiesDesc: "Additional agricultural decision support tools",
       irrigationTool: "Irrigation Tool",
       irrigationToolDesc: "Water requirement guide",
       sowingPlanner: "Sowing Planner",
       sowingPlannerDesc: "Crop season timeline",
-      alertsTitle: "Risk & Weather Alerts",
-      alertsSubtitle: "Real-time severe weather warnings and lightning risk models",
       activeHazards: "Active Weather Hazards",
       activeHazardsDesc: "Monitored via Open-Meteo & ML Early Warning System",
       heavyRainfallRisk: "Heavy Rainfall Risk",
@@ -246,7 +242,7 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       searchBarPlaceholder: "Search city, district, state...",
       searchingLocations: "Searching locations...",
       noResults: "No results found",
-      noResultsQuery: "We couldn't find any location matching \"{{q}}\".",
+      noResultsQuery: 'We couldn\'t find any location matching "{{q}}".',
       useMyLocation: "Use My Location",
       selectOnMap: "Select on Map",
       recentSearches: "Recent Searches",
@@ -327,16 +323,12 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       tabAlerts: "अलर्ट",
     },
     dashboard: {
-      toolsTitle: "खेती और क्षेत्र उपकरण",
-      toolsSubtitle: "AI फसल सलाह, फील्ड कैलकुलेटर और स्थानीय फसल क्षेत्र विश्लेषण",
       smartUtilities: "स्मार्ट फील्ड सुविधाएँ",
       smartUtilitiesDesc: "अतिरिक्त कृषि निर्णय समर्थन उपकरण",
       irrigationTool: "सिंचाई उपकरण",
       irrigationToolDesc: "पानी की आवश्यकता मार्गदर्शिका",
       sowingPlanner: "बुवाई प्लानर",
       sowingPlannerDesc: "फसल मौसम समयरेखा",
-      alertsTitle: "जोखिम और मौसम अलर्ट",
-      alertsSubtitle: "वास्तविक समय के गंभीर मौसम चेतावनी और बिजली जोखिम मॉडल",
       activeHazards: "सक्रिय मौसम खतरे",
       activeHazardsDesc: "Open-Meteo और ML अर्ली वार्निंग सिस्टम से निगरानी",
       heavyRainfallRisk: "भारी वर्षा जोखिम",
@@ -414,7 +406,7 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       searchBarPlaceholder: "शहर, ज़िला, राज्य खोजें...",
       searchingLocations: "स्थान खोजे जा रहे हैं...",
       noResults: "कोई परिणाम नहीं मिला",
-      noResultsQuery: "\"{{q}}\" से मेल खाता कोई स्थान नहीं मिला।",
+      noResultsQuery: '"{{q}}" से मेल खाता कोई स्थान नहीं मिला।',
       useMyLocation: "मेरा स्थान उपयोग करें",
       selectOnMap: "मानचित्र पर चुनें",
       recentSearches: "हाल की खोजें",
@@ -495,18 +487,15 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       tabAlerts: "अलर्ट",
     },
     dashboard: {
-      toolsTitle: "शेती आणि फील्ड साधने",
-      toolsSubtitle: "AI पीक सल्ला, फील्ड कॅल्क्युलेटर आणि स्थानिक पीक क्षेत्र विश्लेषण",
       smartUtilities: "स्मार्ट फील्ड सुविधा",
       smartUtilitiesDesc: "अतिरिक्त कृषी निर्णय समर्थन साधने",
       irrigationTool: "सिंचन साधन",
       irrigationToolDesc: "पाण्याच्या गरजेचे मार्गदर्शक",
       sowingPlanner: "पेरणी प्लॅनर",
       sowingPlannerDesc: "पीक हंगाम वेळरेषा",
-      alertsTitle: "जोखीम आणि हवामान अलर्ट",
-      alertsSubtitle: "रिअल-टाइम गंभीर हवामान इशारे आणि विजेचे जोखीम मॉडेल",
       activeHazards: "सक्रिय हवामान धोके",
-      activeHazardsDesc: "Open-Meteo आणि ML अर्ली वॉर्निंग सिस्टमद्वारे निरीक्षण",
+      activeHazardsDesc:
+        "Open-Meteo आणि ML अर्ली वॉर्निंग सिस्टमद्वारे निरीक्षण",
       heavyRainfallRisk: "अतिवृष्टीचा धोका",
       hazardNormal: "सामान्य",
       heatwaveWarning: "उष्णतेच्या लाटेचा इशारा",
@@ -519,7 +508,8 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       page: "पृष्ठ",
       noSources: "या सल्ल्यासाठी कोणतेही विशिष्ट स्रोत उद्धृत केलेले नाहीत.",
       generatingAdvisory: "सल्ला तयार होत आहे...",
-      advisoryFailed: "सल्ला विनंती अयशस्वी झाली. कृपया नंतर पुन्हा प्रयत्न करा.",
+      advisoryFailed:
+        "सल्ला विनंती अयशस्वी झाली. कृपया नंतर पुन्हा प्रयत्न करा.",
       agricultureRisk: "कृषी जोखीम",
       heavyRain: "अतिवृष्टी",
       heatStress: "उष्णतेचा ताण",
@@ -582,7 +572,7 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       searchBarPlaceholder: "शहर, जिल्हा, राज्य शोधा...",
       searchingLocations: "स्थाने शोधली जात आहेत...",
       noResults: "कोणतेही परिणाम सापडले नाहीत",
-      noResultsQuery: "\"{{q}}\" शी जुळणारे कोणतेही स्थान सापडले नाही.",
+      noResultsQuery: '"{{q}}" शी जुळणारे कोणतेही स्थान सापडले नाही.',
       useMyLocation: "माझे स्थान वापरा",
       selectOnMap: "नकाशावर निवडा",
       recentSearches: "अलीकडील शोध",
@@ -663,18 +653,15 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       tabAlerts: "எச்சரிக்கைகள்",
     },
     dashboard: {
-      toolsTitle: "விவசாயம் & வயல் கருவிகள்",
-      toolsSubtitle: "AI பயிர் ஆலோசனை, வயல் கால்குலேட்டர்கள் மற்றும் உள்ளூர் பயிர் பகுதி பகுப்பாய்வு",
       smartUtilities: "ஸ்மார்ட் வயல் பயன்பாடுகள்",
       smartUtilitiesDesc: "கூடுதல் வேளாண் முடிவு ஆதரவு கருவிகள்",
       irrigationTool: "நீர்ப்பாசன கருவி",
       irrigationToolDesc: "நீர் தேவை வழிகாட்டி",
       sowingPlanner: "விதைப்பு திட்டமிடல்",
       sowingPlannerDesc: "பயிர் பருவ காலவரிசை",
-      alertsTitle: "அபாயம் & வானிலை எச்சரிக்கைகள்",
-      alertsSubtitle: "நிகழ்நேர கடுமையான வானிலை எச்சரிக்கைகள் மற்றும் மின்னல் அபாய மாதிரிகள்",
       activeHazards: "செயலில் உள்ள வானிலை அபாயங்கள்",
-      activeHazardsDesc: "Open-Meteo & ML ஆரம்ப எச்சரிக்கை அமைப்பு மூலம் கண்காணிக்கப்படுகிறது",
+      activeHazardsDesc:
+        "Open-Meteo & ML ஆரம்ப எச்சரிக்கை அமைப்பு மூலம் கண்காணிக்கப்படுகிறது",
       heavyRainfallRisk: "கனமழை அபாயம்",
       hazardNormal: "இயல்பானது",
       heatwaveWarning: "வெப்ப அலை எச்சரிக்கை",
@@ -685,9 +672,11 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       sources: "ஆதாரங்கள்",
       dataSources: "தரவு ஆதாரங்கள்",
       page: "பக்கம்",
-      noSources: "இந்த ஆலோசனைக்கு குறிப்பிட்ட ஆதாரங்கள் எதுவும் மேற்கோள் காட்டப்படவில்லை.",
+      noSources:
+        "இந்த ஆலோசனைக்கு குறிப்பிட்ட ஆதாரங்கள் எதுவும் மேற்கோள் காட்டப்படவில்லை.",
       generatingAdvisory: "ஆலோசனை உருவாக்கப்படுகிறது...",
-      advisoryFailed: "ஆலோசனை கோரிக்கை தோல்வியடைந்தது. பின்னர் மீண்டும் முயற்சிக்கவும்.",
+      advisoryFailed:
+        "ஆலோசனை கோரிக்கை தோல்வியடைந்தது. பின்னர் மீண்டும் முயற்சிக்கவும்.",
       agricultureRisk: "வேளாண் அபாயம்",
       heavyRain: "கனமழை",
       heatStress: "வெப்ப அழுத்தம்",
@@ -750,7 +739,8 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       searchBarPlaceholder: "நகரம், மாவட்டம், மாநிலம் தேடு...",
       searchingLocations: "இருப்பிடங்கள் தேடப்படுகின்றன...",
       noResults: "முடிவுகள் எதுவும் கிடைக்கவில்லை",
-      noResultsQuery: "\"{{q}}\" உடன் பொருந்தும் இருப்பிடம் எதுவும் கிடைக்கவில்லை.",
+      noResultsQuery:
+        '"{{q}}" உடன் பொருந்தும் இருப்பிடம் எதுவும் கிடைக்கவில்லை.',
       useMyLocation: "என் இருப்பிடத்தைப் பயன்படுத்து",
       selectOnMap: "வரைபடத்தில் தேர்ந்தெடு",
       recentSearches: "சமீபத்திய தேடல்கள்",
@@ -784,12 +774,15 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       passwordHint: "குறைந்தது 6 எழுத்துகள்",
       confirmPlaceholder: "கடவுச்சொல்லை மீண்டும் உள்ளிடவும்",
       authSubLogin: "உங்கள் தனிப்பயன் பணம் செலுத்தும் டாஷ்போர்டை அணுகவும்",
-      authSubRegister: "தொலை கள உணர்திறன் மற்றும் AI ஆலோசனைக்காக கணக்கை உருவாக்கவும்",
+      authSubRegister:
+        "தொலை கள உணர்திறன் மற்றும் AI ஆலோசனைக்காக கணக்கை உருவாக்கவும்",
       switchToRegister: "கணக்கு இல்லையா? பதிவு செய்யவும்",
-      errorPhoneText: "செல்லுபடியாகும் 10 இலக்க இந்திய மொபைல் எண்ணை உள்ளிடவும்.",
+      errorPhoneText:
+        "செல்லுபடியாகும் 10 இலக்க இந்திய மொபைல் எண்ணை உள்ளிடவும்.",
       errorFirstName: "முதல் பெயர் தேவை.",
       errorLastName: "கடைசி பெயர் தேவை.",
-      registrationSuccess: "பதிவு வெற்றிகரமாக முடிந்தது! நீங்கள் இப்போது உள்நுழைந்துள்ளீர்கள்.",
+      registrationSuccess:
+        "பதிவு வெற்றிகரமாக முடிந்தது! நீங்கள் இப்போது உள்நுழைந்துள்ளீர்கள்.",
       loginSuccess: "வெற்றிகரமாக உள்நுழைந்தீர்கள்!",
     },
     calendar: {
@@ -797,9 +790,11 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       sowing: "விதைப்பு",
       growing: "வளர்ச்சி",
       harvesting: "அறுவடை",
-      selectCropCalendar: "அதன் பருவ நாட்காட்டியைக் காண ஒரு பயிரைத் தேர்ந்தெடுக்கவும்",
+      selectCropCalendar:
+        "அதன் பருவ நாட்காட்டியைக் காண ஒரு பயிரைத் தேர்ந்தெடுக்கவும்",
       calendarLoadError: "நாட்காட்டி தரவை ஏற்ற முடியவில்லை.",
-      noCalendarFor: "இந்த பகுதியில் {{crop}} க்கு நாட்காட்டி எதுவும் கிடைக்கவில்லை.",
+      noCalendarFor:
+        "இந்த பகுதியில் {{crop}} க்கு நாட்காட்டி எதுவும் கிடைக்கவில்லை.",
       season: "பருவம்",
     },
     landing: {},
@@ -831,18 +826,15 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       tabAlerts: "ચેતવણીઓ",
     },
     dashboard: {
-      toolsTitle: "ખેતી અને ફીલ્ડ સાધનો",
-      toolsSubtitle: "AI પાક સલાહ, ફીલ્ડ કેલ્ક્યુલેટર અને સ્થાનિક પાક ક્ષેત્ર વિશ્લેષણ",
       smartUtilities: "સ્માર્ટ ફીલ્ડ ઉપયોગિતાઓ",
       smartUtilitiesDesc: "વધારાના કૃષિ નિર્ણય સમર્થન સાધનો",
       irrigationTool: "સિંચાઈ સાધન",
       irrigationToolDesc: "પાણીની જરૂરિયાત માર્ગદર્શિકા",
       sowingPlanner: "વાવણી પ્લાનર",
       sowingPlannerDesc: "પાક મોસમ સમયરેખા",
-      alertsTitle: "જોખમ અને હવામાન ચેતવણીઓ",
-      alertsSubtitle: "રીઅલ-ટાઇમ ગંભીર હવામાન ચેતવણીઓ અને વીજળી જોખમ મોડેલ",
       activeHazards: "સક્રિય હવામાન જોખમો",
-      activeHazardsDesc: "Open-Meteo અને ML અર્લી વોર્નિંગ સિસ્ટમ દ્વારા મોનિટર કરવામાં આવે છે",
+      activeHazardsDesc:
+        "Open-Meteo અને ML અર્લી વોર્નિંગ સિસ્ટમ દ્વારા મોનિટર કરવામાં આવે છે",
       heavyRainfallRisk: "ભારે વરસાદનું જોખમ",
       hazardNormal: "સામાન્ય",
       heatwaveWarning: "ગરમીના મોજાની ચેતવણી",
@@ -855,7 +847,8 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       page: "પાનું",
       noSources: "આ સલાહ માટે કોઈ ચોક્કસ સ્ત્રોત ટાંકવામાં આવ્યા નથી.",
       generatingAdvisory: "સલાહ તૈયાર થઈ રહી છે...",
-      advisoryFailed: "સલાહ વિનંતી નિષ્ફળ રહી. કૃપા કરીને પછીથી ફરી પ્રયાસ કરો.",
+      advisoryFailed:
+        "સલાહ વિનંતી નિષ્ફળ રહી. કૃપા કરીને પછીથી ફરી પ્રયાસ કરો.",
       agricultureRisk: "કૃષિ જોખમ",
       heavyRain: "ભારે વરસાદ",
       heatStress: "ગરમીનો તણાવ",
@@ -918,7 +911,7 @@ const NEW_KEYS: Record<string, Record<string, Dict>> = {
       searchBarPlaceholder: "શહેર, જિલ્લો, રાજ્ય શોધો...",
       searchingLocations: "સ્થાનો શોધાઈ રહ્યાં છે...",
       noResults: "કોઈ પરિણામ મળ્યું નથી",
-      noResultsQuery: "\"{{q}}\" સાથે મેળ ખાતું કોઈ સ્થાન મળ્યું નથી.",
+      noResultsQuery: '"{{q}}" સાથે મેળ ખાતું કોઈ સ્થાન મળ્યું નથી.',
       useMyLocation: "મારું સ્થાન વાપરો",
       selectOnMap: "નકશા પર પસંદ કરો",
       recentSearches: "તાજેતરની શોધો",
@@ -1019,7 +1012,16 @@ const mergeWithBase = (base: any, partial: any): any => {
 // 4. Build & write
 // ─────────────────────────────────────────────────────────────────────────────
 
-const NAMESPACES = ["common", "dashboard", "weather", "search", "profile", "auth", "calendar", "landing"] as const;
+const NAMESPACES = [
+  "common",
+  "dashboard",
+  "weather",
+  "search",
+  "profile",
+  "auth",
+  "calendar",
+  "landing",
+] as const;
 const OUT_DIR = join(__dirname, "..", "i18n", "locales");
 
 const baseNs = buildNamespaces(LANG_FILES.en);
@@ -1033,9 +1035,14 @@ for (const lang of LANGS) {
     const merged = mergeWithBase(baseNs[ns], langNs[ns]);
     const withNew = mergeWithBase(merged, NEW_KEYS[lang][ns] ?? {});
     const final = deepConvert(withNew);
-    writeFileSync(join(dir, `${ns}.json`), JSON.stringify(final, null, 2) + "\n");
+    writeFileSync(
+      join(dir, `${ns}.json`),
+      JSON.stringify(final, null, 2) + "\n",
+    );
   }
   console.log(`✔ wrote locales for "${lang}"`);
 }
 
-console.log(`Done — ${LANGS.length} languages × ${NAMESPACES.length} namespaces → ${OUT_DIR}`);
+console.log(
+  `Done — ${LANGS.length} languages × ${NAMESPACES.length} namespaces → ${OUT_DIR}`,
+);

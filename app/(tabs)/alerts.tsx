@@ -39,16 +39,6 @@ export default function AlertsTabScreen() {
         {/* Shared Header */}
         <Header />
 
-        {/* Section Title */}
-        <View className="my-3">
-          <Text className="text-xl font-bold text-foreground">
-            {t("alertsTitle")}
-          </Text>
-          <Text className="text-xs text-muted-foreground mt-0.5">
-            {t("alertsSubtitle")}
-          </Text>
-        </View>
-
         {/* Lightning Risk Assessment */}
         <LightningRiskSection />
 

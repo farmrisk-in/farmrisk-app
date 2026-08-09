@@ -6,10 +6,7 @@ import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { LocationRequired } from "@/components/LocationRequired";
 import { useCropContext } from "@/providers/CropProvider";
-import {
-  Header,
-  AIAdvisorySection,
-} from "@/components/dashboard";
+import { Header, AIAdvisorySection } from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
 import {
   Wrench01Icon,
@@ -47,16 +44,6 @@ export default function ToolsTabScreen() {
       >
         {/* Shared Header */}
         <Header />
-
-        {/* Section Title */}
-        <View className="my-3">
-          <Text className="text-xl font-bold text-foreground">
-            {t("toolsTitle")}
-          </Text>
-          <Text className="text-xs text-muted-foreground mt-0.5">
-            {t("toolsSubtitle")}
-          </Text>
-        </View>
 
         {/* AI Advisory RAG Tool */}
         <AIAdvisorySection crop={selectedCrop} />

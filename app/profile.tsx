@@ -80,16 +80,19 @@ export default function ProfileScreen() {
               await supabase.auth.signOut();
               Alert.alert(
                 "Data Cleared",
-                "All local app storage and sessions have been reset."
+                "All local app storage and sessions have been reset.",
               );
               router.replace("/onboarding/welcome");
             } catch (err: any) {
               console.error("Error resetting data:", err);
-              Alert.alert("Reset Error", err?.message || "Failed to clear local data.");
+              Alert.alert(
+                "Reset Error",
+                err?.message || "Failed to clear local data.",
+              );
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -192,7 +195,11 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background">
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 16,
+          paddingBottom: 40,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* ── Screen Top Header Bar ── */}
@@ -202,15 +209,15 @@ export default function ProfileScreen() {
               {user
                 ? t("yourProfile")
                 : mode === "login"
-                ? t("signInTitle")
-                : t("registerTitle")}
+                  ? t("signInTitle")
+                  : t("registerTitle")}
             </Text>
             <Text className="text-xs font-medium text-muted-foreground mt-0.5">
               {user
                 ? t("premiumActive")
                 : mode === "login"
-                ? t("authSubLogin")
-                : t("authSubRegister")}
+                  ? t("authSubLogin")
+                  : t("authSubRegister")}
             </Text>
           </View>
 
@@ -228,10 +235,7 @@ export default function ProfileScreen() {
         {user && (
           <View className="bg-card border border-border rounded-3xl p-5 mb-5 shadow-sm flex-row items-center gap-4">
             <View className="relative">
-              <Avatar.Image
-                size={58}
-                source={require("../assets/pic5.webp")}
-              />
+              <Avatar.Image size={58} source={require("../assets/pic5.webp")} />
               <View className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-card" />
             </View>
 
@@ -241,7 +245,10 @@ export default function ProfileScreen() {
                   .filter(Boolean)
                   .join(" ") || t("defaultUserName")}
               </Text>
-              <Text className="text-xs text-muted-foreground mt-0.5" numberOfLines={1}>
+              <Text
+                className="text-xs text-muted-foreground mt-0.5"
+                numberOfLines={1}
+              >
                 {user.email}
               </Text>
               <View className="flex-row items-center mt-2">
@@ -263,10 +270,14 @@ export default function ProfileScreen() {
 
           <View className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
             {/* Theme Toggle */}
-            <View className="flex-row items-center justify-between p-4 border-b border-border/40">
+            <View className="flex-row items-center justify-between p-4 border-b border-border">
               <View className="flex-row items-center gap-3">
                 <View className="w-8 h-8 rounded-xl bg-muted items-center justify-center">
-                  <Icon icon={User02Icon} size={18} className="text-muted-foreground" />
+                  <Icon
+                    icon={User02Icon}
+                    size={18}
+                    className="text-muted-foreground"
+                  />
                 </View>
                 <Text className="text-sm font-semibold text-foreground">
                   {t("theme")}
@@ -276,10 +287,14 @@ export default function ProfileScreen() {
             </View>
 
             {/* Language Selector */}
-            <View className="flex-row items-center justify-between p-4 border-b border-border/40">
+            <View className="flex-row items-center justify-between p-4 border-b border-border">
               <View className="flex-row items-center gap-3">
                 <View className="w-8 h-8 rounded-xl bg-muted items-center justify-center">
-                  <Icon icon={Globe02Icon} size={18} className="text-muted-foreground" />
+                  <Icon
+                    icon={Globe02Icon}
+                    size={18}
+                    className="text-muted-foreground"
+                  />
                 </View>
                 <Text className="text-sm font-semibold text-foreground">
                   {t("language")}
@@ -293,15 +308,23 @@ export default function ProfileScreen() {
                 <Text className="text-xs font-bold text-foreground">
                   {LANGUAGE_NAMES[language]}
                 </Text>
-                <Icon icon={ChevronRightIcon} size={14} className="text-muted-foreground rotate-90" />
+                <Icon
+                  icon={ChevronRightIcon}
+                  size={14}
+                  className="text-muted-foreground rotate-90"
+                />
               </TouchableOpacity>
             </View>
 
             {/* Crop Selector */}
-            <View className="flex-row items-center justify-between p-4 border-b border-border/40">
+            <View className="flex-row items-center justify-between p-4 border-b border-border">
               <View className="flex-row items-center gap-3">
                 <View className="w-8 h-8 rounded-xl bg-emerald-500/10 items-center justify-center">
-                  <Icon icon={WheatIcon} size={18} className="text-emerald-600 dark:text-emerald-400" />
+                  <Icon
+                    icon={WheatIcon}
+                    size={18}
+                    className="text-emerald-600 dark:text-emerald-400"
+                  />
                 </View>
                 <Text className="text-sm font-semibold text-foreground">
                   {t("activeCrop")}
@@ -315,7 +338,11 @@ export default function ProfileScreen() {
                 <Text className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
                   {selectedCrop ? selectedCropName : t("selectCrop")}
                 </Text>
-                <Icon icon={ChevronRightIcon} size={14} className="text-emerald-600 dark:text-emerald-400 rotate-90" />
+                <Icon
+                  icon={ChevronRightIcon}
+                  size={14}
+                  className="text-emerald-600 dark:text-emerald-400 rotate-90"
+                />
               </TouchableOpacity>
             </View>
 
@@ -327,13 +354,21 @@ export default function ProfileScreen() {
             >
               <View className="flex-row items-center gap-3">
                 <View className="w-8 h-8 rounded-xl bg-muted items-center justify-center">
-                  <Icon icon={MapPinIcon} size={18} className="text-muted-foreground" />
+                  <Icon
+                    icon={MapPinIcon}
+                    size={18}
+                    className="text-muted-foreground"
+                  />
                 </View>
                 <Text className="text-sm font-semibold text-foreground">
                   {t("myFarms")}
                 </Text>
               </View>
-              <Icon icon={ChevronRightIcon} size={18} className="text-muted-foreground" />
+              <Icon
+                icon={ChevronRightIcon}
+                size={18}
+                className="text-muted-foreground"
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -346,32 +381,60 @@ export default function ProfileScreen() {
             </Text>
 
             <View className="bg-card border border-border rounded-3xl p-4 shadow-sm gap-3.5">
-              <View className="flex-row items-center justify-between py-1 border-b border-border/40 pb-3">
+              <View className="flex-row items-center justify-between py-1 border-b border-border pb-3">
                 <View className="flex-row items-center gap-2.5">
-                  <Icon icon={User02Icon} size={16} className="text-muted-foreground" />
-                  <Text className="text-xs font-medium text-muted-foreground">{t("name")}</Text>
+                  <Icon
+                    icon={User02Icon}
+                    size={16}
+                    className="text-muted-foreground"
+                  />
+                  <Text className="text-xs font-medium text-muted-foreground">
+                    {t("name")}
+                  </Text>
                 </View>
                 <Text className="text-sm font-bold text-foreground">
-                  {[user.user_metadata?.first_name, user.user_metadata?.last_name].filter(Boolean).join(" ") || t("defaultUserName")}
+                  {[
+                    user.user_metadata?.first_name,
+                    user.user_metadata?.last_name,
+                  ]
+                    .filter(Boolean)
+                    .join(" ") || t("defaultUserName")}
                 </Text>
               </View>
 
-              <View className="flex-row items-center justify-between py-1 border-b border-border/40 pb-3">
+              <View className="flex-row items-center justify-between py-1 border-b border-border7 pb-3">
                 <View className="flex-row items-center gap-2.5">
-                  <Icon icon={SmartPhone01Icon} size={16} className="text-muted-foreground" />
-                  <Text className="text-xs font-medium text-muted-foreground">{t("phone")}</Text>
+                  <Icon
+                    icon={SmartPhone01Icon}
+                    size={16}
+                    className="text-muted-foreground"
+                  />
+                  <Text className="text-xs font-medium text-muted-foreground">
+                    {t("phone")}
+                  </Text>
                 </View>
                 <Text className="text-sm font-bold text-foreground">
-                  {user.user_metadata?.phone || user.email?.split("@")[0] || "—"}
+                  {user.user_metadata?.phone ||
+                    user.email?.split("@")[0] ||
+                    "—"}
                 </Text>
               </View>
 
               <View className="flex-row items-center justify-between py-1">
                 <View className="flex-row items-center gap-2.5">
-                  <Icon icon={Mail01Icon} size={16} className="text-muted-foreground" />
-                  <Text className="text-xs font-medium text-muted-foreground">{t("emailLogin")}</Text>
+                  <Icon
+                    icon={Mail01Icon}
+                    size={16}
+                    className="text-muted-foreground"
+                  />
+                  <Text className="text-xs font-medium text-muted-foreground">
+                    {t("emailLogin")}
+                  </Text>
                 </View>
-                <Text className="text-sm font-bold text-foreground" numberOfLines={1}>
+                <Text
+                  className="text-sm font-bold text-foreground"
+                  numberOfLines={1}
+                >
                   {user.email}
                 </Text>
               </View>
@@ -385,18 +448,24 @@ export default function ProfileScreen() {
             <View className="bg-card border border-border rounded-3xl p-5 shadow-sm">
               {error && (
                 <View className="p-3 mb-4 rounded-xl bg-destructive/10 border border-destructive/20">
-                  <Text className="text-xs font-semibold text-destructive text-center">{error}</Text>
+                  <Text className="text-xs font-semibold text-destructive text-center">
+                    {error}
+                  </Text>
                 </View>
               )}
               {success && (
                 <View className="p-3 mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                  <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 text-center">{success}</Text>
+                  <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 text-center">
+                    {success}
+                  </Text>
                 </View>
               )}
 
               {mode === "register" && (
                 <>
-                  <Text className="text-xs font-semibold text-foreground mb-1 mt-1">{t("firstName")}</Text>
+                  <Text className="text-xs font-semibold text-foreground mb-1 mt-1">
+                    {t("firstName")}
+                  </Text>
                   <TextInput
                     className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
                     placeholder={t("firstNamePlaceholder")}
@@ -406,7 +475,9 @@ export default function ProfileScreen() {
                     autoCapitalize="words"
                   />
 
-                  <Text className="text-xs font-semibold text-foreground mb-1">{t("lastName")}</Text>
+                  <Text className="text-xs font-semibold text-foreground mb-1">
+                    {t("lastName")}
+                  </Text>
                   <TextInput
                     className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
                     placeholder={t("lastNamePlaceholder")}
@@ -418,7 +489,9 @@ export default function ProfileScreen() {
                 </>
               )}
 
-              <Text className="text-xs font-semibold text-foreground mb-1">{t("mobileLabel")}</Text>
+              <Text className="text-xs font-semibold text-foreground mb-1">
+                {t("mobileLabel")}
+              </Text>
               <TextInput
                 className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
                 placeholder={t("mobilePlaceholder")}
@@ -428,7 +501,9 @@ export default function ProfileScreen() {
                 onChangeText={setPhone}
               />
 
-              <Text className="text-xs font-semibold text-foreground mb-1">{t("passwordLabel")}</Text>
+              <Text className="text-xs font-semibold text-foreground mb-1">
+                {t("passwordLabel")}
+              </Text>
               <TextInput
                 className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
                 placeholder={t("passwordHint")}
@@ -440,7 +515,9 @@ export default function ProfileScreen() {
 
               {mode === "register" && (
                 <>
-                  <Text className="text-xs font-semibold text-foreground mb-1">{t("confirmPasswordLabel")}</Text>
+                  <Text className="text-xs font-semibold text-foreground mb-1">
+                    {t("confirmPasswordLabel")}
+                  </Text>
                   <TextInput
                     className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
                     placeholder={t("confirmPlaceholder")}
@@ -547,7 +624,11 @@ export default function ProfileScreen() {
                   None / Default
                 </Text>
                 {!selectedCrop && (
-                  <Icon icon={Tick01Icon} size={18} className="text-emerald-500" />
+                  <Icon
+                    icon={Tick01Icon}
+                    size={18}
+                    className="text-emerald-500"
+                  />
                 )}
               </TouchableOpacity>
 
@@ -558,7 +639,9 @@ export default function ProfileScreen() {
                   <TouchableOpacity
                     key={cid}
                     className={`py-3.5 px-3 rounded-2xl mb-1.5 flex-row justify-between items-center ${
-                      isSel ? "bg-emerald-500/10 border border-emerald-500/20" : ""
+                      isSel
+                        ? "bg-emerald-500/10 border border-emerald-500/20"
+                        : ""
                     }`}
                     onPress={() => {
                       setSelectedCrop(cid);
@@ -572,7 +655,11 @@ export default function ProfileScreen() {
                       </Text>
                     </Text>
                     {isSel && (
-                      <Icon icon={Tick01Icon} size={18} className="text-emerald-500" />
+                      <Icon
+                        icon={Tick01Icon}
+                        size={18}
+                        className="text-emerald-500"
+                      />
                     )}
                   </TouchableOpacity>
                 );

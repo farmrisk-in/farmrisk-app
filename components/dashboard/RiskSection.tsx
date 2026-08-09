@@ -36,12 +36,13 @@ const { width } = Dimensions.get("window");
 // 2 columns with padding
 const cardWidth = (width - 32 - 16) / 2;
 
-// Risk band keys (dashboard ns) for the four translatable bands.
-// API bands outside this set (e.g. "Extreme", "Minimal") pass through as-is.
-type RiskBandKey = "riskLow" | "riskModerate" | "riskHigh" | "riskSevere";
+// Risk band keys (dashboard ns) for translatable bands.
+type RiskBandKey = "riskLow" | "riskModerate" | "riskHigh" | "riskSevere" | "riskMinimal" | "riskExtreme";
 
 const getBandKey = (band: string): RiskBandKey | null => {
   switch (band?.toLowerCase()) {
+    case "minimal":
+      return "riskMinimal";
     case "low":
       return "riskLow";
     case "moderate":
@@ -50,6 +51,8 @@ const getBandKey = (band: string): RiskBandKey | null => {
       return "riskHigh";
     case "severe":
       return "riskSevere";
+    case "extreme":
+      return "riskExtreme";
     default:
       return null;
   }
