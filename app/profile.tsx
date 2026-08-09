@@ -8,7 +8,9 @@ import {
   ActivityIndicator,
   ScrollView,
   Modal,
+  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/hooks/useAuth";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
@@ -50,6 +52,32 @@ export default function ProfileScreen() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // ── Dev-only Wipe All Data ──
+  const handleClearDevData = () => {
+    Alert.alert(
+      "Developer Option: Clear All Data",
+      "Are you sure you want to wipe all local storage (AsyncStorage), authentication sessions, and cached state?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Wipe Data & Reset",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await AsyncStorage.clear();
+              await supabase.auth.signOut();
+              Alert.alert("Data Cleared", "All local app storage and sessions have been reset.");
+              router.replace("/onboarding/welcome");
+            } catch (err: any) {
+              console.error("Error resetting data:", err);
+              Alert.alert("Reset Error", err?.message || "Failed to clear local data.");
+            }
+          },
+        },
+      ]
+    );
+  };
 
   const handleAuth = async () => {
     setError(null);
@@ -348,6 +376,24 @@ export default function ProfileScreen() {
           <TouchableOpacity style={styles.buttonLogout} onPress={signOut}>
             <Text style={styles.buttonText}>{t("nav.signOut")}</Text>
           </TouchableOpacity>
+
+          {/* Dev-Only Clear Data Option */}
+          {__DEV__ && (
+            <View className="mt-8 p-4 border border-dashed border-amber-500/60 bg-amber-500/10 rounded-2xl">
+              <Text className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2 text-center">
+                🛠️ Developer Mode (__DEV__)
+              </Text>
+              <TouchableOpacity
+                onPress={handleClearDevData}
+                className="bg-amber-600 active:bg-amber-700 py-3 px-4 rounded-xl items-center"
+                accessibilityRole="button"
+              >
+                <Text className="text-white font-bold text-sm">
+                  Clear All Local Data & Storage
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </ScrollView>
 
         {/* Language Selector Modal */}
@@ -492,6 +538,24 @@ export default function ProfileScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* Dev-Only Clear Data Option */}
+        {__DEV__ && (
+          <View className="mt-8 p-4 border border-dashed border-amber-500/60 bg-amber-500/10 rounded-2xl">
+            <Text className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2 text-center">
+              🛠️ Developer Mode (__DEV__)
+            </Text>
+            <TouchableOpacity
+              onPress={handleClearDevData}
+              className="bg-amber-600 active:bg-amber-700 py-3 px-4 rounded-xl items-center"
+              accessibilityRole="button"
+            >
+              <Text className="text-white font-bold text-sm">
+                Clear All Local Data & Storage
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
