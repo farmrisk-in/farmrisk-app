@@ -299,7 +299,7 @@ export function CropCalendarSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="grow text-xl font-semibold text-foreground">
+          <Text className="flex-1 shrink text-xl font-semibold text-foreground" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {t("cropCalendar")}
           </Text>
         </View>
@@ -320,7 +320,7 @@ export function CropCalendarSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="grow text-xl font-semibold text-foreground">
+          <Text className="flex-1 shrink text-xl font-semibold text-foreground" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {t("cropCalendar")}
           </Text>
         </View>
@@ -350,7 +350,7 @@ export function CropCalendarSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="grow text-xl font-semibold text-foreground">
+          <Text className="flex-1 shrink text-xl font-semibold text-foreground" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {t("cropCalendar")}
           </Text>
         </View>
@@ -374,7 +374,7 @@ export function CropCalendarSection({ crop }: Props) {
           strokeWidth={2}
           size={26}
         />
-        <Text className="grow text-xl text-foreground font-semibold">
+        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
           {t("cropCalendar")}
         </Text>
         <View className="flex-row flex gap-1 items-center">

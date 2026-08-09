@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
@@ -17,7 +16,18 @@ import { normalizePhoneNumber } from "@/lib/auth/phone";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { supabase } from "@/lib/supabase";
 import { Icon } from "@/components/ui/Icon";
-import { Cancel01Icon } from "@hugeicons/core-free-icons";
+import {
+  Cancel01Icon,
+  Globe02Icon,
+  WheatIcon,
+  MapPinIcon,
+  Logout01Icon,
+  ChevronRightIcon,
+  User02Icon,
+  SmartPhone01Icon,
+  Mail01Icon,
+  Tick01Icon,
+} from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
@@ -25,6 +35,7 @@ import { useCropContext } from "@/providers/CropProvider";
 import { useCrops } from "@/hooks/useCrops";
 import { useLanguage } from "@/hooks/useLanguage";
 import { LANGUAGE_NAMES } from "@/i18n";
+import { Avatar } from "react-native-paper";
 
 type Mode = "login" | "register";
 
@@ -33,9 +44,9 @@ export default function ProfileScreen() {
   const { t, language } = useLanguage();
   const [mode, setMode] = useState<Mode>("login");
   const router = useRouter();
-  
+
   const { colorScheme } = useColorScheme();
-  
+
   // Crop selection hooks
   const { selectedCrop, setSelectedCrop } = useCropContext();
   const { crops } = useCrops();
@@ -67,7 +78,10 @@ export default function ProfileScreen() {
             try {
               await AsyncStorage.clear();
               await supabase.auth.signOut();
-              Alert.alert("Data Cleared", "All local app storage and sessions have been reset.");
+              Alert.alert(
+                "Data Cleared",
+                "All local app storage and sessions have been reset."
+              );
               router.replace("/onboarding/welcome");
             } catch (err: any) {
               console.error("Error resetting data:", err);
@@ -135,7 +149,6 @@ export default function ProfileScreen() {
           setError(signUpError.message);
         } else {
           setSuccess(t("registrationSuccess"));
-          // Clear inputs
           setFirstName("");
           setLastName("");
           setPhone("");
@@ -165,384 +178,329 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <View style={styles.center} className="bg-gray-50 dark:bg-gray-900">
+      <View className="flex-1 justify-center items-center bg-background">
         <ActivityIndicator size="large" color="#10b981" />
       </View>
     );
   }
 
-  if (user) {
-    const meta = user.user_metadata || {};
-    const name = [meta.first_name, meta.last_name].filter(Boolean).join(" ");
-    const phoneNo = meta.phone || user.email?.split("@")[0] || "";
-
-    // Helper to get nice name
-    const selectedCropName = crops.find((c: any) => (c.id || c.name?.toLowerCase()) === selectedCrop)?.name || t("noneDefault");
-
-    return (
-      <SafeAreaView
-        style={styles.safeArea}
-        className="bg-gray-50 dark:bg-gray-900"
-      >
-        <ScrollView contentContainerStyle={styles.container}>
-          <View className="flex-row justify-between items-center mb-8">
-            <View>
-              <Text
-                style={styles.title}
-                className="text-gray-900 dark:text-white"
-              >
-                {t("yourProfile")}
-              </Text>
-              <Text
-                style={styles.subtitle}
-                className="text-gray-600 dark:text-gray-400 text-left"
-              >
-                {t("premiumActive")}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => router.back()}
-              className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full"
-            >
-              <Icon
-                icon={Cancel01Icon}
-                size={24}
-                className="text-gray-900 dark:text-white"
-                color={colorScheme === "dark" ? "white" : "black"}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={styles.profileCard}
-            className="bg-white dark:bg-gray-800"
-          >
-            <View style={styles.infoRow} className="items-center">
-              <Text
-                style={styles.infoLabel}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                {t("theme")}
-              </Text>
-              <ThemeToggle />
-            </View>
-
-            {/* Language Selector Row */}
-            <View style={styles.infoRow} className="items-center">
-              <Text
-                style={styles.infoLabel}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                {t("language")}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setLanguageModalVisible(true)}
-                className="bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl"
-                accessibilityRole="button"
-              >
-                <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
-                  {LANGUAGE_NAMES[language]} ▾
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Crop Selector Dropdown */}
-            <View style={styles.infoRow} className="items-center">
-              <Text
-                style={styles.infoLabel}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                {t("activeCrop")}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setCropModalVisible(true)}
-                className="bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl"
-              >
-                <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
-                  {selectedCrop ? selectedCropName : t("selectCrop")} ▾
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* My Farms */}
-            <View style={[styles.infoRow, { borderBottomWidth: 0 }]} className="items-center">
-              <Text
-                style={styles.infoLabel}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                {t("myFarms")}
-              </Text>
-              <TouchableOpacity
-                onPress={() => router.push("/my-farms")}
-                className="bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl"
-              >
-                <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
-                  →
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          
-          {/* Crop Selector Modal */}
-          <Modal visible={cropModalVisible} transparent animationType="slide" onRequestClose={() => setCropModalVisible(false)}>
-            <TouchableOpacity className="flex-1 bg-black/50 justify-end" activeOpacity={1} onPressOut={() => setCropModalVisible(false)}>
-              <View className="bg-white dark:bg-gray-800 rounded-t-3xl p-6 pb-12 max-h-[70%]">
-                <Text className="text-xl font-bold text-gray-900 dark:text-white mb-4">{t("cropPickerTitle")}</Text>
-                <ScrollView>
-                  <TouchableOpacity
-                    className={`py-4 border-b border-gray-100 dark:border-gray-700 flex-row justify-between items-center ${!selectedCrop ? 'bg-gray-50 dark:bg-gray-700/30' : ''}`}
-                    onPress={() => {
-                      setSelectedCrop("");
-                      setCropModalVisible(false);
-                    }}
-                  >
-                    <Text className="text-base text-gray-900 dark:text-white font-medium">None / Default</Text>
-                    {!selectedCrop && <Text className="text-emerald-600">✓</Text>}
-                  </TouchableOpacity>
-                  {crops.map((c: any) => {
-                    const cid = c.id || c.name?.toLowerCase();
-                    const isSel = selectedCrop === cid;
-                    return (
-                      <TouchableOpacity
-                        key={cid}
-                        className={`py-4 border-b border-gray-100 dark:border-gray-700 flex-row justify-between items-center px-2 ${isSel ? 'bg-emerald-50 dark:bg-emerald-900/20' : ''}`}
-                        onPress={() => {
-                          setSelectedCrop(cid);
-                          setCropModalVisible(false);
-                        }}
-                      >
-                        <Text className="text-base text-gray-900 dark:text-white font-medium">
-                          {c.name} <Text className="text-xs text-gray-500">({c.area} ha)</Text>
-                        </Text>
-                        {isSel && <Text className="text-emerald-600 font-bold">✓</Text>}
-                      </TouchableOpacity>
-                    );
-                  })}
-                </ScrollView>
-              </View>
-            </TouchableOpacity>
-          </Modal>
-
-          <View
-            style={styles.profileCard}
-            className="bg-white dark:bg-gray-800"
-          >
-            <View style={styles.infoRow}>
-              <Text
-                style={styles.infoLabel}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                {t("name")}
-              </Text>
-              <Text
-                style={styles.infoValue}
-                className="text-gray-900 dark:text-white"
-              >
-                {name || t("defaultUserName")}
-              </Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text
-                style={styles.infoLabel}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                {t("phone")}
-              </Text>
-              <Text
-                style={styles.infoValue}
-                className="text-gray-900 dark:text-white"
-              >
-                {phoneNo}
-              </Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text
-                style={styles.infoLabel}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                {t("emailLogin")}
-              </Text>
-              <Text
-                style={styles.infoValue}
-                className="text-gray-900 dark:text-white"
-              >
-                {user.email}
-              </Text>
-            </View>
-          </View>
-
-          <TouchableOpacity style={styles.buttonLogout} onPress={signOut}>
-            <Text style={styles.buttonText}>{t("nav.signOut")}</Text>
-          </TouchableOpacity>
-
-          {/* Dev-Only Clear Data Option */}
-          {__DEV__ && (
-            <View className="mt-8 p-4 border border-dashed border-amber-500/60 bg-amber-500/10 rounded-2xl">
-              <Text className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2 text-center">
-                🛠️ Developer Mode (__DEV__)
-              </Text>
-              <TouchableOpacity
-                onPress={handleClearDevData}
-                className="bg-amber-600 active:bg-amber-700 py-3 px-4 rounded-xl items-center"
-                accessibilityRole="button"
-              >
-                <Text className="text-white font-bold text-sm">
-                  Clear All Local Data & Storage
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </ScrollView>
-
-        {/* Language Selector Modal */}
-        <LanguageSelector
-          visible={languageModalVisible}
-          onClose={() => setLanguageModalVisible(false)}
-        />
-      </SafeAreaView>
-    );
-  }
+  // Helper for active crop name
+  const selectedCropName =
+    crops.find((c: any) => (c.id || c.name?.toLowerCase()) === selectedCrop)
+      ?.name || t("noneDefault");
 
   return (
-    <SafeAreaView
-      style={styles.safeArea}
-      className="bg-gray-50 dark:bg-gray-900"
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        <View className="flex-row justify-between items-center mb-8">
-          <View className="flex-1 mr-4">
-            <Text
-              style={styles.title}
-              className="text-gray-900 dark:text-white"
-            >
-              {mode === "login" ? t("signInTitle") : t("registerTitle")}
+    <SafeAreaView className="flex-1 bg-background">
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ── Screen Top Header Bar ── */}
+        <View className="flex-row justify-between items-center mb-6">
+          <View>
+            <Text className="text-2xl font-bold text-foreground">
+              {user
+                ? t("yourProfile")
+                : mode === "login"
+                ? t("signInTitle")
+                : t("registerTitle")}
             </Text>
-            <Text
-              style={styles.subtitle}
-              className="text-gray-600 dark:text-gray-400 text-left"
-            >
-              {mode === "login"
+            <Text className="text-xs font-medium text-muted-foreground mt-0.5">
+              {user
+                ? t("premiumActive")
+                : mode === "login"
                 ? t("authSubLogin")
                 : t("authSubRegister")}
             </Text>
           </View>
+
           <TouchableOpacity
             onPress={() => router.back()}
-            className="p-2 bg-gray-200 dark:bg-gray-800 rounded-full"
+            className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center shadow-sm"
+            accessibilityRole="button"
+            accessibilityLabel={t("cancel")}
           >
-            <Icon
-              icon={Cancel01Icon}
-              size={24}
-              className="text-gray-900 dark:text-white"
-              color={colorScheme === "dark" ? "white" : "black"}
-            />
+            <Icon icon={Cancel01Icon} size={20} className="text-foreground" />
           </TouchableOpacity>
         </View>
-        <View style={styles.profileCard} className="bg-white dark:bg-gray-800">
-          <View style={styles.infoRow} className="items-center">
-            <Text
-              style={styles.infoLabel}
-              className="text-gray-500 dark:text-gray-400"
+
+        {/* ── Logged-in User Hero Header Card ── */}
+        {user && (
+          <View className="bg-card border border-border rounded-3xl p-5 mb-5 shadow-sm flex-row items-center gap-4">
+            <View className="relative">
+              <Avatar.Image
+                size={58}
+                source={require("../assets/pic5.webp")}
+              />
+              <View className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-card" />
+            </View>
+
+            <View className="flex-1">
+              <Text className="text-lg font-bold text-foreground leading-tight">
+                {[user.user_metadata?.first_name, user.user_metadata?.last_name]
+                  .filter(Boolean)
+                  .join(" ") || t("defaultUserName")}
+              </Text>
+              <Text className="text-xs text-muted-foreground mt-0.5" numberOfLines={1}>
+                {user.email}
+              </Text>
+              <View className="flex-row items-center mt-2">
+                <View className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  <Text className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                    PRO MEMBER
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {/* ── Section: Preferences ── */}
+        <View className="mb-5">
+          <Text className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+            Preferences
+          </Text>
+
+          <View className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
+            {/* Theme Toggle */}
+            <View className="flex-row items-center justify-between p-4 border-b border-border/40">
+              <View className="flex-row items-center gap-3">
+                <View className="w-8 h-8 rounded-xl bg-muted items-center justify-center">
+                  <Icon icon={User02Icon} size={18} className="text-muted-foreground" />
+                </View>
+                <Text className="text-sm font-semibold text-foreground">
+                  {t("theme")}
+                </Text>
+              </View>
+              <ThemeToggle />
+            </View>
+
+            {/* Language Selector */}
+            <View className="flex-row items-center justify-between p-4 border-b border-border/40">
+              <View className="flex-row items-center gap-3">
+                <View className="w-8 h-8 rounded-xl bg-muted items-center justify-center">
+                  <Icon icon={Globe02Icon} size={18} className="text-muted-foreground" />
+                </View>
+                <Text className="text-sm font-semibold text-foreground">
+                  {t("language")}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setLanguageModalVisible(true)}
+                className="bg-muted border border-border px-3.5 py-1.5 rounded-xl flex-row items-center gap-1.5"
+                accessibilityRole="button"
+              >
+                <Text className="text-xs font-bold text-foreground">
+                  {LANGUAGE_NAMES[language]}
+                </Text>
+                <Icon icon={ChevronRightIcon} size={14} className="text-muted-foreground rotate-90" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Crop Selector */}
+            <View className="flex-row items-center justify-between p-4 border-b border-border/40">
+              <View className="flex-row items-center gap-3">
+                <View className="w-8 h-8 rounded-xl bg-emerald-500/10 items-center justify-center">
+                  <Icon icon={WheatIcon} size={18} className="text-emerald-600 dark:text-emerald-400" />
+                </View>
+                <Text className="text-sm font-semibold text-foreground">
+                  {t("activeCrop")}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setCropModalVisible(true)}
+                className="bg-emerald-500/10 dark:bg-emerald-950/30 border border-emerald-500/20 px-3.5 py-1.5 rounded-xl flex-row items-center gap-1.5"
+                accessibilityRole="button"
+              >
+                <Text className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                  {selectedCrop ? selectedCropName : t("selectCrop")}
+                </Text>
+                <Icon icon={ChevronRightIcon} size={14} className="text-emerald-600 dark:text-emerald-400 rotate-90" />
+              </TouchableOpacity>
+            </View>
+
+            {/* My Farms Link */}
+            <TouchableOpacity
+              onPress={() => router.push("/my-farms")}
+              className="flex-row items-center justify-between p-4 active:bg-muted/50"
+              accessibilityRole="button"
             >
-              {t("theme")}
-            </Text>
-            <ThemeToggle />
+              <View className="flex-row items-center gap-3">
+                <View className="w-8 h-8 rounded-xl bg-muted items-center justify-center">
+                  <Icon icon={MapPinIcon} size={18} className="text-muted-foreground" />
+                </View>
+                <Text className="text-sm font-semibold text-foreground">
+                  {t("myFarms")}
+                </Text>
+              </View>
+              <Icon icon={ChevronRightIcon} size={18} className="text-muted-foreground" />
+            </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.form} className="dark:bg-gray-800">
-          {error && <Text style={styles.errorText}>{error}</Text>}
-          {success && <Text style={styles.successText}>{success}</Text>}
+        {/* ── Section: Account Details (Logged-in) ── */}
+        {user && (
+          <View className="mb-5">
+            <Text className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+              Account Details
+            </Text>
 
-          {mode === "register" && (
-            <>
-              <Text style={styles.label}>{t("firstName")}</Text>
+            <View className="bg-card border border-border rounded-3xl p-4 shadow-sm gap-3.5">
+              <View className="flex-row items-center justify-between py-1 border-b border-border/40 pb-3">
+                <View className="flex-row items-center gap-2.5">
+                  <Icon icon={User02Icon} size={16} className="text-muted-foreground" />
+                  <Text className="text-xs font-medium text-muted-foreground">{t("name")}</Text>
+                </View>
+                <Text className="text-sm font-bold text-foreground">
+                  {[user.user_metadata?.first_name, user.user_metadata?.last_name].filter(Boolean).join(" ") || t("defaultUserName")}
+                </Text>
+              </View>
+
+              <View className="flex-row items-center justify-between py-1 border-b border-border/40 pb-3">
+                <View className="flex-row items-center gap-2.5">
+                  <Icon icon={SmartPhone01Icon} size={16} className="text-muted-foreground" />
+                  <Text className="text-xs font-medium text-muted-foreground">{t("phone")}</Text>
+                </View>
+                <Text className="text-sm font-bold text-foreground">
+                  {user.user_metadata?.phone || user.email?.split("@")[0] || "—"}
+                </Text>
+              </View>
+
+              <View className="flex-row items-center justify-between py-1">
+                <View className="flex-row items-center gap-2.5">
+                  <Icon icon={Mail01Icon} size={16} className="text-muted-foreground" />
+                  <Text className="text-xs font-medium text-muted-foreground">{t("emailLogin")}</Text>
+                </View>
+                <Text className="text-sm font-bold text-foreground" numberOfLines={1}>
+                  {user.email}
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {/* ── Section: Auth Form (Logged-out) ── */}
+        {!user && (
+          <View className="mb-5">
+            <View className="bg-card border border-border rounded-3xl p-5 shadow-sm">
+              {error && (
+                <View className="p-3 mb-4 rounded-xl bg-destructive/10 border border-destructive/20">
+                  <Text className="text-xs font-semibold text-destructive text-center">{error}</Text>
+                </View>
+              )}
+              {success && (
+                <View className="p-3 mb-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                  <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 text-center">{success}</Text>
+                </View>
+              )}
+
+              {mode === "register" && (
+                <>
+                  <Text className="text-xs font-semibold text-foreground mb-1 mt-1">{t("firstName")}</Text>
+                  <TextInput
+                    className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
+                    placeholder={t("firstNamePlaceholder")}
+                    placeholderTextColor="#9ca3af"
+                    value={firstName}
+                    onChangeText={setFirstName}
+                    autoCapitalize="words"
+                  />
+
+                  <Text className="text-xs font-semibold text-foreground mb-1">{t("lastName")}</Text>
+                  <TextInput
+                    className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
+                    placeholder={t("lastNamePlaceholder")}
+                    placeholderTextColor="#9ca3af"
+                    value={lastName}
+                    onChangeText={setLastName}
+                    autoCapitalize="words"
+                  />
+                </>
+              )}
+
+              <Text className="text-xs font-semibold text-foreground mb-1">{t("mobileLabel")}</Text>
               <TextInput
-                style={styles.input}
-                placeholder={t("firstNamePlaceholder")}
-                value={firstName || ""}
-                onChangeText={(text) => setFirstName(text || "")}
-                autoCapitalize="words"
+                className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
+                placeholder={t("mobilePlaceholder")}
+                placeholderTextColor="#9ca3af"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
               />
 
-              <Text style={styles.label}>{t("lastName")}</Text>
+              <Text className="text-xs font-semibold text-foreground mb-1">{t("passwordLabel")}</Text>
               <TextInput
-                style={styles.input}
-                placeholder={t("lastNamePlaceholder")}
-                value={lastName || ""}
-                onChangeText={(text) => setLastName(text || "")}
-                autoCapitalize="words"
-              />
-            </>
-          )}
-
-          <Text style={styles.label}>{t("mobileLabel")}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={t("mobilePlaceholder")}
-            keyboardType="phone-pad"
-            value={phone || ""}
-            onChangeText={(text) => setPhone(text || "")}
-          />
-
-          <Text style={styles.label}>{t("passwordLabel")}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={t("passwordHint")}
-            secureTextEntry
-            value={password || ""}
-            onChangeText={(text) => setPassword(text || "")}
-          />
-
-          {mode === "register" && (
-            <>
-              <Text style={styles.label}>{t("confirmPasswordLabel")}</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={t("confirmPlaceholder")}
+                className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
+                placeholder={t("passwordHint")}
+                placeholderTextColor="#9ca3af"
                 secureTextEntry
-                value={confirmPassword || ""}
-                onChangeText={(text) => setConfirmPassword(text || "")}
+                value={password}
+                onChangeText={setPassword}
               />
-            </>
-          )}
 
-          <TouchableOpacity
-            style={styles.buttonSubmit}
-            onPress={handleAuth}
-            disabled={submitting}
-          >
-            {submitting ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>
-                {mode === "login" ? t("signInBtn") : t("registerBtn")}
-              </Text>
-            )}
-          </TouchableOpacity>
+              {mode === "register" && (
+                <>
+                  <Text className="text-xs font-semibold text-foreground mb-1">{t("confirmPasswordLabel")}</Text>
+                  <TextInput
+                    className="bg-muted border border-border rounded-xl p-3.5 text-sm text-foreground mb-3"
+                    placeholder={t("confirmPlaceholder")}
+                    placeholderTextColor="#9ca3af"
+                    secureTextEntry
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                  />
+                </>
+              )}
 
+              <TouchableOpacity
+                onPress={handleAuth}
+                disabled={submitting}
+                className="bg-emerald-600 active:bg-emerald-700 rounded-xl py-3.5 items-center justify-center mt-3 shadow-md shadow-emerald-950/20"
+                accessibilityRole="button"
+              >
+                {submitting ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text className="text-white font-bold text-sm">
+                    {mode === "login" ? t("signInBtn") : t("registerBtn")}
+                  </Text>
+                )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setMode(mode === "login" ? "register" : "login");
+                  setError(null);
+                  setSuccess(null);
+                }}
+                className="mt-4 py-1 items-center"
+              >
+                <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  {mode === "login" ? t("switchToRegister") : t("haveAccount")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {/* ── Sign Out Action Button ── */}
+        {user && (
           <TouchableOpacity
-            style={styles.switchButton}
-            onPress={() => {
-              setMode(mode === "login" ? "register" : "login");
-              setError(null);
-              setSuccess(null);
-            }}
+            onPress={signOut}
+            className="bg-destructive/10 dark:bg-destructive/20 border border-destructive/20 active:bg-destructive/20 rounded-2xl py-3.5 flex-row items-center justify-center gap-2 mb-4"
+            accessibilityRole="button"
           >
-            <Text style={styles.switchText}>
-              {mode === "login"
-                ? t("switchToRegister")
-                : t("haveAccount")}
+            <Icon icon={Logout01Icon} size={18} className="text-destructive" />
+            <Text className="text-destructive font-bold text-sm">
+              {t("nav.signOut")}
             </Text>
           </TouchableOpacity>
-        </View>
+        )}
 
-        {/* Dev-Only Clear Data Option */}
+        {/* ── Dev-Only Clear Data Option ── */}
         {__DEV__ && (
-          <View className="mt-8 p-4 border border-dashed border-amber-500/60 bg-amber-500/10 rounded-2xl">
-            <Text className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2 text-center">
+          <View className="p-4 border border-dashed border-amber-500/50 bg-amber-500/10 rounded-3xl mt-2">
+            <Text className="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2 text-center">
               🛠️ Developer Mode (__DEV__)
             </Text>
             <TouchableOpacity
@@ -550,142 +508,85 @@ export default function ProfileScreen() {
               className="bg-amber-600 active:bg-amber-700 py-3 px-4 rounded-xl items-center"
               accessibilityRole="button"
             >
-              <Text className="text-white font-bold text-sm">
+              <Text className="text-white font-bold text-xs">
                 Clear All Local Data & Storage
               </Text>
             </TouchableOpacity>
           </View>
         )}
       </ScrollView>
+
+      {/* ── Crop Selector Modal ── */}
+      <Modal
+        visible={cropModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setCropModalVisible(false)}
+      >
+        <TouchableOpacity
+          className="flex-1 bg-black/60 justify-end"
+          activeOpacity={1}
+          onPressOut={() => setCropModalVisible(false)}
+        >
+          <View className="bg-card border-t border-border rounded-t-3xl p-6 pb-12 max-h-[70%]">
+            <View className="w-12 h-1 bg-border rounded-full self-center mb-4" />
+            <Text className="text-lg font-bold text-foreground mb-4">
+              {t("cropPickerTitle")}
+            </Text>
+            <ScrollView>
+              <TouchableOpacity
+                className={`py-3.5 px-3 rounded-2xl mb-1.5 flex-row justify-between items-center ${
+                  !selectedCrop ? "bg-muted border border-border" : ""
+                }`}
+                onPress={() => {
+                  setSelectedCrop("");
+                  setCropModalVisible(false);
+                }}
+              >
+                <Text className="text-sm font-semibold text-foreground">
+                  None / Default
+                </Text>
+                {!selectedCrop && (
+                  <Icon icon={Tick01Icon} size={18} className="text-emerald-500" />
+                )}
+              </TouchableOpacity>
+
+              {crops.map((c: any) => {
+                const cid = c.id || c.name?.toLowerCase();
+                const isSel = selectedCrop === cid;
+                return (
+                  <TouchableOpacity
+                    key={cid}
+                    className={`py-3.5 px-3 rounded-2xl mb-1.5 flex-row justify-between items-center ${
+                      isSel ? "bg-emerald-500/10 border border-emerald-500/20" : ""
+                    }`}
+                    onPress={() => {
+                      setSelectedCrop(cid);
+                      setCropModalVisible(false);
+                    }}
+                  >
+                    <Text className="text-sm font-semibold text-foreground">
+                      {c.name}{" "}
+                      <Text className="text-xs text-muted-foreground font-normal">
+                        ({c.area} ha)
+                      </Text>
+                    </Text>
+                    {isSel && (
+                      <Icon icon={Tick01Icon} size={18} className="text-emerald-500" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* ── Language Selector Modal ── */}
+      <LanguageSelector
+        visible={languageModalVisible}
+        onClose={() => setLanguageModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f9fafb",
-  },
-  container: {
-    padding: 24,
-    paddingTop: 48,
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f9fafb",
-  },
-  header: {
-    marginBottom: 32,
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#111827",
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#6b7280",
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  form: {
-    backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: 6,
-    marginTop: 12,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#d1d5db",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: "#111827",
-    backgroundColor: "#f9fafb",
-  },
-  errorText: {
-    color: "#dc2626",
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  successText: {
-    color: "#16a34a",
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  buttonSubmit: {
-    backgroundColor: "#10b981",
-    borderRadius: 8,
-    padding: 14,
-    alignItems: "center",
-    marginTop: 24,
-  },
-  buttonLogout: {
-    backgroundColor: "#ef4444",
-    borderRadius: 8,
-    padding: 14,
-    alignItems: "center",
-    marginTop: 24,
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  switchButton: {
-    marginTop: 16,
-    alignItems: "center",
-  },
-  switchText: {
-    color: "#059669",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  profileCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-    marginBottom: 16,
-  },
-  infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
-  },
-  infoLabel: {
-    fontSize: 14,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-  infoValue: {
-    fontSize: 14,
-    color: "#111827",
-    fontWeight: "600",
-  },
-});

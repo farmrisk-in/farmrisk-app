@@ -12,8 +12,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { Icon } from "@/components/ui/Icon";
-import { ArrowLeft02Icon } from "@hugeicons/core-free-icons";
+import { ChevronLeftIcon, Globe02Icon } from "@hugeicons/core-free-icons";
 import { supabase } from "@/lib/supabase";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
 
@@ -38,7 +39,7 @@ export default function Auth() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-
+  const [langVisible, setLangVisible] = useState(false);
   const goNext = () => router.replace("/onboarding/location-perm");
 
   const handleAuth = async () => {
@@ -105,8 +106,10 @@ export default function Auth() {
           goNext();
         }
       } else {
-        const { error: signInError } =
-          await supabase.auth.signInWithPassword({ email, password });
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
         if (signInError) {
           setError(signInError.message);
@@ -136,29 +139,47 @@ export default function Auth() {
   };
 
   const inputClass =
-    "bg-zinc-800 border border-white/10 rounded-xl px-4 py-3.5 text-base text-white placeholder:text-zinc-500";
+    "bg-card border border-border rounded-2xl px-4 py-3.5 text-base text-foreground placeholder:text-muted-foreground";
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      className="flex-1 bg-[#09090b]"
+      className="flex-1 bg-background"
     >
       <ScrollView
         contentContainerClassName="flex-grow px-5 pt-12 pb-8"
         keyboardShouldPersistTaps="handled"
       >
-        {/* Back to welcome */}
-        <Pressable
-          onPress={() => router.replace("/onboarding/welcome")}
-          className="mb-6 w-10 h-10 rounded-full bg-zinc-800 items-center justify-center border border-white/10"
-          accessibilityRole="button"
-          accessibilityLabel={t("common:cancel")}
-        >
-          <Icon icon={ArrowLeft02Icon} size={20} className="text-white" />
-        </Pressable>
+        <View className="flex-row items-center justify-between mb-6">
+          {/* Back to welcome */}
+          <Pressable
+            onPress={() => router.replace("/onboarding/welcome")}
+            accessibilityRole="button"
+            accessibilityLabel={t("common:cancel")}
+          >
+            <Icon
+              icon={ChevronLeftIcon}
+              size={32}
+              className="text-foreground"
+            />
+          </Pressable>
+
+          <Pressable
+            onPress={() => setLangVisible(true)}
+            accessibilityRole="button"
+            accessibilityLabel={t("common:chooseLanguage")}
+          >
+            <Icon
+              icon={Globe02Icon}
+              size={28}
+              strokeWidth={1}
+              className="text-foreground"
+            />
+          </Pressable>
+        </View>
 
         <Animated.View entering={FadeInDown.duration(600)}>
-          <Text className="text-2xl font-bold text-white">
+          <Text className="text-2xl font-bold text-foreground">
             {mode === "register" ? t("registerTitle") : t("signInTitle")}
           </Text>
         </Animated.View>
@@ -220,14 +241,14 @@ export default function Auth() {
 
           {/* Error */}
           {error && (
-            <Text className="text-red-400 text-sm text-center mt-1">
+            <Text className="text-destructive-foreground text-sm text-center mt-1">
               {error}
             </Text>
           )}
 
           {/* Success */}
           {success && (
-            <Text className="text-emerald-400 text-sm text-center mt-1">
+            <Text className="text-primary-foreground text-sm text-center mt-1">
               {success}
             </Text>
           )}
@@ -236,13 +257,13 @@ export default function Auth() {
           <Pressable
             onPress={handleAuth}
             disabled={submitting}
-            className="mt-2 rounded-2xl bg-emerald-600 active:bg-emerald-700 items-center justify-center py-4 disabled:opacity-50"
+            className="mt-2 rounded-2xl bg-primary items-center justify-center py-4 disabled:opacity-50"
             accessibilityRole="button"
           >
             {submitting ? (
-              <ActivityIndicator color="#ffffff" />
+              <ActivityIndicator className="text-foreground" />
             ) : (
-              <Text className="text-white text-lg font-semibold">
+              <Text className="text-foreground text-lg font-semibold w-full text-center">
                 {mode === "register" ? t("registerBtn") : t("signInBtn")}
               </Text>
             )}
@@ -250,7 +271,7 @@ export default function Auth() {
 
           {/* Toggle mode */}
           <Pressable onPress={toggleMode} className="items-center py-3">
-            <Text className="text-zinc-400 text-sm">
+            <Text className="text-muted-foreground text-sm w-full text-center">
               {mode === "register" ? t("haveAccount") : t("noAccount")}
             </Text>
           </Pressable>
@@ -259,14 +280,18 @@ export default function Auth() {
           <View className="items-center border-t border-white/10 pt-5 mt-2">
             <Pressable
               onPress={continueAsGuest}
-              className="rounded-2xl bg-zinc-800 border border-white/10 items-center justify-center py-4 w-full"
+              className="rounded-2xl bg-card border border-border items-center justify-center py-4 w-full"
               accessibilityRole="button"
             >
-              <Text className="text-zinc-200 text-base font-medium">
+              <Text className="text-muted-foreground text-base font-medium">
                 {t("continueAsGuest")}
               </Text>
             </Pressable>
           </View>
+          <LanguageSelector
+            visible={langVisible}
+            onClose={() => setLangVisible(false)}
+          />
         </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>

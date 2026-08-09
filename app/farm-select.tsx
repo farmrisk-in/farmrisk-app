@@ -34,7 +34,7 @@ export default function FarmSelectScreen() {
   const isDark = colorScheme === "dark";
   const { location } = useLocationContext();
   const { selectFarm } = useFarmContext();
-  const { fields, saveField, isSaving } = useFields();
+  const { fields, saveField, isSaving, refetch } = useFields();
 
   const mapRef = useRef<FarmMapHandle>(null);
   const [drawMode, setDrawMode] = useState(false);
@@ -94,10 +94,12 @@ export default function FarmSelectScreen() {
         }
         break;
       case "polygon_complete":
+        // evt.points already contains the final captured snapshot from the JS side
         if (evt.points && evt.points.length >= 3) {
+          const pts = evt.points;
           // Compute center
           let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
-          for (const p of evt.points) {
+          for (const p of pts) {
             if (p.lat < minLat) minLat = p.lat;
             if (p.lat > maxLat) maxLat = p.lat;
             if (p.lng < minLng) minLng = p.lng;
@@ -105,11 +107,19 @@ export default function FarmSelectScreen() {
           }
           const centerLat = (minLat + maxLat) / 2;
           const centerLng = (minLng + maxLng) / 2;
-          const ring = [...evt.points.map((p) => [p.lng, p.lat]), [evt.points[0].lng, evt.points[0].lat]];
+          const ring = [...pts.map((p) => [p.lng, p.lat]), [pts[0].lng, pts[0].lat]];
           setCompletedGeometry({ type: "Polygon", coordinates: [ring] });
           setCompletedCenterLat(centerLat);
           setCompletedCenterLng(centerLng);
-          setPoints(evt.points);
+          setPoints(pts);
+          // Compute final area from pts
+          import("@turf/area").then(({ area }) => {
+            import("@turf/helpers").then(({ polygon }) => {
+              try {
+                setPolygonArea(area(polygon([ring])));
+              } catch { setPolygonArea(0); }
+            });
+          });
           setSaveDialogVisible(true);
         }
         break;
@@ -151,7 +161,7 @@ export default function FarmSelectScreen() {
     try {
       const fieldId = generateFieldId();
       const geometry = completedGeometry!;
-      await saveField({
+      const saved = await saveField({
         fieldId,
         fieldName: info.name,
         source: "manual",
@@ -165,17 +175,19 @@ export default function FarmSelectScreen() {
         season: info.season,
         cropStage: info.cropStage,
       });
+      // Close dialog and reset all drawing state
       setSaveDialogVisible(false);
       setDrawMode(false);
       setPoints([]);
       setPolygonArea(0);
-      // Refresh farms on map
-      if (mapReady) {
-        const { listFields } = await import("@/lib/farms/storage");
-        const updated = await listFields(null);
-        mapRef.current?.renderFarms(updated);
+      setCompletedGeometry(null);
+      mapRef.current?.setDrawMode(false);
+      // Refresh the farm list from storage and re-render on map
+      const updated = await refetch();
+      if (updated.data) {
+        mapRef.current?.renderFarms(updated.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Failed to save farm:", err);
     }
   };

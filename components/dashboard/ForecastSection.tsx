@@ -75,7 +75,7 @@ export function ForecastSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="grow text-xl text-foreground font-semibold">
+          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {tDash("forecast16Day")}
           </Text>
         </View>
@@ -126,7 +126,7 @@ export function ForecastSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="grow text-xl text-foreground font-semibold">
+          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {tDash("forecast16Day")}
           </Text>
         </View>
@@ -151,7 +151,7 @@ export function ForecastSection() {
           strokeWidth={2}
           size={26}
         />
-        <Text className="grow text-xl text-foreground font-semibold">
+        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
           {tDash("forecast16Day")}
         </Text>
         <TouchableOpacity

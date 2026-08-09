@@ -26,6 +26,7 @@ import { Searchbar } from "react-native-paper";
 import { cssInterop } from "nativewind";
 import { useLocationSearch } from "@/hooks/useDashboardQueries";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { useFields } from "@/hooks/useFields";
 import { Icon } from "@/components/ui/Icon";
 import {
   LocationOffline01Icon,
@@ -35,6 +36,7 @@ import {
   Location01Icon,
   Cancel01Icon,
   Search01Icon,
+  MapPinIcon,
 } from "@hugeicons/core-free-icons";
 
 // Teach NativeWind how to style the Searchbar
@@ -67,6 +69,7 @@ export default function SearchScreen() {
   const { setLocation, requestCurrentLocation, isResolving } =
     useLocationContext();
   const { t } = useTranslation(["search"]);
+  const { fields } = useFields();
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -160,6 +163,18 @@ export default function SearchScreen() {
     );
   }, [debouncedQuery, recents]);
 
+  // Saved farms that match the search query
+  const matchingFarms = useMemo(() => {
+    if (!fields || fields.length === 0) return [];
+    if (debouncedQuery.length < 2) return fields; // show all when idle
+    const q = debouncedQuery.toLowerCase();
+    return fields.filter(
+      (f) =>
+        (f.name && f.name.toLowerCase().includes(q)) ||
+        (f.fieldId && f.fieldId.toLowerCase().includes(q)),
+    );
+  }, [fields, debouncedQuery]);
+
   // Filter API results to exclude duplicate items that are already in matchingRecents
   const filteredApiResults = useMemo(() => {
     if (!results || debouncedQuery.length < 2) return [];
@@ -175,7 +190,7 @@ export default function SearchScreen() {
   const totalResultsCount = matchingRecents.length + filteredApiResults.length;
   const showResults = debouncedQuery.length >= 2 && totalResultsCount > 0;
   const showEmpty =
-    debouncedQuery.length >= 2 && !isLoading && totalResultsCount === 0;
+    debouncedQuery.length >= 2 && !isLoading && totalResultsCount === 0 && matchingFarms.length === 0;
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -347,7 +362,7 @@ export default function SearchScreen() {
           </View>
         )}
 
-        {/* Idle State (Quick Actions + Recents) */}
+        {/* Idle State (Quick Actions + Farms + Recents) */}
         {debouncedQuery.length < 2 && (
           <>
             {/* Quick Actions (Side by Side in 1 line) */}
@@ -404,6 +419,54 @@ export default function SearchScreen() {
                 </View>
               </TouchableOpacity>
             </View>
+
+            {/* My Farms Section */}
+            {fields.length > 0 && (
+              <View className="mt-5 px-4">
+                <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">
+                  My Farms
+                </Text>
+                <View className="bg-card rounded-2xl border border-border overflow-hidden">
+                  {fields.map((farm, idx) => (
+                    <TouchableOpacity
+                      key={farm.id}
+                      onPress={() => {
+                        if (farm.centerLat && farm.centerLng) {
+                          setLocation({
+                            lat: farm.centerLat,
+                            lng: farm.centerLng,
+                            name: farm.name || farm.fieldId,
+                            displayName: farm.name || farm.fieldId,
+                          });
+                          Keyboard.dismiss();
+                          router.back();
+                        }
+                      }}
+                      activeOpacity={0.7}
+                      className={`flex-row items-center gap-3 p-3.5 active:bg-muted/50 ${
+                        idx < fields.length - 1 ? "border-b border-border" : ""
+                      }`}
+                    >
+                      <View className="w-9 h-9 rounded-xl bg-emerald-500/10 items-center justify-center">
+                        <Icon
+                          icon={MapPinIcon}
+                          size={18}
+                          className="text-emerald-600 dark:text-emerald-400"
+                        />
+                      </View>
+                      <View className="flex-1">
+                        <Text className="text-sm font-semibold text-foreground" numberOfLines={1}>
+                          {farm.name || farm.fieldId}
+                        </Text>
+                        <Text className="text-xs text-muted-foreground mt-0.5" numberOfLines={1}>
+                          {farm.areaM2 ? `${(farm.areaM2 / 10000).toFixed(2)} ha` : "Farm"}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            )}
 
             {/* Recent Searches */}
             {recents.length > 0 && (

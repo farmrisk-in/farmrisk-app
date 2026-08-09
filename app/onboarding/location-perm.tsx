@@ -8,7 +8,7 @@ import * as Location from "expo-location";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { markOnboarded } from "@/lib/onboarding";
 import { Icon } from "@/components/ui/Icon";
-import { PinLocation01Icon } from "@hugeicons/core-free-icons";
+import { ChevronLeftIcon, PinLocation01Icon } from "@hugeicons/core-free-icons";
 
 /**
  * Step 4 — Geolocation permission dialog.
@@ -83,14 +83,9 @@ export default function LocationPerm() {
   const selectManually = () => router.push("/search");
 
   return (
-    <Modal
-      visible
-      transparent
-      animationType="fade"
-      onRequestClose={handleBack}
-    >
+    <Modal visible transparent animationType="fade" onRequestClose={handleBack}>
       {/* Full-screen dark backdrop */}
-      <View className="flex-1 bg-black/60">
+      <View className="flex-1 bg-background">
         {/* Blurred underlay */}
         <BlurView
           intensity={40}
@@ -102,10 +97,10 @@ export default function LocationPerm() {
         <View className="flex-1 items-center justify-center px-6">
           <Animated.View
             entering={ZoomIn.delay(150).duration(500).springify()}
-            className="w-full max-w-sm rounded-3xl overflow-hidden border border-white/10"
+            className="w-full max-w-sm rounded-3xl overflow-hidden border border-border"
           >
             <BlurView intensity={20} tint="dark">
-              <View className="p-7 items-center bg-zinc-900/80">
+              <View className="p-7 items-center bg-card">
                 {/* Icon */}
                 <Animated.View
                   entering={FadeIn.delay(300).duration(400)}
@@ -119,32 +114,30 @@ export default function LocationPerm() {
                 </Animated.View>
 
                 {/* Title */}
-                <Text className="text-xl font-bold text-white text-center">
+                <Text className="text-xl font-bold text-foreground text-center">
                   {t("enableTelemetryTitle")}
                 </Text>
 
                 {/* Description */}
-                <Text className="mt-3 text-sm leading-5 text-zinc-300 text-center">
+                <Text className="mt-3 text-sm leading-5 text-muted-foreground text-center">
                   {t("enableTelemetryDesc")}
                 </Text>
 
                 {/* Error */}
                 {error && (
-                  <Text className="mt-3 text-sm text-red-400 text-center">
+                  <Text className="mt-3 text-sm text-destructive text-center">
                     {error}
                   </Text>
                 )}
 
                 {/* Primary CTA — conditionally changes based on state */}
                 <Pressable
-                  onPress={
-                    hasLocation && !error ? complete : allowLocation
-                  }
+                  onPress={hasLocation && !error ? complete : allowLocation}
                   disabled={granting}
-                  className="mt-6 w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 items-center justify-center py-4 disabled:opacity-50"
+                  className="mt-6 w-full rounded-2xl bg-primary items-center justify-center py-4 disabled:opacity-50"
                   accessibilityRole="button"
                 >
-                  <Text className="text-white text-base font-semibold">
+                  <Text className="text-foreground text-base font-semibold">
                     {hasLocation && !error
                       ? t("continueToDashboard")
                       : t("allowLocation")}
@@ -155,10 +148,10 @@ export default function LocationPerm() {
                 <Pressable
                   onPress={selectManually}
                   disabled={granting}
-                  className="mt-3 w-full rounded-2xl border border-white/10 bg-zinc-800 active:bg-zinc-700 items-center justify-center py-4"
+                  className="mt-3 w-full rounded-2xl border border-border bg-card items-center justify-center py-4"
                   accessibilityRole="button"
                 >
-                  <Text className="text-zinc-300 text-sm font-medium">
+                  <Text className="text-muted-foreground text-sm font-medium w-full text-center">
                     {t("selectManually")}
                   </Text>
                 </Pressable>
@@ -166,11 +159,16 @@ export default function LocationPerm() {
                 {/* Back link */}
                 <Pressable
                   onPress={handleBack}
-                  className="mt-4"
+                  className="mt-4 flex flex-row items-center gap-0.5"
                   accessibilityRole="button"
                 >
-                  <Text className="text-zinc-500 text-xs">
-                    ← Back to auth
+                  <Icon
+                    icon={ChevronLeftIcon}
+                    size={20}
+                    className="text-muted-foreground"
+                  />
+                  <Text className="text-muted-foreground text-sm">
+                    Back to auth
                   </Text>
                 </Pressable>
               </View>

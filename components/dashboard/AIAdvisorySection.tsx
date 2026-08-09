@@ -113,7 +113,7 @@ export function AIAdvisorySection({ crop }: Props) {
           size={30}
           className="text-primary dark:text-white"
         />
-        <Text className="text-xl grow text-foreground font-semibold">
+        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
           {t("aiTitle")}
         </Text>
         {sources && (

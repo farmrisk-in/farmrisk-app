@@ -43,7 +43,7 @@ export default function Splash() {
 
   return (
     <View
-      className="flex-1 bg-[#09090b] items-center justify-center"
+      className="flex-1 bg-background items-center justify-center"
       style={{ paddingTop: insets.top }}
     >
       <Animated.View entering={ZoomIn.duration(700).springify()}>
@@ -52,7 +52,7 @@ export default function Splash() {
 
       <Animated.Text
         entering={FadeIn.delay(250).duration(600)}
-        className="mt-6 text-4xl font-bold tracking-tight text-white"
+        className="mt-6 text-4xl font-bold tracking-tight text-foreground"
       >
         FarmRisk
       </Animated.Text>

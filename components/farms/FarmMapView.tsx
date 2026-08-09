@@ -101,11 +101,18 @@ function buildFarmMapHTML(initialLat: number, initialLng: number, initialZoom: n
     var vertexMarkers = [];
     var sketchLine = null;
 
-    function clearDrawingLayers() {
+    // Clear only the visual drawing layers (markers + sketch line)
+    // Does NOT reset the points array so undo/finish still work.
+    function clearVisualLayers() {
       vertexMarkers.forEach(function(m) { map.removeLayer(m); });
       vertexMarkers = [];
-      points = [];
       if (sketchLine) { map.removeLayer(sketchLine); sketchLine = null; }
+    }
+
+    // Full reset — wipes points AND visuals.
+    function clearDrawingLayers() {
+      clearVisualLayers();
+      points = [];
     }
 
     function rebuildSketch() {
@@ -151,25 +158,28 @@ function buildFarmMapHTML(initialLat: number, initialLng: number, initialZoom: n
 
     function doFinishDrawing() {
       if (points.length < 3) { sendToRN({ type: 'draw_error', reason: 'points' }); return; }
+      // Snapshot points BEFORE clearing any layers
       var pts = points.slice();
-      // Remove duplicate closing point from auto-finish
+      // Remove duplicate closing point if user tapped near first point
       if (pts.length > 1) {
         var first = pts[0], last = pts[pts.length - 1];
-        if (Math.abs(map.latLngToContainerPoint([last.lat, last.lng]).x - map.latLngToContainerPoint([first.lat, first.lng]).x) < 8 &&
-            Math.abs(map.latLngToContainerPoint([last.lat, last.lng]).y - map.latLngToContainerPoint([first.lat, first.lng]).y) < 8) {
-          pts.pop();
-          var m = vertexMarkers.pop();
-          if (m) map.removeLayer(m);
-        }
+        try {
+          if (Math.abs(map.latLngToContainerPoint([last.lat, last.lng]).x - map.latLngToContainerPoint([first.lat, first.lng]).x) < 20 &&
+              Math.abs(map.latLngToContainerPoint([last.lat, last.lng]).y - map.latLngToContainerPoint([first.lat, first.lng]).y) < 20) {
+            pts.pop();
+          }
+        } catch(e) {}
       }
       if (pts.length < 3) { sendToRN({ type: 'draw_error', reason: 'points' }); return; }
-      points = pts;
+      // Clear visuals (markers + sketch line) but keep pts snapshot safe
       clearDrawingLayers();
-      L.polygon(points.map(function(p) { return [p.lat, p.lng]; }), {
-        color: '#10b981', weight: 2, fillColor: '#10b981', fillOpacity: 0.2
-      }).addTo(map);
       drawMode = false;
-      sendToRN({ type: 'polygon_complete', points: points });
+      // Draw the completed filled polygon
+      L.polygon(pts.map(function(p) { return [p.lat, p.lng]; }), {
+        color: '#10b981', weight: 2.5, fillColor: '#10b981', fillOpacity: 0.25
+      }).addTo(map);
+      // Fire event WITH the captured point snapshot
+      sendToRN({ type: 'polygon_complete', points: pts });
     }
 
     // ── Farm layer ─────────────────────────────────────────────
@@ -238,6 +248,8 @@ function buildFarmMapHTML(initialLat: number, initialLng: number, initialZoom: n
         switch (cmd.action) {
           case 'setDrawMode':
             drawMode = !!cmd.enabled;
+            // Only do a full wipe when explicitly disabling; entering draw mode
+            // just flips the flag so existing points survive a re-enable.
             if (!drawMode) clearDrawingLayers();
             break;
           case 'undoPoint': undoLastPoint(); break;

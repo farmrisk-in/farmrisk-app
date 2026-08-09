@@ -173,7 +173,7 @@ export function SoilMoistureSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="grow text-xl text-foreground font-semibold">
+          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {tW("soilMoisture")}
           </Text>
         </View>
@@ -203,7 +203,7 @@ export function SoilMoistureSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="grow text-xl text-foreground font-semibold">
+          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
             {tW("soilMoisture")}
           </Text>
         </View>
@@ -247,7 +247,7 @@ export function SoilMoistureSection({ crop }: Props) {
           strokeWidth={1.5}
           className="text-foreground"
         />
-        <Text className="grow text-xl text-foreground font-semibold">
+        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
           {tW("soilMoisture")}
         </Text>
         <View className="flex-row items-center gap-1">
