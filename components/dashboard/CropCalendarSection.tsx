@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text } from "react-native";
 import { useCalendar } from "@/hooks/useCalendar";
 import { Icon } from "../ui/Icon";
@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 interface Props {
   crop?: string;
 }
+
+type PeriodType = "sowing" | "growing" | "harvesting";
 
 // ── constants ────────────────────────────────────────────────────────────────
 const MONTHS_SHORT = [
@@ -29,6 +31,7 @@ const MONTHS_SHORT = [
   "N",
   "D",
 ];
+
 const MONTHS_FULL = [
   "Jan",
   "Feb",
@@ -45,222 +48,248 @@ const MONTHS_FULL = [
 ];
 
 // Phase color palette – rich, dark-mode friendly
-const PHASE_COLORS = {
+const PHASE_COLORS: Record<
+  PeriodType,
+  { bar: string; text: string; bg: string }
+> = {
   sowing: {
     bar: "#22c55e",
-    bg: "rgba(34,197,94,0.15)",
     text: "#16a34a",
-    dot: "#22c55e",
+    bg: "rgba(34,197,94,0.15)",
   },
   growing: {
-    bar: "#a16207",
-    bg: "rgba(161,98,7,0.15)",
+    bar: "rgba(255,187,4,0.7)", // 60% transparent (40% opacity)
     text: "#ca8a04",
-    dot: "#ca8a04",
+    bg: "rgba(202,138,4,0.15)",
   },
   harvesting: {
     bar: "#ef4444",
-    bg: "rgba(239,68,68,0.15)",
     text: "#dc2626",
-    dot: "#ef4444",
+    bg: "rgba(239,68,68,0.15)",
   },
 };
 
-const TODAY_MONTH = new Date().getMonth() + 1; // 1-indexed
+const TODAY_MONTH = new Date().getMonth() + 1; // 1-indexed (1..12)
 
-function colForMonth(mon: number) {
-  return mon - 1; // 0-indexed column
-}
-
-function MonthBar({
+// ── Period Bar Segment Component ──────────────────────────────────────────────
+function PeriodBarSegment({
   from,
   to,
   color,
-  totalCols,
+  zIndex = 10,
+  roundedClass = "rounded-none",
 }: {
   from: number;
   to: number;
   color: string;
-  totalCols: number;
+  zIndex?: number;
+  roundedClass?: string;
 }) {
-  const colW = 100 / totalCols;
-  const startCol = colForMonth(from);
+  const colW = 100 / 12;
+  const startCol = from - 1;
   const wraps = to < from;
+
+  const renderSegment = (
+    leftPct: number,
+    widthPct: number,
+    keySuffix: string,
+    extraRounded: string = roundedClass
+  ) => (
+    <View
+      key={keySuffix}
+      style={{
+        left: `${leftPct}%`,
+        width: `${widthPct}%`,
+        backgroundColor: color,
+        zIndex,
+      }}
+      className={`absolute top-1.5 bottom-1.5 ${extraRounded}`}
+    />
+  );
+
   if (!wraps) {
     const span = to - from + 1;
-    return (
-      <View
-        className="absolute top-0 bottom-0 rounded-full"
-        style={{
-          left: `${startCol * colW}%`,
-          width: `${span * colW}%`,
-          backgroundColor: color,
-        }}
-      />
-    );
+    return renderSegment(startCol * colW, span * colW, "main", roundedClass);
   } else {
     const seg1 = 12 - from + 1;
     const seg2 = to;
     return (
       <>
-        <View
-          className="absolute top-0 bottom-0 rounded-full"
-          style={{
-            left: `${startCol * colW}%`,
-            width: `${seg1 * colW}%`,
-            backgroundColor: color,
-          }}
-        />
-        <View
-          className="absolute top-0 bottom-0 rounded-full"
-          style={{ left: 0, width: `${seg2 * colW}%`, backgroundColor: color }}
-        />
+        {renderSegment(
+          startCol * colW,
+          seg1 * colW,
+          "seg1",
+          roundedClass.includes("rounded-l") ? "rounded-l-md" : "rounded-none"
+        )}
+        {renderSegment(
+          0,
+          seg2 * colW,
+          "seg2",
+          roundedClass.includes("rounded-r") ? "rounded-r-md" : "rounded-none"
+        )}
       </>
     );
   }
 }
 
-// ── Season Card
+// ── Season Card ──────────────────────────────────────────────────────────────
 function SeasonCard({ entry }: { entry: any }) {
   const { t } = useTranslation(["calendar"]);
+
   const sowFrom = entry.sowFromMon || entry.sow_from_mon;
   const sowTo = entry.sowToMon || entry.sow_to_mon;
   const harvFrom = entry.harvFromMon || entry.harv_from_mon;
   const harvTo = entry.harvToMon || entry.harv_to_mon;
   const season = entry.season || t("season");
 
+  // Calculate growing phase between sowing end and harvest start
+  let growFrom: number | null = null;
+  let growTo: number | null = null;
+
+  if (sowTo && harvFrom) {
+    const nextAfterSow = (sowTo % 12) + 1;
+    const prevBeforeHarv = harvFrom === 1 ? 12 : harvFrom - 1;
+    if (nextAfterSow !== harvFrom) {
+      growFrom = nextAfterSow;
+      growTo = prevBeforeHarv;
+    }
+  }
+
   const COLS = 12;
   const colW = 100 / COLS;
 
-  // Calculate growing dates properly (between sowing end and harvest start)
-  const growFrom = sowTo ? (sowTo % 12) + 1 : null;
-  const growTo = harvFrom ? (harvFrom === 1 ? 12 : harvFrom - 1) : null;
-  const showGrowing = growFrom && growTo;
-
   return (
-    <View className="mb-5">
-      <Text className="text-base font-bold text-foreground mb-3">{season}</Text>
+    <View className="bg-card dark:bg-muted border border-border rounded-2xl p-4 mb-4 shadow-sm">
+      {/* ── Card Header: Season Name + Month Ranges with Colored Dots ── */}
+      <View className="flex-row items-center justify-between mb-3 flex-wrap gap-y-1">
+        <Text className="text-base font-bold text-foreground">{season}</Text>
 
-      <View className="flex-row mb-2">
-        {MONTHS_SHORT.map((m, i) => (
-          <View key={i} style={{ width: `${colW}%` }} className="items-center">
-            <Text
-              className={`text-[10px] ${TODAY_MONTH === i + 1 ? "font-black text-emerald-500" : "font-semibold text-muted-foreground"}`}
-            >
-              {m}
-            </Text>
-          </View>
-        ))}
+        {/* Month ranges per period with matching color dots */}
+        <View className="flex-row items-center flex-wrap gap-2.5">
+          {sowFrom && sowTo && (
+            <View className="flex-row items-center gap-1">
+              <View
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: PHASE_COLORS.sowing.bar }}
+              />
+              <Text className="text-[11px] font-semibold text-muted-foreground">
+                {MONTHS_FULL[sowFrom - 1]}–{MONTHS_FULL[sowTo - 1]}
+              </Text>
+            </View>
+          )}
+
+          {growFrom && growTo && (
+            <View className="flex-row items-center gap-1">
+              <View
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: PHASE_COLORS.growing.bar }}
+              />
+              <Text className="text-[11px] font-semibold text-muted-foreground">
+                {MONTHS_FULL[growFrom - 1]}–{MONTHS_FULL[growTo - 1]}
+              </Text>
+            </View>
+          )}
+
+          {harvFrom && harvTo && (
+            <View className="flex-row items-center gap-1">
+              <View
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: PHASE_COLORS.harvesting.bar }}
+              />
+              <Text className="text-[11px] font-semibold text-muted-foreground">
+                {MONTHS_FULL[harvFrom - 1]}–{MONTHS_FULL[harvTo - 1]}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
 
-      {sowFrom && sowTo && (
-        <View className="mb-2">
-          <Text
-            className="text-[10px] font-bold mb-1 uppercase tracking-wider"
-            style={{ color: PHASE_COLORS.sowing.text }}
-          >
-            {t("sowing")}
-          </Text>
-          <View className="h-7 rounded-full overflow-hidden bg-white/5 relative">
-            {MONTHS_SHORT.map((_, i) => (
+      {/* ── Single Chart Container (Month Row Background at 5% opacity + Period Bars) ── */}
+      <View className="relative h-11 w-full rounded-xl overflow-hidden bg-card border border-border justify-center">
+        {/* Month grid background at 5% opacity using inline style */}
+        <View
+          style={{ backgroundColor: "rgba(128, 128, 128, 0.05)" }}
+          className="absolute inset-0 flex-row items-center"
+        >
+          {MONTHS_SHORT.map((m, i) => {
+            const isCurrentMon = TODAY_MONTH === i + 1;
+            return (
               <View
                 key={i}
-                className="absolute top-0 bottom-0 w-[0.5px] bg-muted-foreground/15"
-                style={{ left: `${i * colW}%` }}
-              />
-            ))}
-            <MonthBar
-              from={sowFrom}
-              to={sowTo}
-              color={PHASE_COLORS.sowing.bar}
-              totalCols={COLS}
-            />
-            <View
-              className="absolute top-0 bottom-0 w-0.5 bg-white/60 rounded-full"
-              style={{ left: `${(TODAY_MONTH - 1 + 0.5) * colW}%` }}
-            />
-          </View>
-          <Text className="text-[10px] text-muted-foreground mt-1">
-            {MONTHS_FULL[sowFrom - 1]} – {MONTHS_FULL[sowTo - 1]}
-          </Text>
+                style={{
+                  width: `${colW}%`,
+                  borderColor: "rgba(128, 128, 128, 0.1)",
+                }}
+                className={`h-full items-center justify-center border-r ${
+                  i === 11 ? "border-r-0" : ""
+                }`}
+              >
+                <Text
+                  style={{
+                    opacity: isCurrentMon ? 1 : 0.2,
+                  }}
+                  className={`text-[10px] font-bold ${
+                    isCurrentMon
+                      ? "text-emerald-500 font-black"
+                      : "text-foreground"
+                  }`}
+                >
+                  {m}
+                </Text>
+              </View>
+            );
+          })}
         </View>
-      )}
 
-      {showGrowing && (
-        <View className="mb-2">
-          <Text
-            className="text-[10px] font-bold mb-1 uppercase tracking-wider"
-            style={{ color: PHASE_COLORS.growing.text }}
-          >
-            {t("growing")}
-          </Text>
-          <View className="h-7 rounded-full overflow-hidden bg-white/5 relative">
-            {MONTHS_SHORT.map((_, i) => (
-              <View
-                key={i}
-                className="absolute top-0 bottom-0 w-[0.5px] bg-muted-foreground/15"
-                style={{ left: `${i * colW}%` }}
-              />
-            ))}
-            <MonthBar
-              from={growFrom}
-              to={growTo}
-              color={PHASE_COLORS.growing.bar}
-              totalCols={COLS}
-            />
-            <View
-              className="absolute top-0 bottom-0 w-0.5 bg-white/60 rounded-full"
-              style={{ left: `${(TODAY_MONTH - 1 + 0.5) * colW}%` }}
-            />
-          </View>
-          <Text className="text-[10px] text-muted-foreground mt-1">
-            {MONTHS_FULL[growFrom - 1]} – {MONTHS_FULL[growTo - 1]}
-          </Text>
-        </View>
-      )}
+        {/* 1. Growing Bar (Yellow, 60% Transparent, No Roundness) - zIndex=10 */}
+        {growFrom && growTo && (
+          <PeriodBarSegment
+            from={growFrom}
+            to={growTo}
+            color={PHASE_COLORS.growing.bar}
+            zIndex={10}
+            roundedClass="rounded-none"
+          />
+        )}
 
-      {harvFrom && harvTo && (
-        <View>
-          <Text
-            className="text-[10px] font-bold mb-1 uppercase tracking-wider"
-            style={{ color: PHASE_COLORS.harvesting.text }}
-          >
-            {t("harvesting")}
-          </Text>
-          <View className="h-7 rounded-full overflow-hidden bg-white/5 relative">
-            {MONTHS_SHORT.map((_, i) => (
-              <View
-                key={i}
-                className="absolute top-0 bottom-0 w-[0.5px] bg-muted-foreground/15"
-                style={{ left: `${i * colW}%` }}
-              />
-            ))}
-            <MonthBar
-              from={harvFrom}
-              to={harvTo}
-              color={PHASE_COLORS.harvesting.bar}
-              totalCols={COLS}
-            />
-            <View
-              className="absolute top-0 bottom-0 w-0.5 bg-white/60 rounded-full"
-              style={{ left: `${(TODAY_MONTH - 1 + 0.5) * colW}%` }}
-            />
-          </View>
-          <Text className="text-[10px] text-muted-foreground mt-1">
-            {MONTHS_FULL[harvFrom - 1]} – {MONTHS_FULL[harvTo - 1]}
-          </Text>
-        </View>
-      )}
+        {/* 2. Sowing Bar (Green, Left Rounded) - zIndex=20 */}
+        {sowFrom && sowTo && (
+          <PeriodBarSegment
+            from={sowFrom}
+            to={sowTo}
+            color={PHASE_COLORS.sowing.bar}
+            zIndex={20}
+            roundedClass="rounded-l-md rounded-r-none"
+          />
+        )}
+
+        {/* 3. Harvesting Bar (Red, Right Rounded) - zIndex=30 */}
+        {harvFrom && harvTo && (
+          <PeriodBarSegment
+            from={harvFrom}
+            to={harvTo}
+            color={PHASE_COLORS.harvesting.bar}
+            zIndex={30}
+            roundedClass="rounded-r-md rounded-l-none"
+          />
+        )}
+
+        {/* Current Month Line Indicator */}
+        <View
+          className="absolute top-0 bottom-0 w-0.5 bg-emerald-500 z-30 pointer-events-none shadow-sm"
+          style={{ left: `${(TODAY_MONTH - 1 + 0.5) * colW}%` }}
+        />
+      </View>
     </View>
   );
 }
 
-// ── main component ────────────────────────────────────────────────────────────
+// ── Main Section Component ────────────────────────────────────────────────────
 export function CropCalendarSection({ crop }: Props) {
   const { t } = useTranslation(["calendar"]);
   const { calendar, isLoading, isError } = useCalendar(crop);
 
-  // ── loading ──
+  // ── Loading ──
   if (isLoading) {
     return (
       <View className="my-6 px-4">
@@ -275,27 +304,13 @@ export function CropCalendarSection({ crop }: Props) {
             {t("cropCalendar")}
           </Text>
         </View>
-        <View className="bg-card dark:bg-muted/20 rounded-3xl p-6 my-2 h-[200px] justify-center">
-          <Skeleton width="40%" height={20} borderRadius={6} className="mb-4" />
-          <Skeleton
-            width="100%"
-            height={28}
-            borderRadius={14}
-            className="mb-3"
-          />
-          <Skeleton
-            width="100%"
-            height={28}
-            borderRadius={14}
-            className="mb-3"
-          />
-          <Skeleton width="100%" height={28} borderRadius={14} />
-        </View>
+        <View className="bg-card dark:bg-muted rounded-3xl p-6 my-2 h-[80px] justify-center gap-3" />
+        <View className="bg-card dark:bg-muted rounded-3xl p-6 my-2 h-[80px] justify-center gap-3" />
       </View>
     );
   }
 
-  // ── no crop selected ──
+  // ── No crop selected ──
   if (!crop) {
     return (
       <View className="my-6 px-4">
@@ -310,7 +325,7 @@ export function CropCalendarSection({ crop }: Props) {
             {t("cropCalendar")}
           </Text>
         </View>
-        <View className="bg-card border border-border/50 rounded-3xl p-6 items-center gap-2">
+        <View className="bg-card border border-border rounded-3xl p-6 items-center gap-2">
           <Icon
             icon={WheatIcon}
             size={32}
@@ -325,7 +340,7 @@ export function CropCalendarSection({ crop }: Props) {
     );
   }
 
-  // ── error / empty ──
+  // ── Error / Empty ──
   if (isError || !calendar.length) {
     return (
       <View className="my-6 px-4">
@@ -340,12 +355,10 @@ export function CropCalendarSection({ crop }: Props) {
             {t("cropCalendar")}
           </Text>
         </View>
-        <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-6 items-center justify-center">
+        <View className="bg-card dark:bg-muted border border-border rounded-3xl p-6 items-center justify-center">
           <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
           <Text className="mt-4 text-sm text-muted-foreground font-medium text-center">
-            {isError
-              ? t("calendarLoadError")
-              : t("noCalendarFor", { crop })}
+            {isError ? t("calendarLoadError") : t("noCalendarFor", { crop })}
           </Text>
         </View>
       </View>
@@ -354,7 +367,8 @@ export function CropCalendarSection({ crop }: Props) {
 
   return (
     <View className="my-6 px-4">
-      <View className="flex pb-4 flex-row gap-2 items-center">
+      {/* ── Header ── */}
+      <View className="flex pb-2 flex-row gap-2 items-center">
         <Icon
           icon={Calendar03Icon}
           className="text-foreground"
@@ -365,7 +379,7 @@ export function CropCalendarSection({ crop }: Props) {
           {t("cropCalendar")}
         </Text>
         <View className="flex-row flex gap-1 items-center">
-          <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+          <View className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-900 border border-emerald-200 dark:border-emerald-800">
             <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
               {crop}
             </Text>
@@ -373,19 +387,19 @@ export function CropCalendarSection({ crop }: Props) {
         </View>
       </View>
 
-      {/* ── Legend ── */}
-      <View className="flex-row gap-4 mb-5">
+      {/* ── Global Section Legend (Shown ONCE at top) ── */}
+      <View className="flex-row items-center gap-4 mb-4">
         {[
           { label: t("sowing"), color: PHASE_COLORS.sowing.bar },
           { label: t("growing"), color: PHASE_COLORS.growing.bar },
           { label: t("harvesting"), color: PHASE_COLORS.harvesting.bar },
         ].map(({ label, color }) => (
-          <View key={label} className="flex-row items-end gap-1.5">
+          <View key={label} className="flex-row items-center gap-1.5">
             <View
               className="w-2.5 h-2.5 rounded-full"
               style={{ backgroundColor: color }}
             />
-            <Text className="text-xs text-muted-foreground font-semibold">
+            <Text className="text-[11px] font-semibold text-muted-foreground">
               {label}
             </Text>
           </View>

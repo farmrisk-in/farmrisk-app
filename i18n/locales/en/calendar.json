@@ -6,5 +6,7 @@
   "selectCropCalendar": "Select a crop to see its seasonal calendar",
   "calendarLoadError": "Failed to load calendar data.",
   "noCalendarFor": "No calendar found for {{crop}} in this region.",
-  "season": "Season"
+  "season": "Season",
+  "activeNow": "Active Now",
+  "tapHint": "Tap a phase for details"
 }
