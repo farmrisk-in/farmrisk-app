@@ -41,8 +41,7 @@ export default function LocationPerm() {
    * Mark onboarded and jump to the main Dashboard.
    * ────────────────────────────────────────────────────────── */
   const complete = async () => {
-    await markOnboarded();
-    router.replace("/");
+    router.replace("/onboarding/farm-select");
   };
 
   /* ──────────────────────────────────────────────────────────

@@ -14,6 +14,7 @@ import authEn from "./locales/en/auth.json";
 import calendarEn from "./locales/en/calendar.json";
 import landingEn from "./locales/en/landing.json";
 import onboardingEn from "./locales/en/onboarding.json";
+import fieldsEn from "./locales/en/fields.json";
 
 import commonHi from "./locales/hi/common.json";
 import dashboardHi from "./locales/hi/dashboard.json";
@@ -24,6 +25,7 @@ import authHi from "./locales/hi/auth.json";
 import calendarHi from "./locales/hi/calendar.json";
 import landingHi from "./locales/hi/landing.json";
 import onboardingHi from "./locales/hi/onboarding.json";
+import fieldsHi from "./locales/hi/fields.json";
 
 import commonMr from "./locales/mr/common.json";
 import dashboardMr from "./locales/mr/dashboard.json";
@@ -34,6 +36,7 @@ import authMr from "./locales/mr/auth.json";
 import calendarMr from "./locales/mr/calendar.json";
 import landingMr from "./locales/mr/landing.json";
 import onboardingMr from "./locales/mr/onboarding.json";
+import fieldsMr from "./locales/mr/fields.json";
 
 import commonTa from "./locales/ta/common.json";
 import dashboardTa from "./locales/ta/dashboard.json";
@@ -44,6 +47,7 @@ import authTa from "./locales/ta/auth.json";
 import calendarTa from "./locales/ta/calendar.json";
 import landingTa from "./locales/ta/landing.json";
 import onboardingTa from "./locales/ta/onboarding.json";
+import fieldsTa from "./locales/ta/fields.json";
 
 import commonGu from "./locales/gu/common.json";
 import dashboardGu from "./locales/gu/dashboard.json";
@@ -54,6 +58,7 @@ import authGu from "./locales/gu/auth.json";
 import calendarGu from "./locales/gu/calendar.json";
 import landingGu from "./locales/gu/landing.json";
 import onboardingGu from "./locales/gu/onboarding.json";
+import fieldsGu from "./locales/gu/fields.json";
 
 export const resources = {
   en: {
@@ -66,6 +71,7 @@ export const resources = {
     calendar: calendarEn,
     landing: landingEn,
     onboarding: onboardingEn,
+    fields: fieldsEn,
   },
   hi: {
     common: commonHi,
@@ -77,6 +83,7 @@ export const resources = {
     calendar: calendarHi,
     landing: landingHi,
     onboarding: onboardingHi,
+    fields: fieldsHi,
   },
   mr: {
     common: commonMr,
@@ -88,6 +95,7 @@ export const resources = {
     calendar: calendarMr,
     landing: landingMr,
     onboarding: onboardingMr,
+    fields: fieldsMr,
   },
   ta: {
     common: commonTa,
@@ -99,6 +107,7 @@ export const resources = {
     calendar: calendarTa,
     landing: landingTa,
     onboarding: onboardingTa,
+    fields: fieldsTa,
   },
   gu: {
     common: commonGu,
@@ -110,5 +119,6 @@ export const resources = {
     calendar: calendarGu,
     landing: landingGu,
     onboarding: onboardingGu,
+    fields: fieldsGu,
   },
 } as const;

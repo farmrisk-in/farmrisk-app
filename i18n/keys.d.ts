@@ -18,6 +18,7 @@ import auth from "./locales/en/auth.json";
 import calendar from "./locales/en/calendar.json";
 import landing from "./locales/en/landing.json";
 import onboarding from "./locales/en/onboarding.json";
+import fields from "./locales/en/fields.json";
 
 declare module "i18next" {
   interface CustomTypeOptions {
@@ -32,6 +33,7 @@ declare module "i18next" {
       calendar: typeof calendar;
       landing: typeof landing;
       onboarding: typeof onboarding;
+      fields: typeof fields;
     };
   }
 }

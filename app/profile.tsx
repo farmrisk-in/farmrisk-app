@@ -219,7 +219,7 @@ export default function ProfileScreen() {
             </View>
 
             {/* Crop Selector Dropdown */}
-            <View style={[styles.infoRow, { borderBottomWidth: 0 }]} className="items-center">
+            <View style={styles.infoRow} className="items-center">
               <Text
                 style={styles.infoLabel}
                 className="text-gray-500 dark:text-gray-400"
@@ -232,6 +232,24 @@ export default function ProfileScreen() {
               >
                 <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
                   {selectedCrop ? selectedCropName : t("selectCrop")} ▾
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* My Farms */}
+            <View style={[styles.infoRow, { borderBottomWidth: 0 }]} className="items-center">
+              <Text
+                style={styles.infoLabel}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                {t("myFarms")}
+              </Text>
+              <TouchableOpacity
+                onPress={() => router.push("/my-farms")}
+                className="bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl"
+              >
+                <Text className="text-emerald-800 dark:text-emerald-400 font-bold">
+                  →
                 </Text>
               </TouchableOpacity>
             </View>

@@ -79,6 +79,25 @@ The AI advisory hook. Internally composes **all** other data hooks:
 - Query key: `["weather-summary", lat, lng, language, forecastHash]` → `getWeatherSummary({ location, cropId: "general", calendarData, weatherData, forecastData, language })`, `retry: false`.
 - Returns `{ data: query.data?.weather_summary, ... }`.
 
+### `useFields()` — `hooks/useFields.ts`
+CRUD hook for saved farm/field data. Wraps `lib/farms/storage.ts` and is **not** coordinate-based (it reads `user` from `useAuth` instead).
+- Query key: `["saved-fields", userId]` → `listFields(userId)`.
+- Returns:
+  ```ts
+  {
+    fields: SavedField[],       // all saved farms (empty for guests until saved)
+    isLoading, isError, error,
+    saveField: (input: NewFieldRecord) => Promise<SavedField>,
+    deleteField: (id: string) => Promise<void>,
+    isSaving: boolean,          // true during save mutation
+    isDeleting: boolean,        // true during delete mutation
+    refetch,
+  }
+  ```
+- `saveField` and `deleteField` both invalidate `["saved-fields", userId]` on success, triggering a re-fetch.
+- For authenticated users: reads/writes the Supabase `saved_fields` table.
+- For guests (no user): reads/writes `farmrisk:local_fields` in AsyncStorage.
+
 ### `useRiskScore()` — `hooks/useRiskScore.ts`
 - Composes `useWeather()`, `useForecast()`, `useSoilMoisture("general")`.
 - Builds a payload client-side:
@@ -165,5 +184,6 @@ Resolves a color from `props` or `Colors[theme][colorName]` (see `constants/them
 | Weather summary | `["weather-summary", lat, lng, language, forecastHash]` |
 | Risk score | `["riskScore", lat, lng, payloadHash]` |
 | Location search | `["location-search", q]` |
+| Saved fields | `["saved-fields", userId]` |
 
 > **Tip for AI working on this code:** adding/changing query keys affects cache invalidation. `useRefreshDashboard` invalidates everything, so new queries with different keys still refresh on pull-to-refresh.

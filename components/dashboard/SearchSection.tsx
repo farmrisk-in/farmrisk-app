@@ -6,19 +6,26 @@ import React from "react";
 import { View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { useFarmContext } from "@/providers/FarmProvider";
 import { Icon } from "@/components/ui/Icon";
 import { Search01Icon, Gps01Icon, Location01Icon } from "@hugeicons/core-free-icons";
 import { useTranslation } from "react-i18next";
 
 export function SearchSection() {
   const router = useRouter();
-  const { t } = useTranslation(["search"]);
+  const { t } = useTranslation(["search", "fields"]);
   const { t: tCommon } = useTranslation(["common"]);
   const { location, requestCurrentLocation, isResolving } =
     useLocationContext();
+  const { selectedFarm, clearFarm } = useFarmContext();
 
   const handleGPSPress = async () => {
-    await requestCurrentLocation();
+    // If a farm is active, switching to GPS means clearing the farm selection.
+    if (selectedFarm) {
+      await clearFarm();
+    } else {
+      await requestCurrentLocation();
+    }
   };
 
   return (
@@ -31,7 +38,27 @@ export function SearchSection() {
       >
         <Icon icon={Search01Icon} size={20} className="text-foreground" />
         <View style={{ flex: 1 }}>
-          {location?.name ? (
+          {selectedFarm ? (
+            <>
+              <View className="flex flex-row items-center gap-2">
+                <Text
+                  className="text-md font-medium text-foreground"
+                  numberOfLines={1}
+                  style={{ flexShrink: 1 }}
+                >
+                  {selectedFarm.name}
+                </Text>
+                <View className="rounded-full bg-emerald-600/20 px-2 py-0.5">
+                  <Text className="text-[10px] font-semibold text-emerald-600">
+                    {t("fields:farmBadge")}
+                  </Text>
+                </View>
+              </View>
+              <Text className="text-xs text-muted-foreground" numberOfLines={1}>
+                {t("fields:active")}
+              </Text>
+            </>
+          ) : location?.name ? (
             <>
               <Text
                 className="text-md font-medium text-foreground"

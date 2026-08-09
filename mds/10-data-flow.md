@@ -219,8 +219,12 @@ This is the most important derived flow — see §4 below.
 4. **Location perm** (transparent modal):
    - **Allow Location Access** → `Location.requestForegroundPermissionsAsync()` → granted → `requestCurrentLocation()` → resolves GPS → auto-completes.
    - **Select Location Manually** → `router.push("/search")`; picking a village calls `setLocation()` and returns (location context now set).
-   - With a location set, the primary CTA becomes **Continue to Dashboard** → `markOnboarded()` + `router.replace("/")` (Step 5).
-5. All onboarding steps render instantly in the chosen language because the welcome screen's language selector switched the active i18n language (the onboarding namespace is localized in all 5 languages).
+   - With a location set, the primary CTA becomes **Continue to Dashboard** → navigates to `/onboarding/farm-select` (Step 5).
+5. **Farm select** (transparent modal, optional):
+   - **Draw Farm** → `router.push("/farm-select")` (full satellite map screen).
+   - **Skip for now** → `complete()` → `markOnboarded()` + `router.replace("/")`.
+   - If a farm was selected on the map, the dashboard's `SearchSection` shows the farm name and badge.
+6. All onboarding steps render instantly in the chosen language because the welcome screen's language selector switched the active i18n language (the onboarding namespace is localized in all 5 languages).
 
 ### Home tab — `app/(tabs)/index.tsx`
 
@@ -228,7 +232,7 @@ This is the most important derived flow — see §4 below.
 2. Guards: `!location && !isResolving && locationError` → `<LocationRequired/>`.
 3. Renders `ScrollView` sections in order:
    - `Header` — auth state from `useAuth`; router for profile.
-   - `SearchSection` — current location chip → navigates to `search.tsx`.
+   - `SearchSection` — current location chip, or active farm name + badge (from `useFarmContext()`); GPS button clears farm if active. Navigates to `search.tsx`.
    - `CurrentWeatherSection` — `useWeather()` + `useWeatherSummary()`.
    - `RiskSection` — `useRiskScore()`.
    - `HourlyWeatherSection` — `useWeather().data.hourly`.
@@ -265,11 +269,25 @@ Same guard + refresh pattern, then:
 
 - `LeafletMapView` (WebView) shows the interactive map; taps are reverse-geocoded → location selected → `setLocation`.
 
-### `app/profile.tsx` — profile + crop picker
+### `app/profile.tsx` — profile + crop picker + farms
 
 - Auth flows via `useAuth()` (Supabase; phone `normalizePhoneNumber` → `<phone>@farmrisk.app`).
 - Reads/writes `profiles` table (Supabase) — name/age/location fields.
 - Crop picker calls `useCrops(lat, lng)` and `useCropContext().setSelectedCrop(...)`; the selected crop is persisted (`farmrisk_selected_crop`) and consumed by the Forecast/Tools tabs.
+- **My Farms** row → `router.push("/my-farms")`. `useFarmContext()` reads `selectedFarm` to display the active farm name below the row.
+
+### `app/farm-select.tsx` — satellite farm picker (full-screen modal)
+
+- `<FarmMapView>` renders a Leaflet WebView with ArcGIS satellite tiles.
+- **Draw mode:** tap map to place vertices, undo last, finish (≥3 points) → opens `SaveFieldDialog` → `saveField(...)` via `useFields()` → Supabase (authenticated) or AsyncStorage (guest).
+- **Browse mode:** tap a saved farm polygon → `selectFarm(farm)` from `useFarmContext()` → `router.back()`. `selectFarm` writes `farmrisk:selected_farm` to AsyncStorage and updates `LocationProvider.setLocation()` to the farm centroid — all downstream hooks re-query with the farm's coordinates.
+
+### `app/my-farms.tsx` — saved farm list (modal)
+
+- Reads `useFields()` → `fields` array.
+- Tap a farm → `selectFarm(farm)` → `router.back()`. Same effect as selecting on the map.
+- Delete → `Alert` confirm → `deleteField(id)` → invalidates `["saved-fields", userId]`.
+- Export GeoJSON → builds a `FeatureCollection` → `Share.share()`.
 
 ### `app/weather-table.tsx` & `app/soil-detail.tsx`
 
@@ -319,8 +337,12 @@ Behavior:
 | `farmrisk:active_location` | `LocationProvider.setLocation` | `SelectedLocation` JSON |
 | `farmrisk:recent_locations` | location search flow | Array of `SelectedLocation` (index 0 = most recent) |
 | `farmrisk_selected_crop` | `CropProvider` | Selected crop id |
+| `farmrisk:selected_farm` | `FarmProvider` | JSON-serialized `SavedField` (the currently active farm) |
+| `farmrisk:local_fields` | `lib/farms/storage.ts` (guest path only) | Array of `SavedField` (guest farms, not in Supabase) |
 
 Supabase also persists its auth session via the custom AsyncStorage wrapper (keys are Supabase-managed).
+
+The `saved_fields` Supabase table (for authenticated users) stores: `id`, `user_id`, `field_id`, `field_name`, `year`, `geometry` (jsonb), `area_m2`, `center_lat`, `center_lng`, `crops` (text[]), `season`, `crop_stage`, `source`, `created_at`.
 
 ---
 
@@ -330,5 +352,7 @@ Supabase also persists its auth session via the custom AsyncStorage wrapper (key
 - **Add a new dashboard section** → new file in `components/dashboard/`, export from `components/dashboard/index.ts`, render it in the desired tab screen.
 - **Add a new tab** → new file in `app/(tabs)/`, register in `app/(tabs)/_layout.tsx` (`Tabs.Screen` + icon).
 - **Wire a new language** → new `i18n/locales/<code>/` + register in `i18n/index.ts` and `i18n/resources.ts` (full checklist in `mds/language.md`).
+- **Add a new i18n namespace** → create `i18n/locales/en/<domain>.json` (×5 langs), add to `resources.ts`, `index.ts` (`ns` array), `keys.d.ts`, `LanguageProvider.tsx` (`ALL_NAMESPACES`).
+- **Add a new farm/field feature** → types in `types/fields.ts`, constants in `constants/farm.ts`, geometry helpers in `lib/drawField.ts`, storage in `lib/farms/storage.ts`, hook in `hooks/useFields.ts`, context in `providers/FarmProvider.tsx`, i18n in `i18n/locales/en/fields.json`.
 - **Change when data refreshes** → adjust `staleTime`/`refetchInterval` on the hook's `useQuery` options (not in `lib/api.ts`).
 - **Change what triggers a refresh** → the query key (include whatever data affects the result, e.g. `forecastHash`).

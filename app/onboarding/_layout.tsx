@@ -18,6 +18,13 @@ export default function OnboardingLayout() {
           animation: "fade",
         }}
       />
+      <Stack.Screen
+        name="farm-select"
+        options={{
+          presentation: "transparentModal",
+          animation: "fade",
+        }}
+      />
     </Stack>
   );
 }

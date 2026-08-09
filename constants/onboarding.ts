@@ -11,6 +11,7 @@ export type OnboardingStep =
   | "WELCOME"
   | "AUTH"
   | "LOCATION_PERM"
+  | "FARM_SELECT"
   | "COMPLETE";
 
 /** Route for each step (COMPLETE uses the root "/"). */
@@ -19,6 +20,7 @@ export const ONBOARDING_STEP_ROUTES: Record<OnboardingStep, string> = {
   WELCOME: "/onboarding/welcome",
   AUTH: "/onboarding/auth",
   LOCATION_PERM: "/onboarding/location-perm",
+  FARM_SELECT: "/onboarding/farm-select",
   COMPLETE: "/",
 };
 
@@ -33,7 +35,8 @@ export const ONBOARDING_TRANSITIONS: Record<OnboardingStep, OnboardingStep[]> = 
   SPLASH: ["WELCOME"],
   WELCOME: ["AUTH"],
   AUTH: ["LOCATION_PERM"],
-  LOCATION_PERM: ["COMPLETE"],
+  LOCATION_PERM: ["FARM_SELECT"],
+  FARM_SELECT: ["COMPLETE"],
   COMPLETE: [],
 };
 

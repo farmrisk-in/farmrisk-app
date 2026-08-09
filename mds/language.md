@@ -35,15 +35,16 @@ i18n/
     │   ├── dashboard.json  # Dashboard copy, headers, risk/hazard labels
     │   ├── weather.json    # Weather telemetry, conditions, soil-moisture bands
     │   ├── search.json     # Location/village search + map screen
-    │   ├── profile.json    # Profile screen (incl. language + crop pickers)
+    │   ├── profile.json    # Profile screen (incl. language + crop + my farms picker)
     │   ├── auth.json       # Sign in / register forms + validation errors
     │   ├── calendar.json   # Crop calendar phases
     │   ├── landing.json    # Landing hero + nav (legacy content)
-    │   └── onboarding.json # 5-step onboarding flow (welcome, auth, location-perm)
-    ├── hi/             # Same 9 files, Hindi
-    ├── mr/             # Same 9 files, Marathi
-    ├── ta/             # Same 9 files, Tamil
-    └── gu/             # Same 9 files, Gujarati
+    │   ├── onboarding.json # 5-step onboarding flow (welcome, auth, location-perm)
+    │   └── fields.json     # Farm/field selection, save dialog, farm list
+    ├── hi/             # Same 10 files, Hindi
+    ├── mr/             # Same 10 files, Marathi
+    ├── ta/             # Same 10 files, Tamil
+    └── gu/             # Same 10 files, Gujarati
 ```
 
 The namespaces are **domain-based, not screen-positional** — keys describe
@@ -58,11 +59,12 @@ sits on screen. That keeps translations reusable and the typing strict.
 | `dashboard` | | Dashboard sections, risk/hazard labels, tools/alerts copy | `(tabs)/index`, `forecast`, `tools`, `alerts`, dashboard sections |
 | `weather` | | Weather conditions, metrics grid, lightning risk, soil-moisture bands | Weather sections, weather-table, soil-detail |
 | `search` | | Village search, GPS, map screen, recents | `app/search.tsx`, `app/map.tsx` |
-| `profile` | | Profile form, theme/crop/language rows | `app/profile.tsx` |
+| `profile` | | Profile form, theme/crop/language rows, My Farms link | `app/profile.tsx` |
 | `auth` | | Login/register forms + validation messages | `app/profile.tsx` (auth card) |
 | `calendar` | | Crop calendar phase names | `CropCalendarSection` |
 | `landing` | | Legacy landing/hero copy | (legacy — rarely rendered) |
-| `onboarding` | | Welcome/auth/location-permission copy for the 5-step flow | `app/onboarding/*` |
+| `onboarding` | | Welcome/auth/location-permission/farm-select copy for the 5-step flow | `app/onboarding/*` |
+| `fields` | | Farm selection, drawing, save dialog, farm list, onboarding farm prompt | `app/farm-select.tsx`, `app/my-farms.tsx`, `components/farms/*`, `app/onboarding/farm-select.tsx` |
 
 ---
 
@@ -146,6 +148,7 @@ the other four languages.
 - Subscribes with `useTranslation([...all namespaces])` so the context value
   (`language`, `t`) stays fresh across switches.
 - Provides `{ language, setLanguage, t, ready }` via `LanguageContext`.
+- All 10 namespaces (`ALL_NAMESPACES`) are registered in the `useTranslation` list.
 
 ### `hooks/useLanguage.ts` — context accessor
 
@@ -254,13 +257,13 @@ Tick every box:
 
 Add e.g. Bengali (`bn`):
 
-- [ ] **1. Create the folder** `i18n/locales/bn/` and **copy all 9 JSON files** from `i18n/locales/en/` as a starting scaffold.
-- [ ] **2. Translate every key** in `bn/*.json` (all 9 files). Keep the JSON **structure identical** to `en` — same keys, same nesting, same `{{var}}` placeholders. Missing keys silently fall back to English, so an incomplete file still runs — but translate all keys for a real rollout.
+- [ ] **1. Create the folder** `i18n/locales/bn/` and **copy all 10 JSON files** from `i18n/locales/en/` as a starting scaffold (common, dashboard, weather, search, profile, auth, calendar, landing, onboarding, fields).
+- [ ] **2. Translate every key** in `bn/*.json` (all 10 files). Keep the JSON **structure identical** to `en` — same keys, same nesting, same `{{var}}` placeholders. Missing keys silently fall back to English, so an incomplete file still runs — but translate all keys for a real rollout.
 - [ ] **3. Register in `i18n/index.ts`:**
       - Add `"bn"` to `SUPPORTED_LANGUAGES`.
       - Add `bn: "বাংলা"` to `LANGUAGE_NAMES`.
       - (`LanguageCode` and `isSupportedLanguage` update automatically.)
-- [ ] **4. Register in `i18n/resources.ts`:** import all 9 `bn` JSON files and add a `bn: { common, dashboard, weather, search, profile, auth, calendar, landing, onboarding }` entry to `resources`.
+- [ ] **4. Register in `i18n/resources.ts`:** import all 10 `bn` JSON files and add a `bn: { common, dashboard, weather, search, profile, auth, calendar, landing, onboarding, fields }` entry to `resources`.
 - [ ] **5. Add device-language detection support** if needed: `getDeviceLanguage()` already uses `isSupportedLanguage`, so `bn`-locale devices are detected automatically — nothing else to do. If the locale code differs (e.g. `pt-BR`), consider normalizing in `getDeviceLanguage`.
 - [ ] **6. Verify with `npx tsc --noEmit`** — `keys.d.ts` types `t()` against `en` only, so this won't catch missing keys in `bn`; instead spot-check by switching to the language in the app and scanning screens.
 - [ ] **7. Update the docs:**
@@ -279,6 +282,7 @@ Add e.g. Bengali (`bn`):
 | Add/change a UI string | `i18n/locales/<lang>/<domain>.json` (all 5 languages) |
 | Change the language list | `i18n/index.ts` (`SUPPORTED_LANGUAGES` + `LANGUAGE_NAMES`) |
 | Add a language | new `i18n/locales/<code>/` + `i18n/resources.ts` + `i18n/index.ts` |
+| Add a namespace | `i18n/locales/en/<domain>.json` (×5 langs) + register in `resources.ts`, `index.ts`, `keys.d.ts`, `LanguageProvider.tsx` |
 | Add a namespace | `i18n/locales/en/<domain>.json` (×5 langs) + register in `resources.ts`, `index.ts`, `keys.d.ts`, `LanguageProvider.tsx` |
 | Change persistence key | `LANGUAGE_STORAGE_KEY` in `i18n/index.ts` |
 | Change the picker UI | `components/ui/LanguageSelector.tsx` |

@@ -4,6 +4,7 @@ import { LanguageProvider } from "@/providers/LanguageProvider";
 import { LocationProvider } from "@/providers/LocationProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { CropProvider } from "@/providers/CropProvider";
+import { FarmProvider } from "@/providers/FarmProvider";
 import { PaperProvider } from "react-native-paper";
 import {
   DarkTheme,
@@ -30,6 +31,7 @@ export default function RootLayout() {
           <LanguageProvider>
             <LocationProvider>
               <CropProvider>
+                <FarmProvider>
                 <ThemeProvider value={navTheme}>
                 <Stack
                   initialRouteName="onboarding"
@@ -60,6 +62,22 @@ export default function RootLayout() {
                     }}
                   />
                   <Stack.Screen
+                    name="farm-select"
+                    options={{
+                      presentation: "fullScreenModal",
+                      headerShown: false,
+                      animation: "slide_from_bottom",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="my-farms"
+                    options={{
+                      presentation: "modal",
+                      headerShown: false,
+                      animation: "slide_from_bottom",
+                    }}
+                  />
+                  <Stack.Screen
                     name="map"
                     options={{
                       presentation: "fullScreenModal",
@@ -85,6 +103,7 @@ export default function RootLayout() {
                 </Stack>
                 <StatusBar style={isDark ? "light" : "dark"} />
                 </ThemeProvider>
+                </FarmProvider>
               </CropProvider>
             </LocationProvider>
           </LanguageProvider>

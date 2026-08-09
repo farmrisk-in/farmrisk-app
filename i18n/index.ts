@@ -73,7 +73,7 @@ export const initI18n = (): Promise<LanguageCode> => {
         lng: resolved,
         fallbackLng: "en",
         defaultNS: "common",
-        ns: ["common", "dashboard", "weather", "search", "profile", "auth", "calendar", "landing", "onboarding"],
+        ns: ["common", "dashboard", "weather", "search", "profile", "auth", "calendar", "landing", "onboarding", "fields"],
         interpolation: {
           // React Native renders text already; no HTML to escape.
           escapeValue: false,

@@ -21,5 +21,6 @@
   "noneDefault": "None / Default",
   "name": "Name",
   "phone": "Phone",
-  "emailLogin": "Email Login"
+  "emailLogin": "Email Login",
+  "myFarms": "My Farms"
 }

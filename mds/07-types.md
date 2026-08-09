@@ -10,6 +10,7 @@ All shared TypeScript types live in `types/`. The directory is flat — each fil
 | `types/calendar.ts` | Crop calendar events + API response |
 | `types/ai.ts` | AI advisory request payload + response |
 | `types/database.ts` | Supabase `Database` type + `Profile` |
+| `types/fields.ts` | Farm/field domain: `SavedField`, `NewFieldRecord`, `DrawnVertex`, `FieldInfo`, `FarmFeature` |
 | `types/svg.d.ts` | `*.svg` module declaration (SvgProps) |
 
 There is no barrel `types/index.ts` — components import directly, e.g. `import { Crop } from "@/types/crops"`.
@@ -328,6 +329,53 @@ Exports:
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
 ```
+
+---
+
+## `types/fields.ts` — farm / field domain types
+
+Maps to the Supabase `saved_fields` table (authenticated users) or `farmrisk:local_fields` (guests).
+
+### `SavedField`
+
+| Field | Type | Meaning |
+|---|---|---|
+| `id` | `string` | Primary key (uuid or local-generated) |
+| `fieldId` | `string` | Identifier of the source field (e.g. `manual-<ts>-<rand>`) |
+| `source` | `"detected" \| "manual"` | Always `"manual"` in the RN app |
+| `year` | `string` | Year the field was added |
+| `countryCode?` | `string \| null` | Country code |
+| `areaM2?` | `number \| null` | Area in square meters |
+| `confidence?` | `number \| null` | Detection confidence |
+| `geometry` | `Record<string, unknown>` | GeoJSON geometry (always a Polygon) |
+| `properties` | `Record<string, unknown>` | Arbitrary metadata |
+| `savedAt` | `string` | ISO timestamp of creation |
+| `name?` | `string` | User-facing name, e.g. "North Farm" |
+| `centerLat?` / `centerLng?` | `number \| null` | Centroid coordinates (used by `FarmProvider.selectFarm` to update `LocationProvider`) |
+| `crops?` | `string[]` | Crop ids |
+| `season?` | `string` | `"kharif" \| "rabi" \| "zaid"` |
+| `cropStage?` | `string` | `"sowing" \| "vegetative" \| "flowering" \| "maturity"` |
+
+### `NewFieldRecord`
+Payload for creating a new farm. All `SavedField` fields except `id` and `savedAt`; adds `fieldName`.
+
+### `DrawnVertex`
+```ts
+{ lat: number; lng: number }
+```
+A single hand-drawn vertex in geographic coordinates.
+
+### `FieldInfo`
+```ts
+{ name: string; crops: string[]; season: string; cropStage: string }
+```
+Returned by `SaveFieldDialog` on save.
+
+### `FarmFeature`
+```ts
+{ id: string; name?: string; centerLat?: number | null; centerLng?: number | null; geometry: Record<string, unknown> }
+```
+Minimal farm feature passed to `FarmMapView` for rendering polygons and markers on the Leaflet map.
 
 ---
 

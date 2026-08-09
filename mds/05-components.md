@@ -20,7 +20,8 @@ Barrel file `components/dashboard/index.ts` exports:
 
 ### `SearchSection`
 - Fake tappable search bar showing active `location.name` / `location.displayName` → `router.push("/search")`.
-- GPS button → `requestCurrentLocation()` (spinner while resolving).
+- When a farm is active (`useFarmContext().selectedFarm`): shows the farm name + emerald "Farm" badge, with "Active" as the subtext.
+- GPS button → if a farm is selected, calls `clearFarm()` to switch back to GPS mode; otherwise calls `requestCurrentLocation()` (spinner while resolving).
 - Map button → `router.push("/map")`.
 
 ### `CurrentWeatherSection`
@@ -115,7 +116,53 @@ Barrel file `components/dashboard/index.ts` exports:
 
 ---
 
-## Shared Components (top-level `components/`)
+## Farm Components (`components/farms/`)
+
+### `FarmMapView` — `components/farms/FarmMapView.tsx`
+A WebView-based Leaflet map specialized for farm boundary drawing. Uses an `imperativeHandle` (`FarmMapHandle`) so parent screens call methods directly instead of props updating.
+
+**Map tiles:** ArcGIS World Imagery (satellite) + World Boundaries & Places (labels overlay).
+
+**Props / events:**
+```ts
+interface FarmMapHandle {
+  flyTo(lat: number, lng: number, zoom?: number): void;
+  renderFarms(farms: SavedField[]): void;
+  setDrawMode(on: boolean): void;
+  clearDrawing(): void;
+  undoPoint(): void;
+  finishDrawing(): void;
+}
+
+type FarmMapEvent =
+  | { type: "ready" }
+  | { type: "point_added"; points: DrawnVertex[] }
+  | { type: "point_removed"; points: DrawnVertex[] }
+  | { type: "polygon_complete"; points: DrawnVertex[] }
+  | { type: "farm_selected"; fieldId: string };
+```
+
+**Behavior:**
+- Generates an HTML string injected into a `react-native-webview`. Leaflet 1.9.4 loaded from unpkg CDN.
+- Draw mode: taps place green circle vertices; tapping near the first point closes the polygon (≥3 points).
+- Saved farm polygons are rendered with semi-transparent fill (`#10b981` green with 0.25 opacity). Farm markers are clickable and emit `farm_selected` events.
+- Used by `app/farm-select.tsx` (full map screen) and indirectly by `app/onboarding/farm-select.tsx` (which pushes to `/farm-select`).
+
+### `SaveFieldDialog` — `components/farms/SaveFieldDialog.tsx`
+Modal form for saving a newly drawn farm boundary.
+
+**Props:**
+```ts
+{
+  visible: boolean;
+  onClose: () => void;
+  onSave: (info: FieldInfo) => void;
+  areaM2: number;
+  saving: boolean;
+}
+```
+
+**Form fields:** farm name (required), crops (multi-select chip picker from `useCrops()` with `DEFAULT_CROPS` fallback), season (Kharif/Rabi/Zaid pick), crop stage (Sowing/Vegetative/Flowering/Maturity pick). Validation uses `fields:validation.*` i18n keys.
 
 ### `WeatherIcon` — `WeatherIcon.tsx`
 - Maps a weather condition name (with or without `.svg`, case-insensitive) → bundled SVG asset via a big `WEATHER_ICON_MAP`.
@@ -155,7 +202,7 @@ Barrel file `components/dashboard/index.ts` exports:
 | Component | Hooks used |
 |---|---|
 | `Header` | `useAuth`, `useRouter` |
-| `SearchSection` | `useLocationContext`, `useRouter` |
+### `SearchSection` | `useLocationContext`, `useFarmContext`, `useRouter`
 | `CurrentWeatherSection` | `useWeather`, `useWeatherSummary`, `useLocationContext` |
 | `HourlyWeatherSection` | `useWeather`, `useRouter` |
 | `ForecastSection` | `useForecast`, `useWeather`, `useRouter` |
@@ -168,3 +215,4 @@ Barrel file `components/dashboard/index.ts` exports:
 | `LightningRiskSection` | `useWeather`, `useLocationContext` |
 | `ThemeToggle` | nativewind `useColorScheme` |
 | `LocationRequired` | `useLocationContext`, `useRouter` |
+| `FarmMapView` | `react-native-webview`, Leaflet |

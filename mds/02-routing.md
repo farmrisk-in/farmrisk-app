@@ -14,6 +14,8 @@ The root layout renders providers and a `<Stack>` navigator:
 | `(tabs)` | `/` | default | Tab navigator, header hidden |
 | `search` | `/search` | `modal`, `fade_from_bottom` | header hidden |
 | `profile` | `/profile` | `transparentModal` | header hidden |
+| `farm-select` | `/farm-select` | `fullScreenModal`, `slide_from_bottom` | header hidden — satellite map, draw/select farms |
+| `my-farms` | `/my-farms` | `modal`, `slide_from_bottom` | header hidden — saved farm list (from profile) |
 | `map` | `/map` | `fullScreenModal`, `slide_from_bottom` | header hidden, title "Map" |
 | `weather-table` | `/weather-table` | `card` | header hidden |
 | `soil-detail` | `/soil-detail` | `card` | header hidden |
@@ -82,7 +84,7 @@ Leaflet-based location picker:
 ### 7. Profile — `app/profile.tsx` (transparent modal)
 Two modes via local state `Mode = "login" | "register"`:
 - **Logged out:** name/phone/password form. Registration creates email `${phone}@farmrisk.app` with metadata `{ first_name, last_name, phone }` via `supabase.auth.signUp`. Login uses `signInWithPassword`. Phone validated by `normalizePhoneNumber` (10-digit Indian mobile starting 6–9).
-- **Logged in:** profile card (Theme toggle, Active Crop picker modal, Name, Phone, Email) + Sign Out button. Crop picker uses `useCrops()` + `useCropContext().setSelectedCrop`.
+- **Logged in:** profile card (Theme toggle, Active Crop picker modal, Name, Phone, Email, **My Farms** row → `router.push("/my-farms")`) + Sign Out button. Crop picker uses `useCrops()` + `useCropContext().setSelectedCrop`.
 - The "Active Crop" selection persists (CropProvider) and feeds the Forecast & Tools tabs.
 
 ### 8. Weather table — `app/weather-table.tsx`
@@ -92,6 +94,20 @@ Full-page tables reached via `router.push("/weather-table?type=hourly" | "type=f
 
 ### 9. Soil detail — `app/soil-detail.tsx`
 Full-page soil moisture table (date, moisture bar %, rain, PE) from `useSoilMoisture()`, newest first. (Currently not linked from any screen — reachable via deep link `/soil-detail`.)
+
+### 10. Farm select — `app/farm-select.tsx` (full-screen modal)
+Satellite map for drawing & selecting farm boundaries. Entry points: **Profile → My Farms → Select on Map** and **Onboarding Step 5**.
+- Renders `<FarmMapView>` (WebView + Leaflet, ArcGIS World Imagery satellite tiles + labels overlay) centered on the active `location` (or Dholka, Gujarat default).
+- **Browse mode:** tap a saved farm polygon → `farm_selected` event → `selectFarm(farm)` → `router.back()`.
+- **Draw mode:** tap to place vertices, **Undo** pops the last point, **Finish** (≥3 points) validates the polygon and opens `SaveFieldDialog` (name, crops, season, crop stage). Saving calls `saveField(...)` (Supabase for logged-in, AsyncStorage for guests) and re-renders the farms.
+- GPS button requests `expo-location` permission and `flyTo` the current position.
+
+### 11. My Farms — `app/my-farms.tsx` (modal)
+List of saved farms from `useFields()` with select / delete / GeoJSON export:
+- **Tap a farm** → `selectFarm(farm)` (persists to AsyncStorage, moves the active location to the farm centroid) → `router.back()`.
+- **Export GeoJSON** → `Share.share()` a `FeatureCollection` of all farms.
+- **Delete** → `Alert` confirm → `deleteField(id)`.
+- "Select on Map" + empty-state CTA → `router.push("/farm-select")`. Active farm gets an "Active" badge.
 
 ---
 
@@ -104,25 +120,28 @@ A 5-step, first-launch sequence driven by a small state machine (`constants/onbo
 | **1 — Splash** | `app/onboarding/index.tsx` | `/onboarding` | Dark screen with logo + wordmark; after **1.8s** (`SPLASH_DURATION_MS`) checks `isOnboarded()` → `router.replace("/")` if `has_onboarded === "true"`, else `router.replace("/onboarding/welcome")` |
 | **2 — Welcome** | `app/onboarding/welcome.tsx` | `/onboarding/welcome` | `ImageBackground` (`assets/images/splash.png`) + `LinearGradient` fade to `#09090b`; top bar with **language selector** (`LanguageSelector`, EN/HI/MR/TA/GU); glassmorphic `BlurView` card (title, subtitle, **Get Started** CTA → `/onboarding/auth`) |
 | **3 — Auth** | `app/onboarding/auth.tsx` | `/onboarding/auth` | Sign in / Register toggle (Supabase phone auth, same logic as `profile.tsx`), or **Continue as Guest** → `/onboarding/location-perm` |
-| **4 — Location** | `app/onboarding/location-perm.tsx` | `/onboarding/location-perm` | `transparentModal` with `BlurView` backdrop; **Allow Location Access** → `Location.requestForegroundPermissionsAsync()` + `requestCurrentLocation()`; **Select Location Manually** → `router.push("/search")` (existing search screen). Once a location exists, the CTA becomes **Continue to Dashboard** |
-| **5 — Complete** | (no screen) | `/` | `markOnboarded()` writes `has_onboarded = "true"`, then `router.replace("/")` lands on the dashboard; every later launch skips straight to the tabs |
+| **4 — Location** | `app/onboarding/location-perm.tsx` | `/onboarding/location-perm` | `transparentModal` with `BlurView` backdrop; **Allow Location Access** → `Location.requestForegroundPermissionsAsync()` + `requestCurrentLocation()`; **Select Location Manually** → `router.push("/search")` (existing search screen). Once a location exists, the CTA becomes **Continue to Dashboard** → `/onboarding/farm-select` |
+| **5 — Farm select** | `app/onboarding/farm-select.tsx` | `/onboarding/farm-select` | `transparentModal` prompt: **Draw Farm** CTA → `router.push("/farm-select")` (full map), or **Skip for now**. `complete()` calls `markOnboarded()` then `router.replace("/")` — if a farm was selected, the dashboard's SearchSection shows it; otherwise GPS location is used |
 
 Key details:
 
 - **Transitions use `router.replace()`** so the onboarding stack never accumulates back-stack entries (back button from location-perm returns to auth, not to splash).
-- The onboarding Stack (`app/onboarding/_layout.tsx`) sets `headerShown: false`, `contentStyle: { backgroundColor: "#09090b" }`, and per-screen animations: `none` (splash), `fade` (welcome), `slide_from_bottom` (auth), `fade` + `transparentModal` (location-perm).
+- The onboarding Stack (`app/onboarding/_layout.tsx`) sets `headerShown: false`, `contentStyle: { backgroundColor: "#09090b" }`, and per-screen animations: `none` (splash), `fade` (welcome), `slide_from_bottom` (auth), `fade` + `transparentModal` (location-perm and farm-select).
 - **`LocationProvider` skips its GPS auto-prompt during onboarding** — `requestCurrentLocation` is only invoked automatically once `has_onboarded === "true"`, so the permission dialog never fires during splash/welcome. The location-perm step is the deliberate, user-initiated permission moment.
-- Guest users get no Supabase account — `useAuth()` simply reports no user; the dashboard works fully as guest.
+- **Farm selection is optional.** Skipping Step 5 is allowed — the app then uses GPS/village location. A farm selected later (Profile → My Farms, or SearchSection) updates the dashboard's active location to the farm centroid.
+- Guest users get no Supabase account — `useAuth()` simply reports no user; the dashboard works fully as guest. Guest farms persist to AsyncStorage (`farmrisk:local_fields`) instead of Supabase.
 
 ---
 
 ## Navigation Patterns Used
 
 - `router.replace("/onboarding/<step>")` — forward transitions inside the onboarding flow (replaces, keeps back-stack clean).
-- `router.replace("/")` — onboarding complete (from splash when already onboarded, and from location-perm when finishing).
+- `router.replace("/")` — onboarding complete (from splash when already onboarded, and from the farm-select step when finishing).
 - `router.push("/profile")` — Header avatar/menu button.
 - `router.push("/search")` — SearchSection fake search bar.
 - `router.push("/map")` — SearchSection map button + search screen "Select on Map".
+- `router.push("/my-farms")` — Profile "My Farms" row.
+- `router.push("/farm-select")` — My Farms "Select on Map" + onboarding farm step's "Draw Farm" CTA.
 - `router.push("/weather-table?type=hourly")` — HourlyWeatherSection "Next 24 Hours" pill.
 - `router.push("/weather-table?type=forecast")` — ForecastSection chevron.
 - `router.back()` — modals/sheets after selection.

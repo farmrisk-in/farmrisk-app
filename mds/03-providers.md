@@ -134,6 +134,34 @@ type CropContextType = {
 
 ---
 
+## 6. `FarmProvider` — `providers/FarmProvider.tsx`
+
+Tracks the user's **selected farm** and keeps it in sync with the active location. Sits between `CropProvider` and `ThemeProvider` in the tree.
+
+```ts
+interface FarmContextValue {
+  selectedFarm: SavedField | null;             // currently active farm, null = GPS mode
+  isLoading: boolean;                          // true while restoring from AsyncStorage
+  selectFarm: (farm: SavedField) => Promise<void>; // activates farm + updates location
+  clearFarm: () => Promise<void>;              // clears farm, re-resolves GPS
+}
+```
+
+**AsyncStorage key:** `farmrisk:selected_farm` (JSON-serialized `SavedField`).
+
+**Behavior:**
+- On mount reads `farmrisk:selected_farm` from AsyncStorage. If present, `selectedFarm` is set and the app's active `location` (via `setLocation`) is updated to `farm.centerLat/centerLng` — so all data hooks query the farm centroid rather than the user's GPS.
+- `selectFarm(farm)` — saves to AsyncStorage, sets `selectedFarm`, and calls `LocationProvider.setLocation(...)` with `{ lat: farm.centerLat, lng: farm.centerLng, name: farm.name, displayName: farm.name }`.
+- `clearFarm()` — sets `selectedFarm = null`, removes AsyncStorage key, and calls `requestCurrentLocation()` to restore GPS coordinates.
+
+**Consumed by:**
+- `components/dashboard/SearchSection.tsx` — shows the active farm name + "Farm" badge when a farm is selected; GPS button calls `clearFarm()` to switch back to GPS mode.
+- `app/farm-select.tsx` — `selectFarm()` when user taps a saved farm on the map.
+- `app/my-farms.tsx` — `selectFarm()` when user taps a farm in the list.
+- `app/onboarding/farm-select.tsx` — reads `selectedFarm` to show the "Ready to go!" state.
+
+---
+
 ## Consumer Hook Summary
 
 | Context | Hook | File |
@@ -142,6 +170,7 @@ type CropContextType = {
 | Language | `useLanguage()` | `hooks/useLanguage.ts` (throws outside provider) |
 | Location | `useLocationContext()` | `providers/LocationProvider.tsx` (safe default) |
 | Crop | `useCropContext()` | `providers/CropProvider.tsx` (default context) |
+| Farm | `useFarmContext()` | `providers/FarmProvider.tsx` (safe default) |
 | Query | `useQueryClient()` | TanStack Query |
 
 > **Gotcha:** `useLocationContext()` is defined **inside** `LocationProvider.tsx` (unlike the others which live in `hooks/`). Import it from `@/providers/LocationProvider`.
