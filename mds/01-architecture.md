@@ -43,6 +43,12 @@ The mobile client is a **thin client**: all data processing (bias correction, so
 farmrisk-app/
 ├── app/                    # Expo Router — every file = a screen/route
 │   ├── _layout.tsx         # Root layout: providers + Stack navigator
+│   ├── onboarding/         # 5-step first-launch flow (see 02-routing.md)
+│   │   ├── _layout.tsx     # Onboarding Stack (header hidden, animations)
+│   │   ├── index.tsx       # Step 1: Splash (1.8s, then routes on has_onboarded)
+│   │   ├── welcome.tsx     # Step 2: Welcome hero (image + language picker + CTA)
+│   │   ├── auth.tsx        # Step 3: Login / Register / Continue as Guest
+│   │   └── location-perm.tsx # Step 4: Geolocation dialog (transparent modal)
 │   ├── (tabs)/             # Bottom-tab group
 │   │   ├── _layout.tsx     # Tab bar config (4 tabs)
 │   │   ├── index.tsx       # Dashboard (Home) tab
@@ -82,16 +88,18 @@ farmrisk-app/
 │   ├── Logo.tsx            # FarmRisk SVG logo
 │   └── WeatherIcon.tsx     # Maps names → weather SVG assets
 ├── constants/
-│   └── theme.ts            # Colors (light/dark) + Fonts (legacy — mostly dead)
+│   ├── theme.ts            # Colors (light/dark) + Fonts (legacy — mostly dead)
+│   └── onboarding.ts       # Onboarding state machine: steps, routes, transitions, HAS_ONBOARDED_KEY
 ├── i18n/                   # i18next engine (see 08-theme-i18n.md + language.md)
 │   ├── index.ts            # Init, storage, device detection, changeAppLanguage
 │   ├── resources.ts        # Static import of all language × namespace JSON
 │   ├── keys.d.ts           # Strict t() typing (en = source of truth)
-│   └── locales/            # en/ hi/ mr/ ta/ gu/ × 8 namespaces each
+│   └── locales/            # en/ hi/ mr/ ta/ gu/ × 9 namespaces each
 ├── hooks/                  # All custom hooks (see 04-hooks.md)
 ├── lib/
 │   ├── api.ts              # All backend fetch functions
 │   ├── supabase.ts         # Supabase client (AsyncStorage persistence)
+│   ├── onboarding.ts       # isOnboarded() / markOnboarded() AsyncStorage helpers
 │   └── auth/phone.ts       # Indian phone number normalizer
 ├── providers/              # React Context providers (see 03-providers.md)
 ├── types/                  # TypeScript types (see 07-types.md)
@@ -125,6 +133,7 @@ QueryProvider            (TanStack QueryClient — retry 2, stale 5m, gc 10m)
                 └── CropProvider  (selected crop, persisted)
                     └── ThemeProvider  (@react-navigation/native light/dark)
                         └── <Stack>  (Expo Router navigator)
+                            ├── onboarding   (nested Stack: splash → welcome → auth → location-perm)
                             ├── (tabs)
                             ├── search         (modal, fade_from_bottom)
                             ├── profile        (transparentModal)
@@ -152,10 +161,11 @@ QueryProvider            (TanStack QueryClient — retry 2, stale 5m, gc 10m)
 | `hooks/` | Data-access hooks (TanStack Query) + UI hooks (theme, refresh, pro) |
 | `lib/api.ts` | Single source of truth for backend calls |
 | `lib/supabase.ts` | Supabase client singleton |
+| `lib/onboarding.ts` | `isOnboarded()` / `markOnboarded()` AsyncStorage helpers |
 | `components/dashboard/` | Composable dashboard "sections" (data + UI in one) |
 | `components/ui/` | Presentational primitives |
-| `i18n/` | i18next engine + per-language JSON namespaces (5 langs × 8 ns) |
-| `constants/` | Theme tokens (legacy `theme.ts` only) |
+| `i18n/` | i18next engine + per-language JSON namespaces (5 langs × 9 ns) |
+| `constants/` | Theme tokens (legacy `theme.ts`) + onboarding state machine (`onboarding.ts`) |
 | `types/` | Shared TypeScript contracts (mirror backend API shapes) |
 
 ---
@@ -166,6 +176,7 @@ QueryProvider            (TanStack QueryClient — retry 2, stale 5m, gc 10m)
 2. **Cross-cutting client state** → Context providers (location, auth, language, crop).
 3. **Screen-local UI state** → `useState` inside components (e.g. modals, tooltips, form fields).
 4. **Persistence** → AsyncStorage, always namespaced keys:
+   - `has_onboarded` (onboarding flow — `"true"` skips the flow on next launch)
    - `farmrisk-language` (LanguageProvider)
    - `farmrisk:active_location` (LocationProvider)
    - `farmrisk:recent_locations` (LocationProvider + search screen)

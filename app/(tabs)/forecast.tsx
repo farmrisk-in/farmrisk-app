@@ -3,7 +3,6 @@ import { ScrollView, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { useColorScheme } from "nativewind";
 import { LocationRequired } from "@/components/LocationRequired";
 import { useCropContext } from "@/providers/CropProvider";
 import {
@@ -11,7 +10,6 @@ import {
   HourlyWeatherSection,
   ForecastSection,
   SoilMoistureSection,
-  CalendarSection,
   CropCalendarSection,
 } from "@/components/dashboard";
 

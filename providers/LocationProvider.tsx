@@ -150,13 +150,19 @@ export function LocationProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        // 3. Fallback to user's current GPS location
-        if (isMounted) {
+        // 3. Fallback to user's current GPS location — but only for returning
+        //    users who have completed onboarding. New users grant/choose
+        //    location during onboarding (Step 4) which calls
+        //    requestCurrentLocation() explicitly; auto-prompting here would
+        //    fire the OS permission dialog before the user reaches Step 4.
+        const onboardedFlag = await AsyncStorage.getItem("has_onboarded");
+        if (onboardedFlag === "true" && isMounted) {
           await requestCurrentLocation();
         }
       } catch (err) {
         console.warn("Location initialization failed, resolving GPS:", err);
-        if (isMounted) {
+        const onboardedFlag = await AsyncStorage.getItem("has_onboarded");
+        if (onboardedFlag === "true" && isMounted) {
           await requestCurrentLocation();
         }
       } finally {

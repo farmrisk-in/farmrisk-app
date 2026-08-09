@@ -44,9 +44,10 @@
 
 1. **Location is the core.** `LocationProvider` resolves the user's village (stored location → recents → GPS), and every data hook reads `location` from context.
 2. **Hooks are the API.** Context-based hooks (`useWeather`, `useForecast`, `useSoilMoisture`, `useCrops`, `useCalendar`, `useAI`, `useRiskScore`, `useWeatherSummary`) wrap TanStack Query and are used directly by screens/components.
-3. **Everything talks to one backend.** `lib/api.ts` defines 10 fetch functions hitting the Next.js API (`/api/weather`, `/api/forecast`, `/api/soil-moisture`, `/api/ai`, `/api/risk`, `/api/crops`, `/api/calender`, `/api/locations`, etc.).
-4. **The UI is section-based.** The Dashboard (`app/(tabs)/index.tsx`) composes reusable section components from `components/dashboard/`.
-5. **Auth is optional.** Supabase session presence unlocks "Pro" (paid dashboard) views; login uses a 10-digit Indian phone number converted to `<phone>@farmrisk.app`.
+3. **First launch runs a 5-step onboarding flow** (`app/onboarding/`): Splash → Welcome → Auth (or Guest) → Location permission → Dashboard. `has_onboarded` in AsyncStorage skips it on later launches. The flow is fully localized (all 5 languages).
+4. **Everything talks to one backend.** `lib/api.ts` defines 10 fetch functions hitting the Next.js API (`/api/weather`, `/api/forecast`, `/api/soil-moisture`, `/api/ai`, `/api/risk`, `/api/crops`, `/api/calender`, `/api/locations`, etc.).
+5. **The UI is section-based.** The Dashboard (`app/(tabs)/index.tsx`) composes reusable section components from `components/dashboard/`.
+6. **Auth is optional.** Supabase session presence unlocks "Pro" (paid dashboard) views; login uses a 10-digit Indian phone number converted to `<phone>@farmrisk.app`.
 
 ---
 

@@ -49,7 +49,7 @@ interface AuthContextType {
 
 ## 3. `LanguageProvider` — `providers/LanguageProvider.tsx`
 
-Bootstraps the **i18next** engine (5 languages × 8 namespaces) and hydrates the user's language choice before rendering the app.
+Bootstraps the **i18next** engine (5 languages × 9 namespaces) and hydrates the user's language choice before rendering the app.
 
 ```ts
 interface LanguageContextProps {
@@ -99,10 +99,12 @@ interface LocationContextValue {
 **Initialization sequence (on mount & on `retryLocationInit`):**
 1. **Stored active location** — if `farmrisk:active_location` exists and has lat/lng, use it.
 2. **Most recent location** — else read `farmrisk:recent_locations` and use `recents[0]`.
-3. **GPS fallback** — else `requestCurrentLocation()`:
+3. **GPS fallback** — *only when onboarding is complete*: if `has_onboarded === "true"`, call `requestCurrentLocation()`:
    - Requests `expo-location` foreground permission; if granted uses `Location.getCurrentPositionAsync({ accuracy: Balanced })`.
    - Falls back to browser `navigator.geolocation` (web).
    - Reverse-geocodes via `reverseGeocode(lat, lng)` from `lib/api.ts` to build `SelectedLocation` (name = `district` → `state` → first part of displayName).
+
+> **Onboarding gate:** during the first-launch flow (`has_onboarded` unset), the GPS auto-prompt is **skipped** so the permission dialog never pops up over the splash/welcome screens. The onboarding Step 4 (location-perm) is the deliberate permission moment, and the search/map screens work without GPS.
 
 **Error handling:**
 - On failure, `locationError = true` and `location` stays `null` → screens render `<LocationRequired />`.

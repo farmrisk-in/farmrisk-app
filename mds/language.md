@@ -29,7 +29,7 @@ i18n/
 ├── index.ts            # Engine: init, storage, device detection, changeAppLanguage
 ├── resources.ts        # Static import of every language × namespace JSON
 ├── keys.d.ts           # Strict TypeScript: t() autocomplete + compile-time key checks
-└── locales/
+├── locales/
     ├── en/             # ← SOURCE OF TRUTH for key shape
     │   ├── common.json     # Navigation, tab titles, generic buttons, errors
     │   ├── dashboard.json  # Dashboard copy, headers, risk/hazard labels
@@ -38,11 +38,12 @@ i18n/
     │   ├── profile.json    # Profile screen (incl. language + crop pickers)
     │   ├── auth.json       # Sign in / register forms + validation errors
     │   ├── calendar.json   # Crop calendar phases
-    │   └── landing.json    # Landing hero + nav (legacy content)
-    ├── hi/             # Same 8 files, Hindi
-    ├── mr/             # Same 8 files, Marathi
-    ├── ta/             # Same 8 files, Tamil
-    └── gu/             # Same 8 files, Gujarati
+    │   ├── landing.json    # Landing hero + nav (legacy content)
+    │   └── onboarding.json # 5-step onboarding flow (welcome, auth, location-perm)
+    ├── hi/             # Same 9 files, Hindi
+    ├── mr/             # Same 9 files, Marathi
+    ├── ta/             # Same 9 files, Tamil
+    └── gu/             # Same 9 files, Gujarati
 ```
 
 The namespaces are **domain-based, not screen-positional** — keys describe
@@ -61,6 +62,7 @@ sits on screen. That keeps translations reusable and the typing strict.
 | `auth` | | Login/register forms + validation messages | `app/profile.tsx` (auth card) |
 | `calendar` | | Crop calendar phase names | `CropCalendarSection` |
 | `landing` | | Legacy landing/hero copy | (legacy — rarely rendered) |
+| `onboarding` | | Welcome/auth/location-permission copy for the 5-step flow | `app/onboarding/*` |
 
 ---
 
@@ -197,7 +199,7 @@ File: `components/ui/LanguageSelector.tsx` — a bottom-sheet `Modal`.
   (each language's name in its own script — always readable by the user).
 - Marks the active language (`i18n.language`) with a tick.
 - On press → `await changeAppLanguage(code)` then `onClose()`.
-- Mounted from `app/profile.tsx` (Profile → "Language" row → `languageModalVisible`).
+- Mounted from **two places**: `app/profile.tsx` (Profile → "Language" row → `languageModalVisible`) and `app/onboarding/welcome.tsx` (top-right globe button), so users can pick a language *before* creating an account.
 
 **Text-length safety (en → hi/mr/ta/gu):** Devanagari/Tamil/Gujarati strings are
 often ~20–40% longer than English. The dashboard is built with `flex` layouts,
@@ -252,13 +254,13 @@ Tick every box:
 
 Add e.g. Bengali (`bn`):
 
-- [ ] **1. Create the folder** `i18n/locales/bn/` and **copy all 8 JSON files** from `i18n/locales/en/` as a starting scaffold.
-- [ ] **2. Translate every key** in `bn/*.json` (all 8 files). Keep the JSON **structure identical** to `en` — same keys, same nesting, same `{{var}}` placeholders. Missing keys silently fall back to English, so an incomplete file still runs — but translate all keys for a real rollout.
+- [ ] **1. Create the folder** `i18n/locales/bn/` and **copy all 9 JSON files** from `i18n/locales/en/` as a starting scaffold.
+- [ ] **2. Translate every key** in `bn/*.json` (all 9 files). Keep the JSON **structure identical** to `en` — same keys, same nesting, same `{{var}}` placeholders. Missing keys silently fall back to English, so an incomplete file still runs — but translate all keys for a real rollout.
 - [ ] **3. Register in `i18n/index.ts`:**
       - Add `"bn"` to `SUPPORTED_LANGUAGES`.
       - Add `bn: "বাংলা"` to `LANGUAGE_NAMES`.
       - (`LanguageCode` and `isSupportedLanguage` update automatically.)
-- [ ] **4. Register in `i18n/resources.ts`:** import all 8 `bn` JSON files and add a `bn: { common, dashboard, weather, search, profile, auth, calendar, landing }` entry to `resources`.
+- [ ] **4. Register in `i18n/resources.ts`:** import all 9 `bn` JSON files and add a `bn: { common, dashboard, weather, search, profile, auth, calendar, landing, onboarding }` entry to `resources`.
 - [ ] **5. Add device-language detection support** if needed: `getDeviceLanguage()` already uses `isSupportedLanguage`, so `bn`-locale devices are detected automatically — nothing else to do. If the locale code differs (e.g. `pt-BR`), consider normalizing in `getDeviceLanguage`.
 - [ ] **6. Verify with `npx tsc --noEmit`** — `keys.d.ts` types `t()` against `en` only, so this won't catch missing keys in `bn`; instead spot-check by switching to the language in the app and scanning screens.
 - [ ] **7. Update the docs:**

@@ -32,7 +32,7 @@ export default function ProfileScreen() {
   const [mode, setMode] = useState<Mode>("login");
   const router = useRouter();
   
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
   
   // Crop selection hooks
   const { selectedCrop, setSelectedCrop } = useCropContext();

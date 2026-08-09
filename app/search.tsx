@@ -23,7 +23,7 @@ import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Searchbar } from "react-native-paper";
-import { cssInterop, useColorScheme } from "nativewind";
+import { cssInterop } from "nativewind";
 import { useLocationSearch } from "@/hooks/useDashboardQueries";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Icon } from "@/components/ui/Icon";

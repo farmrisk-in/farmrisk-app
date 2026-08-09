@@ -5,7 +5,6 @@ import { useWeather } from "@/hooks/useWeather";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Icon } from "@/components/ui/Icon";
 import {
-  CloudLightningIcon,
   CloudOffIcon,
   Lightning,
 } from "@hugeicons/core-free-icons";

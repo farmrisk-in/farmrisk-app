@@ -6,7 +6,7 @@ This app has **two separate theming systems** and **two separate i18n layers**:
 |---|---|---|
 | **NativeWind theme** (authoritative) | CSS variables in `global.css` mapped to Tailwind color names in `tailwind.config.js`. **This is what all real screens use.** | `global.css`, `tailwind.config.js` |
 | **Legacy `Colors`/`Fonts`** | Old shadcn-style constants. Only used by `components/ui/collapsible.tsx` and the `useThemeColor` hook. Mostly dead code. | `constants/theme.ts` |
-| **App i18n (authoritative)** | **i18next + react-i18next** engine with 5 languages × 8 domain namespaces, JSON files under `i18n/locales/`. Consumed via `useTranslation()` / `useLanguage()`. Full guide + checklists in [`language.md`](./language.md). | `i18n/` |
+| **App i18n (authoritative)** | **i18next + react-i18next** engine with 5 languages × 9 domain namespaces, JSON files under `i18n/locales/`. Consumed via `useTranslation()` / `useLanguage()`. Full guide + checklists in [`language.md`](./language.md). | `i18n/` |
 | **Weather conditions i18n** | WMO condition strings per language inside `types/weather.ts` (`WmoEntry.condition`, `CurrentWeather.condition`). Separate from the i18next dictionary — translated per record. | `types/weather.ts`, used by `components/WeatherIcon.tsx` |
 
 ---
@@ -139,7 +139,7 @@ The default tint (`#0a7ea4` blue) does **not** match the app's green brand — e
 | `ta` | Tamil | தமிழ் |
 | `gu` | Gujarati | ગુજરાતી |
 
-Each language has **8 domain namespaces** as JSON files under `i18n/locales/<code>/`:
+Each language has **9 domain namespaces** as JSON files under `i18n/locales/<code>/`:
 
 | Namespace | Covers |
 |---|---|
@@ -151,6 +151,7 @@ Each language has **8 domain namespaces** as JSON files under `i18n/locales/<cod
 | `auth` | Sign in/register forms + validation errors |
 | `calendar` | Crop calendar phase names |
 | `landing` | Legacy landing/hero copy |
+| `onboarding` | 5-step onboarding flow: welcome, auth, location-permission copy |
 
 ### Resolution order (first launch)
 

@@ -1,0 +1,184 @@
+import { useState } from "react";
+import { View, Text, Pressable, Modal } from "react-native";
+import { BlurView } from "expo-blur";
+import { useTranslation } from "react-i18next";
+import { router } from "expo-router";
+import Animated, { FadeIn, ZoomIn } from "react-native-reanimated";
+import * as Location from "expo-location";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { markOnboarded } from "@/lib/onboarding";
+import { Icon } from "@/components/ui/Icon";
+import { PinLocation01Icon } from "@hugeicons/core-free-icons";
+
+/**
+ * Step 4 — Geolocation permission dialog.
+ *
+ * Renders as a transparent modal overlay. Two actions:
+ *   - "Allow Location Access" → requestForegroundPermissionsAsync + resolve GPS.
+ *   - "Select Location Manually" → push to /search.
+ *
+ * Once a location is available (either path), the "Continue to Dashboard"
+ * primary button appears. Tapping it completes onboarding (Step 5).
+ */
+export default function LocationPerm() {
+  const { t } = useTranslation(["onboarding"]);
+  const { location } = useLocationContext();
+
+  const [granting, setGranting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { requestCurrentLocation } = useLocationContext();
+
+  const hasLocation = !!location;
+
+  /* ──────────────────────────────────────────────────────────
+   * Android back button — treat as "stay", since leaving
+   * without a location would land the user on an empty tabs.
+   * The user must tap one of the two primary actions.
+   * ────────────────────────────────────────────────────────── */
+  const handleBack = () => router.replace("/onboarding/auth");
+
+  /* ──────────────────────────────────────────────────────────
+   * Mark onboarded and jump to the main Dashboard.
+   * ────────────────────────────────────────────────────────── */
+  const complete = async () => {
+    await markOnboarded();
+    router.replace("/");
+  };
+
+  /* ──────────────────────────────────────────────────────────
+   * "Allow Location Access" — request permission → GPS → geocode.
+   * If the user already has a location from the manual flow,
+   * we still allow the "Continue" button (no extra prompt).
+   * ────────────────────────────────────────────────────────── */
+  const allowLocation = async () => {
+    setGranting(true);
+    setError(null);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status === "granted") {
+        const resolved = await requestCurrentLocation();
+        if (resolved) {
+          await complete();
+        } else {
+          setError(t("permissionError"));
+        }
+      } else {
+        setError(t("permissionDenied"));
+      }
+    } catch (e: any) {
+      console.warn("Location request failed:", e);
+      setError(e?.message || t("permissionError"));
+    } finally {
+      setGranting(false);
+    }
+  };
+
+  /* ──────────────────────────────────────────────────────────
+   * "Select Location Manually" — push to the existing search
+   * screen.  When the user selects a village/city there, the
+   * LocationProvider's `setLocation` is called, which updates
+   * the `location` context variable we watch above.  When the
+   * user returns, the primary CTA will reflect the new state.
+   * ────────────────────────────────────────────────────────── */
+  const selectManually = () => router.push("/search");
+
+  return (
+    <Modal
+      visible
+      transparent
+      animationType="fade"
+      onRequestClose={handleBack}
+    >
+      {/* Full-screen dark backdrop */}
+      <View className="flex-1 bg-black/60">
+        {/* Blurred underlay */}
+        <BlurView
+          intensity={40}
+          tint="dark"
+          style={{ position: "absolute", inset: 0 }}
+        />
+
+        {/* Centered card */}
+        <View className="flex-1 items-center justify-center px-6">
+          <Animated.View
+            entering={ZoomIn.delay(150).duration(500).springify()}
+            className="w-full max-w-sm rounded-3xl overflow-hidden border border-white/10"
+          >
+            <BlurView intensity={20} tint="dark">
+              <View className="p-7 items-center bg-zinc-900/80">
+                {/* Icon */}
+                <Animated.View
+                  entering={FadeIn.delay(300).duration(400)}
+                  className="w-16 h-16 rounded-full bg-emerald-600/20 items-center justify-center mb-5"
+                >
+                  <Icon
+                    icon={PinLocation01Icon}
+                    size={32}
+                    className="text-emerald-500"
+                  />
+                </Animated.View>
+
+                {/* Title */}
+                <Text className="text-xl font-bold text-white text-center">
+                  {t("enableTelemetryTitle")}
+                </Text>
+
+                {/* Description */}
+                <Text className="mt-3 text-sm leading-5 text-zinc-300 text-center">
+                  {t("enableTelemetryDesc")}
+                </Text>
+
+                {/* Error */}
+                {error && (
+                  <Text className="mt-3 text-sm text-red-400 text-center">
+                    {error}
+                  </Text>
+                )}
+
+                {/* Primary CTA — conditionally changes based on state */}
+                <Pressable
+                  onPress={
+                    hasLocation && !error ? complete : allowLocation
+                  }
+                  disabled={granting}
+                  className="mt-6 w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 items-center justify-center py-4 disabled:opacity-50"
+                  accessibilityRole="button"
+                >
+                  <Text className="text-white text-base font-semibold">
+                    {hasLocation && !error
+                      ? t("continueToDashboard")
+                      : t("allowLocation")}
+                  </Text>
+                </Pressable>
+
+                {/* Secondary CTA */}
+                <Pressable
+                  onPress={selectManually}
+                  disabled={granting}
+                  className="mt-3 w-full rounded-2xl border border-white/10 bg-zinc-800 active:bg-zinc-700 items-center justify-center py-4"
+                  accessibilityRole="button"
+                >
+                  <Text className="text-zinc-300 text-sm font-medium">
+                    {t("selectManually")}
+                  </Text>
+                </Pressable>
+
+                {/* Back link */}
+                <Pressable
+                  onPress={handleBack}
+                  className="mt-4"
+                  accessibilityRole="button"
+                >
+                  <Text className="text-zinc-500 text-xs">
+                    ← Back to auth
+                  </Text>
+                </Pressable>
+              </View>
+            </BlurView>
+          </Animated.View>
+        </View>
+      </View>
+    </Modal>
+  );
+}

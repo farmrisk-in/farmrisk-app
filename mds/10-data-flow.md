@@ -52,11 +52,13 @@ The init strategy is **stored → recents → GPS**:
 
 1. **Stored active location** — reads `farmrisk:active_location` (JSON `{lat, lng, name, displayName}`). If valid (`lat && lng`), use it immediately.
 2. **Most recent from recents** — reads `farmrisk:recent_locations` (array; index 0 = most recent). If present and valid, use `recents[0]` and persist it as active.
-3. **GPS fallback** — `requestCurrentLocation()`:
+3. **GPS fallback** — `requestCurrentLocation()`, **but only when onboarding is complete** (`has_onboarded === "true"` in AsyncStorage):
    - `expo-location`: `requestForegroundPermissionsAsync()` → if granted, `getCurrentPositionAsync({ accuracy: Balanced })`.
    - Web fallback: `navigator.geolocation.getCurrentPosition` (10s timeout).
    - Reverse-geocode the coordinates through `reverseGeocode(lat, lng)` (`/api/locations?mode=reverse`) to get `display_name` and a short `name` (district → state → first comma part → `"My Location"`).
    - Persist via `setLocation`.
+
+> **Onboarding gate:** during first launch (no `has_onboarded` flag) the GPS auto-prompt is skipped entirely — the onboarding Step 4 dialog is the only place the permission is requested, and manual selection (search/map) also works without GPS.
 
 `setLocation(newLoc)`:
 - Updates state, clears `locationError`.
@@ -207,6 +209,19 @@ This is the most important derived flow — see §4 below.
 
 ## 5. Screen-by-screen flows
 
+### Onboarding — `app/onboarding/` (first launch)
+
+1. Root Stack starts at `/onboarding` (`initialRouteName`). Splash shows the logo for **1.8s**, then:
+   - `isOnboarded()` (`lib/onboarding.ts`) → `"true"` → `router.replace("/")` straight to the dashboard.
+   - Otherwise → `router.replace("/onboarding/welcome")`.
+2. **Welcome** renders the hero image + gradient, a language selector (`LanguageSelector` → `changeAppLanguage`, instant re-render), and **Get Started** → `/onboarding/auth`.
+3. **Auth** signs in/up via Supabase (phone → `${phone}@farmrisk.app`), or **Continue as Guest** (no account) → `/onboarding/location-perm`.
+4. **Location perm** (transparent modal):
+   - **Allow Location Access** → `Location.requestForegroundPermissionsAsync()` → granted → `requestCurrentLocation()` → resolves GPS → auto-completes.
+   - **Select Location Manually** → `router.push("/search")`; picking a village calls `setLocation()` and returns (location context now set).
+   - With a location set, the primary CTA becomes **Continue to Dashboard** → `markOnboarded()` + `router.replace("/")` (Step 5).
+5. All onboarding steps render instantly in the chosen language because the welcome screen's language selector switched the active i18n language (the onboarding namespace is localized in all 5 languages).
+
 ### Home tab — `app/(tabs)/index.tsx`
 
 1. Reads `useRefreshDashboard()` (pull-to-refresh) + `useLocationContext()`.
@@ -299,6 +314,7 @@ Behavior:
 
 | Key | Written by | Contents |
 |---|---|---|
+| `has_onboarded` | onboarding flow (`lib/onboarding.ts`) | `"true"` once the 5-step flow completes (splash skips it on later launches) |
 | `farmrisk-language` | `LanguageProvider` | `"en" \| "hi" \| "mr" \| "ta" \| "gu"` |
 | `farmrisk:active_location` | `LocationProvider.setLocation` | `SelectedLocation` JSON |
 | `farmrisk:recent_locations` | location search flow | Array of `SelectedLocation` (index 0 = most recent) |

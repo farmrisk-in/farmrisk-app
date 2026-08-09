@@ -5,7 +5,7 @@ import { useForecast } from "./useForecast";
 
 export function useSoilMoisture(crop?: string, daysbefore?: number) {
   const { location, isResolving } = useLocationContext();
-  const { forecastRows, isLoading: isForecastLoading } = useForecast();
+  const { isLoading: isForecastLoading } = useForecast();
 
   const activeCrop = crop && crop !== "general" ? crop : undefined;
 

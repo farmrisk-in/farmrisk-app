@@ -32,12 +32,14 @@ export default function RootLayout() {
               <CropProvider>
                 <ThemeProvider value={navTheme}>
                 <Stack
+                  initialRouteName="onboarding"
                   screenOptions={{
                     contentStyle: {
                       backgroundColor: isDark ? "#09090b" : "#ffffff",
                     },
                   }}
                 >
+                  <Stack.Screen name="onboarding" options={{ headerShown: false, animation: "fade" }} />
                   <Stack.Screen
                     name="(tabs)"
                     options={{ headerShown: false }}

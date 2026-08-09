@@ -22,6 +22,7 @@ export const ALL_NAMESPACES = [
   "auth",
   "calendar",
   "landing",
+  "onboarding",
 ] as const;
 
 /** `t` typed against every namespace (unprefixed keys accepted from any). */
@@ -55,6 +56,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
     "auth",
     "calendar",
     "landing",
+    "onboarding",
   ]);
 
   useEffect(() => {

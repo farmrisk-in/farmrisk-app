@@ -65,7 +65,6 @@ function buildMapHTML(options: {
     : '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>';
 
   const crosshairColor = isDark ? "white" : "black";
-  const crosshairBg = isDark ? "rgba(9,9,11,0.6)" : "rgba(255,255,255,0.7)";
 
   return `
 <!DOCTYPE html>

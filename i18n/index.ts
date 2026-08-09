@@ -11,7 +11,7 @@
  * once and gates rendering until ready, so the app never flashes the wrong
  * language.
  */
-import i18n from "i18next";
+import i18n, { changeLanguage, use } from "i18next";
 import { initReactI18next } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Localization from "expo-localization";
@@ -68,12 +68,12 @@ export const initI18n = (): Promise<LanguageCode> => {
       const stored = await getStoredLanguage();
       const resolved = stored ?? getDeviceLanguage();
 
-      await i18n.use(initReactI18next).init({
+      await use(initReactI18next).init({
         resources,
         lng: resolved,
         fallbackLng: "en",
         defaultNS: "common",
-        ns: ["common", "dashboard", "weather", "search", "profile", "auth", "calendar", "landing"],
+        ns: ["common", "dashboard", "weather", "search", "profile", "auth", "calendar", "landing", "onboarding"],
         interpolation: {
           // React Native renders text already; no HTML to escape.
           escapeValue: false,
@@ -102,7 +102,7 @@ export const changeAppLanguage = async (lang: LanguageCode): Promise<void> => {
   } catch (e) {
     console.error("Failed to persist language preference", e);
   }
-  await i18n.changeLanguage(lang);
+  await changeLanguage(lang);
 };
 
 export { i18n };

@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   Text,
-  ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
 import { useWeather } from "@/hooks/useWeather";

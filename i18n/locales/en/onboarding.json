@@ -1,0 +1,13 @@
+{
+  "welcomeTitle": "Welcome to FarmRisk",
+  "welcomeSubtitle": "Hyper-local weather telemetry, lightning hazard alerts, and predictive AI agronomist intelligence at your fingertips.",
+  "getStarted": "Get Started",
+  "enableTelemetryTitle": "Enable Field Telemetry",
+  "enableTelemetryDesc": "FarmRisk uses your location to deliver village-level weather, lightning alerts, and soil-moisture intelligence — right on your field.",
+  "allowLocation": "Allow Location Access",
+  "selectManually": "Select Location Manually",
+  "continueToDashboard": "Continue to Dashboard",
+  "permissionDenied": "Location permission was denied. Choose a location manually to continue.",
+  "permissionError": "Something went wrong while requesting location access.",
+  "locationSet": "Location enabled. Setting up your dashboard..."
+}

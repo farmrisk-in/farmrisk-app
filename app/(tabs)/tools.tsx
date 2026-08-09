@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { useColorScheme } from "nativewind";
 import { LocationRequired } from "@/components/LocationRequired";
 import { useCropContext } from "@/providers/CropProvider";
 import {

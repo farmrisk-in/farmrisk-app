@@ -7,7 +7,6 @@ import {
   CloudOffIcon,
   WheatIcon,
 } from "@hugeicons/core-free-icons";
-import { Skeleton } from "@/components/ui/Skeleton";
 import { useTranslation } from "react-i18next";
 
 interface Props {

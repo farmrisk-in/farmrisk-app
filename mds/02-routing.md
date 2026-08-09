@@ -10,6 +10,7 @@ The root layout renders providers and a `<Stack>` navigator:
 
 | `Stack.Screen` name | Route path | Presentation | Notes |
 |---|---|---|---|
+| `onboarding` | `/onboarding` | group w/ own Stack | 5-step first-launch flow, header hidden (see §Onboarding flow below) |
 | `(tabs)` | `/` | default | Tab navigator, header hidden |
 | `search` | `/search` | `modal`, `fade_from_bottom` | header hidden |
 | `profile` | `/profile` | `transparentModal` | header hidden |
@@ -94,8 +95,31 @@ Full-page soil moisture table (date, moisture bar %, rain, PE) from `useSoilMois
 
 ---
 
+## Onboarding flow — `app/onboarding/`
+
+A 5-step, first-launch sequence driven by a small state machine (`constants/onboarding.ts`) with AsyncStorage persistence (`lib/onboarding.ts`). It is the root `Stack`'s `initialRouteName` (`app/_layout.tsx`), so **every launch starts at `/onboarding`** — the splash decides where to go next:
+
+| Step | Screen | Route | What happens |
+|---|---|---|---|
+| **1 — Splash** | `app/onboarding/index.tsx` | `/onboarding` | Dark screen with logo + wordmark; after **1.8s** (`SPLASH_DURATION_MS`) checks `isOnboarded()` → `router.replace("/")` if `has_onboarded === "true"`, else `router.replace("/onboarding/welcome")` |
+| **2 — Welcome** | `app/onboarding/welcome.tsx` | `/onboarding/welcome` | `ImageBackground` (`assets/images/splash.png`) + `LinearGradient` fade to `#09090b`; top bar with **language selector** (`LanguageSelector`, EN/HI/MR/TA/GU); glassmorphic `BlurView` card (title, subtitle, **Get Started** CTA → `/onboarding/auth`) |
+| **3 — Auth** | `app/onboarding/auth.tsx` | `/onboarding/auth` | Sign in / Register toggle (Supabase phone auth, same logic as `profile.tsx`), or **Continue as Guest** → `/onboarding/location-perm` |
+| **4 — Location** | `app/onboarding/location-perm.tsx` | `/onboarding/location-perm` | `transparentModal` with `BlurView` backdrop; **Allow Location Access** → `Location.requestForegroundPermissionsAsync()` + `requestCurrentLocation()`; **Select Location Manually** → `router.push("/search")` (existing search screen). Once a location exists, the CTA becomes **Continue to Dashboard** |
+| **5 — Complete** | (no screen) | `/` | `markOnboarded()` writes `has_onboarded = "true"`, then `router.replace("/")` lands on the dashboard; every later launch skips straight to the tabs |
+
+Key details:
+
+- **Transitions use `router.replace()`** so the onboarding stack never accumulates back-stack entries (back button from location-perm returns to auth, not to splash).
+- The onboarding Stack (`app/onboarding/_layout.tsx`) sets `headerShown: false`, `contentStyle: { backgroundColor: "#09090b" }`, and per-screen animations: `none` (splash), `fade` (welcome), `slide_from_bottom` (auth), `fade` + `transparentModal` (location-perm).
+- **`LocationProvider` skips its GPS auto-prompt during onboarding** — `requestCurrentLocation` is only invoked automatically once `has_onboarded === "true"`, so the permission dialog never fires during splash/welcome. The location-perm step is the deliberate, user-initiated permission moment.
+- Guest users get no Supabase account — `useAuth()` simply reports no user; the dashboard works fully as guest.
+
+---
+
 ## Navigation Patterns Used
 
+- `router.replace("/onboarding/<step>")` — forward transitions inside the onboarding flow (replaces, keeps back-stack clean).
+- `router.replace("/")` — onboarding complete (from splash when already onboarded, and from location-perm when finishing).
 - `router.push("/profile")` — Header avatar/menu button.
 - `router.push("/search")` — SearchSection fake search bar.
 - `router.push("/map")` — SearchSection map button + search screen "Select on Map".
