@@ -12,6 +12,10 @@ import {
   CloudOffIcon,
   CheckmarkBadge01Icon,
   Analytics01Icon,
+  RainDropIcon,
+  Clock01Icon,
+  ThermometerWarmIcon,
+  Plant01Icon,
 } from "@hugeicons/core-free-icons";
 
 const RAINY_DAY_THRESHOLD_MM = 2.5;
@@ -48,7 +52,8 @@ const soilWord = (pct: number): SoilWordKey => {
   return "smExceptionalDry";
 };
 
-type OutlookKey = "outlookFavorable" | "outlookCautionary" | "outlookUnfavorable";
+type OutlookKey =
+  "outlookFavorable" | "outlookCautionary" | "outlookUnfavorable";
 
 const extractOutlook = (text?: string): OutlookKey | "" => {
   if (!text) return "";
@@ -83,19 +88,28 @@ export function ModelSummarySection() {
       }))
     : [];
 
-  const finalPredictions = predictions.length > 0 ? predictions : fallbackPredictions;
-  const isFallbackUsed = predictions.length === 0 && fallbackPredictions.length > 0;
+  const finalPredictions =
+    predictions.length > 0 ? predictions : fallbackPredictions;
+  const isFallbackUsed =
+    predictions.length === 0 && fallbackPredictions.length > 0;
 
-  // Assuming cropId logic isn't needed right away, we pass "general" for now. 
+  // Assuming cropId logic isn't needed right away, we pass "general" for now.
   // In a real app we'd get this from a context.
   const cropId = "general";
-  const { data: advisory, isLoading: isAdvisoryLoading, isError: isAdvisoryError } = useAI(cropId, "en");
+  const {
+    data: advisory,
+    isLoading: isAdvisoryLoading,
+    isError: isAdvisoryError,
+  } = useAI(cropId, "en");
   const outlook = extractOutlook(advisory);
   const outlookLabel = outlook ? tDash(outlook) : "";
   const advisoryPending = isAdvisoryLoading && !advisory && !isAdvisoryError;
 
   const daysBefore = undefined;
-  const { data: soilResponse, isLoading: isSoilLoading } = useSoilMoisture(cropId, daysBefore);
+  const { data: soilResponse, isLoading: isSoilLoading } = useSoilMoisture(
+    cropId,
+    daysBefore,
+  );
 
   const soilTrend = useMemo(() => {
     const soilRows = soilResponse?.soil_moisture ?? [];
@@ -128,8 +142,12 @@ export function ModelSummarySection() {
       if ((day.pcp_corrected ?? 0) > (peak.pcp_corrected ?? 0)) peak = day;
     }
 
-    const maxTemp = Math.max(...finalPredictions.map((day: any) => day.tmax_corrected));
-    const minTemp = Math.min(...finalPredictions.map((day: any) => day.tmin_corrected));
+    const maxTemp = Math.max(
+      ...finalPredictions.map((day: any) => day.tmax_corrected),
+    );
+    const minTemp = Math.min(
+      ...finalPredictions.map((day: any) => day.tmin_corrected),
+    );
 
     return {
       totalRainfall,
@@ -144,10 +162,13 @@ export function ModelSummarySection() {
   if (finalPredictions.length === 0 && !isForecastLoading) {
     return (
       <View className="my-6 px-3">
-        <SectionHeader icon={Analytics01Icon} title={tDash("forecast16Day") as string} />
+        <SectionHeader
+          icon={Analytics01Icon}
+          title={tDash("forecast16Day") as string}
+        />
         <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-5 py-8 items-center justify-center shadow-sm">
-          <Icon icon={CloudOffIcon} size={40} className="text-muted-foreground/60 mb-3" />
-          <Text className="font-semibold text-[15px] text-foreground text-center">
+          <Icon icon={CloudOffIcon} size={40} className="text-destructive" />
+          <Text className="font-semibold text-[15px] text-foreground text-center mt-4">
             {tDash("modelSummaryLoadError")}
           </Text>
         </View>
@@ -158,11 +179,17 @@ export function ModelSummarySection() {
   if (isForecastLoading || !metrics) {
     return (
       <View className="my-6 px-3">
-        <SectionHeader icon={Analytics01Icon} title={tDash("forecast16Day") as string} />
-        <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-5 shadow-sm">
-          {[...Array(4)].map((_, i) => (
-            <View key={i} className="flex-row py-3 border-b border-border/50 last:border-b-0">
-              <Skeleton width="100%" height={14} borderRadius={4} />
+        <SectionHeader
+          icon={Analytics01Icon}
+          title={tDash("forecast16Day") as string}
+        />
+        <View className="bg-card border border-border rounded-3xl p-5">
+          {[...Array(7)].map((_, i) => (
+            <View
+              key={i}
+              className="flex-row py-3 border-b border-border last:border-b-0"
+            >
+              <Skeleton width="100%" height={20} borderRadius={8} />
             </View>
           ))}
         </View>
@@ -170,31 +197,49 @@ export function ModelSummarySection() {
     );
   }
 
-  const rows: [string, string, string, string][] = [
-    [
-      tDash("totalRainfall") as string,
-      `${metrics.totalRainfall.toFixed(1)} mm`,
-      tDash("rainyDays") as string,
-      `${metrics.rainyDays} ${tDash("daysUnit")}`,
-    ],
-    [
-      tDash("peakDayRain") as string,
-      `${metrics.peakRain.toFixed(1)} mm`,
-      tDash("peakDate") as string,
-      formatDateText(metrics.peakDate, locale),
-    ],
-    [
-      tDash("maxTemp") as string,
-      `${Math.round(metrics.maxTemp)}°`,
-      tDash("minTemp") as string,
-      `${Math.round(metrics.minTemp)}°`,
-    ],
-    [
-      tDash("soilTrend") as string,
-      soilTrend || "—",
-      tDash("outlook") as string,
-      outlookLabel || "—",
-    ],
+  const rows = [
+    {
+      label: tDash("totalRainfall") as string,
+      value: `${metrics.totalRainfall.toFixed(1)} mm`,
+      icon: RainDropIcon,
+    },
+    {
+      label: tDash("rainyDays") as string,
+      value: `${metrics.rainyDays} ${tDash("daysUnit")}`,
+      icon: RainDropIcon,
+    },
+    {
+      label: tDash("peakDayRain") as string,
+      value: `${metrics.peakRain.toFixed(1)} mm`,
+      icon: RainDropIcon,
+    },
+    {
+      label: tDash("peakDate") as string,
+      value: formatDateText(metrics.peakDate, locale),
+      icon: Clock01Icon,
+    },
+    {
+      label: tDash("maxTemp") as string,
+      value: `${Math.round(metrics.maxTemp)}°`,
+      icon: ThermometerWarmIcon,
+    },
+    {
+      label: tDash("minTemp") as string,
+      value: `${Math.round(metrics.minTemp)}°`,
+      icon: ThermometerWarmIcon,
+    },
+    {
+      label: tDash("soilTrend") as string,
+      value: soilTrend || "—",
+      icon: Plant01Icon,
+      isSoil: true,
+    },
+    {
+      label: tDash("outlook") as string,
+      value: outlookLabel || "—",
+      icon: Analytics01Icon,
+      isAdvisory: true,
+    },
   ];
 
   return (
@@ -211,7 +256,11 @@ export function ModelSummarySection() {
             </View>
             {!isFallbackUsed && (
               <View className="px-2 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/50 flex-row items-center gap-1 border border-emerald-200 dark:border-emerald-800/50">
-                <Icon icon={CheckmarkBadge01Icon} size={10} className="text-emerald-700 dark:text-emerald-300" />
+                <Icon
+                  icon={CheckmarkBadge01Icon}
+                  size={10}
+                  className="text-emerald-700 dark:text-emerald-300"
+                />
                 <Text className="text-[9px] font-extrabold uppercase tracking-widest text-emerald-700 dark:text-emerald-300">
                   {tDash("biasCorrected")}
                 </Text>
@@ -220,56 +269,40 @@ export function ModelSummarySection() {
           </View>
         }
       />
-      <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl px-5 py-2 shadow-sm">
-        <View className="flex-row py-2.5 border-b border-border/50">
-          <Text className="flex-1 text-muted-foreground text-[10.5px] font-bold uppercase tracking-wide">
-            {tDash("metric")}
-          </Text>
-          <Text className="flex-[0.8] text-muted-foreground text-[10.5px] font-bold uppercase tracking-wide text-right">
-            {tDash("value")}
-          </Text>
-          <View className="w-4" />
-          <Text className="flex-1 text-muted-foreground text-[10.5px] font-bold uppercase tracking-wide pl-2">
-            {tDash("metric")}
-          </Text>
-          <Text className="flex-[0.8] text-muted-foreground text-[10.5px] font-bold uppercase tracking-wide text-right">
-            {tDash("value")}
-          </Text>
-        </View>
-
-        {rows.map(([k1, v1, k2, v2], ri) => {
+      <View className="bg-card border border-border rounded-3xl px-5 py-2">
+        {rows.map((row, ri) => {
           const isLast = ri === rows.length - 1;
+          const pending =
+            (row.isSoil && soilPending) || (row.isAdvisory && advisoryPending);
           return (
             <View
               key={ri}
-              className={`flex-row py-3.5 items-center ${
-                !isLast ? "border-b border-border/40" : ""
+              className={`flex-row justify-between py-4 items-center ${
+                !isLast ? "border-b border-border" : ""
               }`}
             >
-              <Text className="flex-1 text-muted-foreground text-[11.5px]" numberOfLines={1}>
-                {k1}
-              </Text>
-              <View className="flex-[0.8] items-end">
-                {ri === 3 && soilPending ? (
-                  <Skeleton width={40} height={12} borderRadius={4} />
-                ) : (
-                  <Text className="text-[13px] font-bold tabular-nums text-foreground" numberOfLines={1}>
-                    {v1}
-                  </Text>
-                )}
+              <View className="flex-row items-center gap-3 flex-1">
+                <Icon
+                  icon={row.icon}
+                  size={18}
+                  className="text-muted-foreground"
+                />
+                <Text
+                  className="text-muted-foreground text-[14px] font-bold uppercase tracking-wide"
+                  numberOfLines={1}
+                >
+                  {row.label}
+                </Text>
               </View>
-
-              <View className="w-4" />
-
-              <Text className="flex-1 text-muted-foreground text-[11.5px] pl-2" numberOfLines={1}>
-                {k2}
-              </Text>
-              <View className="flex-[0.8] items-end">
-                {ri === 3 && advisoryPending ? (
-                  <Skeleton width={40} height={12} borderRadius={4} />
+              <View className="flex-1 items-end">
+                {pending ? (
+                  <Skeleton width={40} height={14} borderRadius={4} />
                 ) : (
-                  <Text className="text-[13px] font-bold tabular-nums text-foreground" numberOfLines={1}>
-                    {v2}
+                  <Text
+                    className="text-[16px] font-extrabold tabular-nums text-foreground text-right"
+                    numberOfLines={1}
+                  >
+                    {row.value}
                   </Text>
                 )}
               </View>

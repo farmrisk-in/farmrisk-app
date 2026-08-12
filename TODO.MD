@@ -1,2 +1,3 @@
 redo export template
-reduce size of source in ai advisory
+
+new compoenent are not theme synced

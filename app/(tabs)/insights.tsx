@@ -5,7 +5,12 @@ import { useTranslation } from "react-i18next";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { LocationRequired } from "@/components/LocationRequired";
-import { Header, LightningRiskSection, ClimateReadoutSection, ModelSummarySection } from "@/components/dashboard";
+import {
+  Header,
+  LightningRiskSection,
+  ClimateReadoutSection,
+  ModelSummarySection,
+} from "@/components/dashboard";
 import { Icon } from "@/components/ui/Icon";
 import { Alert01Icon } from "@hugeicons/core-free-icons";
 
@@ -38,11 +43,10 @@ export default function AlertsTabScreen() {
       >
         <Header />
 
-        <ClimateReadoutSection />
-
-        <ModelSummarySection />
-
         <LightningRiskSection />
+
+        <ClimateReadoutSection />
+        <ModelSummarySection />
       </ScrollView>
     </SafeAreaView>
   );

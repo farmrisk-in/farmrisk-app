@@ -16,7 +16,7 @@ import {
   FlashIcon,
   ArrowUp01Icon,
   ArrowDown01Icon,
-  ChevronRightIcon
+  ChevronRightIcon,
 } from "@hugeicons/core-free-icons";
 
 // formatHour logic
@@ -30,7 +30,10 @@ const formatHour = (dateInput: Date | string) => {
 
 type Trend = "up" | "down" | null;
 
-function getTrend(current: number | undefined, next: number | undefined): Trend {
+function getTrend(
+  current: number | undefined,
+  next: number | undefined,
+): Trend {
   if (current === undefined || next === undefined) return null;
   if (next > current) return "up";
   if (next < current) return "down";
@@ -44,13 +47,18 @@ function TrendArrow({ trend }: { trend: Trend }) {
   return (
     <Icon
       icon={IconComponent}
-      size={14}
-      className={up ? "text-orange-500" : "text-blue-500"}
+      strokeWidth={2}
+      size={16}
+      className="text-foreground"
     />
   );
 }
 
-export function CompactHourlySection({ hourCount = 6 }: { hourCount?: number }) {
+export function CompactHourlySection({
+  hourCount = 6,
+}: {
+  hourCount?: number;
+}) {
   const { t: tDash } = useTranslation(["dashboard"]);
   const { data: weatherData, isLoading: isWeatherLoading } = useWeather();
   const { data: riskData, isLoading: isRiskLoading } = useRiskScore();
@@ -92,7 +100,10 @@ export function CompactHourlySection({ hourCount = 6 }: { hourCount?: number }) 
     {
       key: "lightning",
       label: tDash("hourlyLightning"),
-      value: tDash(`risk${riskData?.lightning?.band || "Minimal"}` as any, riskData?.lightning?.band || "Minimal"),
+      value: tDash(
+        `risk${riskData?.lightning?.band || "Minimal"}` as any,
+        riskData?.lightning?.band || "Minimal",
+      ),
       icon: FlashIcon,
       trend: null,
     },
@@ -127,8 +138,8 @@ export function CompactHourlySection({ hourCount = 6 }: { hourCount?: number }) 
       <View className="my-6 px-3">
         <SectionHeader icon={Clock01Icon} title={tDash("hourlyNextHours")} />
         <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-5 items-center justify-center">
-          <Icon icon={CloudOffIcon} size={32} className="text-muted-foreground" />
-          <Text className="text-muted-foreground font-medium mt-2">
+          <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
+          <Text className="text-muted-foreground font-medium mt-3">
             {tDash("hourlyLoadError")}
           </Text>
         </View>
@@ -142,28 +153,19 @@ export function CompactHourlySection({ hourCount = 6 }: { hourCount?: number }) 
         icon={Clock01Icon}
         title={tDash("hourlyNextHours")}
         rightContent={
-          <TouchableOpacity
-            className="flex-row items-center gap-1"
-            onPress={() => router.push("/weather-table?type=hourly")}
-          >
-            <View className="px-2.5 py-1 rounded-lg items-center justify-center bg-muted">
-              <Text className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
-                {tDash("hourlyNext6")}
-              </Text>
-            </View>
-            <Icon icon={ChevronRightIcon} size={20} className="text-foreground" />
-          </TouchableOpacity>
+          <View className="px-2.5 py-1 rounded-lg items-center justify-center bg-muted">
+            <Text className="text-xs font-extrabold uppercase tracking-widest text-muted-foreground">
+              {tDash("hourlyNext6")}
+            </Text>
+          </View>
         }
       />
 
-      <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-5 shadow-sm">
+      <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl px-2 py-4 shadow-sm">
         {/* HOURLY TILES */}
         <View className="flex-row justify-between pb-4">
           {visible.map((slot: any, i: number) => (
-            <View
-              key={i}
-              className="flex-col items-center gap-1.5 flex-1"
-            >
+            <View key={i} className="flex-col items-center gap-1.5 flex-1">
               <Text className="text-[11px] text-muted-foreground font-semibold">
                 {slot.time}
               </Text>
@@ -190,9 +192,16 @@ export function CompactHourlySection({ hourCount = 6 }: { hourCount?: number }) 
               key={key}
               className="flex-1 flex-row items-center justify-center gap-1.5"
             >
-              <Icon icon={icon} size={16} className="text-muted-foreground shrink-0" />
+              {/*<Icon
+                icon={icon}
+                size={16}
+                className="text-muted-foreground shrink-0"
+              />*/}
               <View className="flex-col min-w-0">
-                <Text className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider" numberOfLines={1}>
+                <Text
+                  className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider"
+                  numberOfLines={1}
+                >
                   {label}
                 </Text>
                 <View className="flex-row items-center gap-1 mt-0.5">

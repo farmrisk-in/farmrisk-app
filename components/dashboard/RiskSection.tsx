@@ -141,7 +141,7 @@ function RiskGauge({
           </View>
           <Text
             style={{ color: color }}
-            className="font-semibold text-md flex-1"
+            className="font-semibold text-sm flex-1"
           >
             {hazard}
           </Text>

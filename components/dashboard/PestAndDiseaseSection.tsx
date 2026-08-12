@@ -12,9 +12,7 @@ import {
   Bug01Icon,
   ThermometerWarmIcon,
   RainDropIcon,
-  PercentIcon,
   Plant01Icon,
-  CloudRainIcon
 } from "@hugeicons/core-free-icons";
 
 // Basic fallback mapping for icons, in case PercentIcon/CloudRainIcon don't exist
@@ -41,7 +39,8 @@ export function PestAndDiseaseSection() {
   const { data: riskData, isLoading: isRiskLoading } = useRiskScore();
   const { forecastRows, isLoading: isForecastLoading } = useForecast();
   const { data: weatherData, isLoading: isWeatherLoading } = useWeather();
-  const { data: soilData, isLoading: isSoilLoading } = useSoilMoisture("general");
+  const { data: soilData, isLoading: isSoilLoading } =
+    useSoilMoisture("general");
 
   const hazard = riskData?.pest;
   const title = tDash("hazardPest");
@@ -67,10 +66,12 @@ export function PestAndDiseaseSection() {
           0,
         ) / next5Rows.length
       : weatherData?.daily?.temperature_2m_max &&
-        weatherData.daily.temperature_2m_max.length > 0
-      ? weatherData.daily.temperature_2m_max.reduce((a: number, b: number) => a + b, 0) /
-        weatherData.daily.temperature_2m_max.length
-      : null;
+          weatherData.daily.temperature_2m_max.length > 0
+        ? weatherData.daily.temperature_2m_max.reduce(
+            (a: number, b: number) => a + b,
+            0,
+          ) / weatherData.daily.temperature_2m_max.length
+        : null;
 
   const humidity = weatherData?.current?.relative_humidity_2m ?? null;
 
@@ -148,18 +149,27 @@ export function PestAndDiseaseSection() {
     sub?: string;
     colorTheme: { bg: string; text: string; icon: string };
   }) => (
-    <View className={`w-[48%] flex flex-col gap-1.5 rounded-2xl p-3.5 mb-2 ${colorTheme.bg}`}>
+    <View
+      className={`flex flex-col gap-1.5 rounded-3xl p-3.5 w-[48%] ${colorTheme.bg}`}
+    >
       <View className="flex-row items-center gap-1.5">
         <Icon icon={icon} size={16} className={`shrink-0 ${colorTheme.icon}`} />
-        <Text className={`uppercase tracking-wide text-[10px] font-bold flex-1 ${colorTheme.icon}`} numberOfLines={1}>
+        <Text
+          className={`uppercase tracking-wide text-xs font-bold flex-1 ${colorTheme.icon}`}
+          numberOfLines={1}
+        >
           {label}
         </Text>
       </View>
-      <Text className={`text-lg font-extrabold leading-none mt-1 ${colorTheme.text}`}>
+      <Text
+        className={`text-lg font-extrabold leading-none mt-1 ${colorTheme.text}`}
+      >
         {value}
       </Text>
       {sub && (
-        <Text className={`text-[10px] font-medium leading-none opacity-80 ${colorTheme.text}`}>
+        <Text
+          className={`text-xs font-medium leading-none opacity-80 ${colorTheme.text}`}
+        >
           {sub}
         </Text>
       )}
@@ -172,7 +182,7 @@ export function PestAndDiseaseSection() {
       : tDash("pestWetDays");
 
   return (
-    <View className="my-6 px-3">
+    <View className="my-6 px-2">
       <SectionHeader
         icon={Bug01Icon}
         title={title}
@@ -181,17 +191,26 @@ export function PestAndDiseaseSection() {
             style={{ backgroundColor: color + "20" }}
             className="px-2.5 py-1 rounded-lg items-center justify-center self-center"
           >
-            <Text style={{ color }} className="text-[10px] font-extrabold uppercase tracking-widest leading-none">
+            <Text
+              style={{ color }}
+              className="text-xs font-extrabold uppercase tracking-widest leading-none"
+            >
               {tDash(`risk${hazard.band}` as any, hazard.band)}
             </Text>
           </View>
         }
       />
-      <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-5 shadow-sm space-y-5">
+      <View
+        className="space-y-5 border-2 p-1 rounded-3xl"
+        style={{ borderColor: color + "40" }}
+      >
         {/* Major factor description */}
         {hazard.major_factor && (
-          <View className="border-l-4 pl-3 py-1" style={{ borderLeftColor: color }}>
-            <Text className="text-[13px] text-muted-foreground leading-relaxed italic font-medium">
+          <View
+            className="p-3 rounded-t-2xl"
+            style={{ backgroundColor: color + "40" }}
+          >
+            <Text className="text-sm text-foreground">
               {hazard.major_factor}
             </Text>
           </View>
@@ -199,81 +218,84 @@ export function PestAndDiseaseSection() {
 
         {/* Bullet list of reasons */}
         {hazard.reasons && hazard.reasons.length > 0 && (
-          <View className="space-y-2.5 mb-2">
+          <View className="space-y-2.5 p-2 mb-1">
             {hazard.reasons.map((r: string, i: number) => (
               <View key={i} className="flex-row items-start gap-2.5">
                 <View
-                  className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
+                  className="mt-2 w-2 h-2 rounded-full shrink-0"
                   style={{ backgroundColor: color }}
                 />
-                <Text className="text-[13px] font-medium text-foreground/90 leading-snug flex-1">
-                  {r}
-                </Text>
+                <Text className="text-sm font-medium text-foreground">{r}</Text>
               </View>
             ))}
           </View>
         )}
+      </View>
 
-        {/* CURRENT CONDITIONS */}
-        <View>
-          <Text className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mb-3">
-            {tDash("pestCurrentConditions")}
-          </Text>
-          <View className="flex-row flex-wrap justify-between">
-            <Pill
-              icon={ThermometerWarmIcon}
-              label={tDash("pestAvgMaxTemp")}
-              value={avgMaxTemp != null ? `${avgMaxTemp.toFixed(1)}°C` : "–"}
-              sub={tDash("pestNext5Days")}
-              colorTheme={{
-                bg: "bg-orange-500/10 dark:bg-orange-500/15",
-                text: "text-orange-700 dark:text-orange-300",
-                icon: "text-orange-600 dark:text-orange-400"
-              }}
-            />
-            <Pill
-              icon={RainDropIcon} // using RainDrop for humidity fallback
-              label={tDash("pestHumidity")}
-              value={humidity != null ? `${Math.round(humidity)}%` : "–"}
-              sub={tDash("pestCurrent")}
-              colorTheme={{
-                bg: "bg-purple-500/10 dark:bg-purple-500/15",
-                text: "text-purple-700 dark:text-purple-300",
-                icon: "text-purple-600 dark:text-purple-400"
-              }}
-            />
-            <Pill
-              icon={RainDropIcon}
-              label={tDash("pestRain")}
-              value={rainTotal != null ? `${rainTotal.toFixed(1)} mm` : "–"}
-              sub={rainyDays != null ? `${rainyDays} ${wetDaysLabel}` : undefined}
-              colorTheme={{
-                bg: "bg-sky-500/10 dark:bg-sky-500/15",
-                text: "text-sky-700 dark:text-sky-300",
-                icon: "text-sky-600 dark:text-sky-400"
-              }}
-            />
-            <Pill
-              icon={Plant01Icon}
-              label={tDash("pestSoilMoisture")}
-              value={soilPercentile != null ? `${Math.round(soilPercentile)}%` : "–"}
-              sub={tDash("pestPercentile")}
-              colorTheme={{
-                bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-                text: "text-emerald-700 dark:text-emerald-300",
-                icon: "text-emerald-600 dark:text-emerald-400"
-              }}
-            />
-          </View>
+      {/* CURRENT CONDITIONS */}
+      <View>
+        <Text className="text-md font-extrabold text-foreground my-3 pl-1">
+          {tDash("pestCurrentConditions")}
+        </Text>
+        <View className="flex-row flex-wrap justify-between gap-y-4">
+          <Pill
+            icon={ThermometerWarmIcon}
+            label={tDash("pestAvgMaxTemp")}
+            value={avgMaxTemp != null ? `${avgMaxTemp.toFixed(1)}°C` : "–"}
+            sub={tDash("pestNext5Days")}
+            colorTheme={{
+              bg: "bg-orange-500/10 dark:bg-orange-500/15",
+              text: "text-orange-700 dark:text-orange-300",
+              icon: "text-orange-600 dark:text-orange-400",
+            }}
+          />
+          <Pill
+            icon={RainDropIcon} // using RainDrop for humidity fallback
+            label={tDash("pestHumidity")}
+            value={humidity != null ? `${Math.round(humidity)}%` : "–"}
+            sub={tDash("pestCurrent")}
+            colorTheme={{
+              bg: "bg-purple-500/10 dark:bg-purple-500/15",
+              text: "text-purple-700 dark:text-purple-300",
+              icon: "text-purple-600 dark:text-purple-400",
+            }}
+          />
+          <Pill
+            icon={RainDropIcon}
+            label={tDash("pestRain")}
+            value={rainTotal != null ? `${rainTotal.toFixed(1)} mm` : "–"}
+            sub={rainyDays != null ? `${rainyDays} ${wetDaysLabel}` : undefined}
+            colorTheme={{
+              bg: "bg-sky-500/10 dark:bg-sky-500/15",
+              text: "text-sky-700 dark:text-sky-300",
+              icon: "text-sky-600 dark:text-sky-400",
+            }}
+          />
+          <Pill
+            icon={Plant01Icon}
+            label={tDash("pestSoilMoisture")}
+            value={
+              soilPercentile != null ? `${Math.round(soilPercentile)}%` : "–"
+            }
+            sub={tDash("pestPercentile")}
+            colorTheme={{
+              bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
+              text: "text-emerald-700 dark:text-emerald-300",
+              icon: "text-emerald-600 dark:text-emerald-400",
+            }}
+          />
         </View>
 
         {/* Interpretation */}
         <View className="pt-2">
-          <Text className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mb-3">
+          <Text className="text-md font-extrabold text-foreground my-3 pl-2">
             {tDash("pestInterpretation")}
           </Text>
-          <View className="bg-muted/40 p-4 rounded-2xl border border-border/50">
-            <Text className="text-[13.5px] font-medium text-foreground/90 leading-relaxed">
+          <View
+            className="p-3 rounded-2xl border-2"
+            style={{ borderColor: color + "70" }}
+          >
+            <Text className="text-sm font-medium text-foreground">
               {interpretation}
             </Text>
           </View>
