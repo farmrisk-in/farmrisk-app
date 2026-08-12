@@ -13,7 +13,8 @@ import {
   ScrollView,
 } from "react-native";
 import { useSoilMoisture } from "@/hooks/useSoilMoisture";
-import { Icon } from "../ui/Icon";
+import { Icon } from "@/components/ui/Icon";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import {
   Settings01Icon,
   SoilMoistureFieldIcon,
@@ -249,57 +250,46 @@ export function SoilMoistureSection({ crop }: Props) {
   // ── render ────────────────────────────────────────────────────────────────
   return (
     <View className="my-6 px-4">
-      {/* ── Header ── */}
-      <View className="flex pb-4 flex-row gap-2 items-center">
-        <Icon
-          icon={SoilMoistureFieldIcon}
-          size={28}
-          strokeWidth={1.5}
-          className="text-foreground"
-        />
-        <Text
-          className="flex-1 shrink text-lg text-foreground font-semibold"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {tW("soilMoisture")}
-        </Text>
-        <View className="flex-row items-center gap-1">
-          <TouchableOpacity
-            onPress={() => setIrrigationOpen(true)}
-            className="border px-3 flex-row gap-1 items-center rounded-xl py-1.5 bg-emerald-100/80 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-800/50"
-          >
-            <Icon
-              icon={Calendar03Icon}
-              size={14}
-              className="text-emerald-800 dark:text-emerald-300"
-            />
-            <Text className="text-sm text-emerald-800 dark:text-emerald-300">
-              {t("irrigation")}
-            </Text>
-            {daysbefore !== undefined && (
-              <View className="w-2 h-2 rounded-full bg-emerald-500" />
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setSettingsOpen(true)}
-            className="pl-1"
-          >
-            <Icon icon={Settings01Icon} size={22} className="text-foreground" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => router.push("/soil-detail")}
-            className="pl-1"
-          >
-            <Icon
-              icon={ChevronRightIcon}
-              size={24}
-              className="text-foreground"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <SectionHeader
+        icon={SoilMoistureFieldIcon}
+        title={tW("soilMoisture")}
+        rightContent={
+          <>
+            <TouchableOpacity
+              onPress={() => setIrrigationOpen(true)}
+              className="border px-3 flex-row gap-1 items-center rounded-xl py-1.5 bg-emerald-100/80 dark:bg-emerald-900/50 border-emerald-200 dark:border-emerald-800/50"
+            >
+              <Icon
+                icon={Calendar03Icon}
+                size={14}
+                className="text-emerald-800 dark:text-emerald-300"
+              />
+              <Text className="text-sm text-emerald-800 dark:text-emerald-300">
+                {t("irrigation")}
+              </Text>
+              {daysbefore !== undefined && (
+                <View className="w-2 h-2 rounded-full bg-emerald-500" />
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setSettingsOpen(true)}
+              className="pl-1"
+            >
+              <Icon icon={Settings01Icon} size={22} className="text-foreground" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/soil-detail")}
+              className="pl-1"
+            >
+              <Icon
+                icon={ChevronRightIcon}
+                size={24}
+                className="text-foreground"
+              />
+            </TouchableOpacity>
+          </>
+        }
+      />
 
       {/* ── Chart Area ── */}
       <View>

@@ -12,6 +12,7 @@ import { useLocationContext } from "@/providers/LocationProvider";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { Icon } from "@/components/ui/Icon";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import {
   RainDropIcon,
   CloudFastWindIcon,
@@ -219,42 +220,33 @@ export function CurrentWeatherSection() {
       {/* Card Content Overlay */}
       <View className="p-6 z-10">
         {/* Header Row: Location Name + LIVE Badge */}
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row gap-1 items-center">
-            <Icon
-              icon={SunCloud01Icon}
-              className={`${
-                isDark ? "text-emerald-100/90" : "text-emerald-900/90"
-              }`}
-              size={25}
-            />
-            <Text
-              className={`text-sm font-medium  ${
-                isDark ? "text-emerald-100/90" : "text-emerald-900/90"
-              }`}
-              numberOfLines={1}
-            >
-              {t("currentWeather")}
-            </Text>
-          </View>
-          <View
-            className={`px-2.5 py-0.5 rounded-full border ${
-              isDark
-                ? "bg-emerald-400/20 border-emerald-300/40"
-                : "bg-emerald-600/15 border-emerald-600/30"
-            }`}
-          >
-            <Text
-              className={`text-[10px] font-bold uppercase tracking-widest ${
-                isDark ? "text-emerald-300" : "text-emerald-800"
+        <SectionHeader
+          icon={SunCloud01Icon}
+          title={t("currentWeather")}
+          iconSize={25}
+          iconClassName={isDark ? "text-emerald-100/90" : "text-emerald-900/90"}
+          titleClassName={`text-sm grow font-medium ${isDark ? "text-emerald-100/90" : "text-emerald-900/90"}`}
+          containerClassName="flex-row items-center gap-2"
+          rightContent={
+            <View
+              className={`px-2.5 py-0.5 rounded-full border ${
+                isDark
+                  ? "bg-emerald-400/20 border-emerald-300/40"
+                  : "bg-emerald-600/15 border-emerald-600/30"
               }`}
             >
-              {location?.lat &&
-                location?.lng &&
-                `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`}
-            </Text>
-          </View>
-        </View>
+              <Text
+                className={`text-[10px] font-bold uppercase tracking-widest ${
+                  isDark ? "text-emerald-300" : "text-emerald-800"
+                }`}
+              >
+                {location?.lat &&
+                  location?.lng &&
+                  `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`}
+              </Text>
+            </View>
+          }
+        />
 
         {/* Main Weather Display Row */}
         <View className="flex-row items-center justify-between mt-2 mb-0">

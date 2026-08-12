@@ -13,6 +13,7 @@ import { useColorScheme } from "nativewind";
 import { useRiskScore } from "@/hooks/useRiskScore";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Icon } from "@/components/ui/Icon";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import Svg from "react-native-svg";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
@@ -302,34 +303,25 @@ export function RiskSection() {
 
   return (
     <View>
-      <View className="flex flex-row gap-2 mt-6 mb-3 px-3 items-center">
-        <Icon
-          icon={SecurityWarningIcon}
-          size={25}
-          strokeWidth={2}
-          className="text-foreground"
-        />
-        <Text
-          className="flex-1 shrink text-lg text-foreground font-semibold"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {t("agricultureRisk")}
-        </Text>
-        <View
-          style={{ backgroundColor: overallColor + 20 }}
-          className="flex flex-row rounded-xl gap-1 px-3 py-1.5 h-min"
-        >
-          <Icon icon={overallIcon} size={18} color={overallColor} />
-          <Text
-            style={{ color: overallColor }}
-            className="font-semibold text-sm uppercase"
+      <SectionHeader
+        icon={SecurityWarningIcon}
+        title={t("agricultureRisk")}
+        containerClassName="flex flex-row gap-2 mt-6 mb-3 px-3 items-center"
+        rightContent={
+          <View
+            style={{ backgroundColor: overallColor + 20 }}
+            className="flex flex-row rounded-xl gap-1.5 px-3 py-1.5 h-min items-end"
           >
-            {formatBand(t, overall.band).toUpperCase()}
-          </Text>
-        </View>
-      </View>
+            <Icon icon={overallIcon} size={18} color={overallColor} />
+            <Text
+              style={{ color: overallColor }}
+              className="font-semibold text-sm uppercase"
+            >
+              {formatBand(t, overall.band).toUpperCase()}
+            </Text>
+          </View>
+        }
+      />
 
       {/* 2-Column Hazard Grid */}
       <View className="flex gap-4 px-2">

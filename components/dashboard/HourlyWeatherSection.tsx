@@ -3,7 +3,8 @@ import { View, ScrollView, Text, TouchableOpacity } from "react-native";
 import { useWeather } from "@/hooks/useWeather";
 import type { HourlyWeather } from "@/types/weather";
 import { WeatherIcon } from "@/components/WeatherIcon";
-import { Icon } from "../ui/Icon";
+import { Icon } from "@/components/ui/Icon";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import {
   ChevronRightIcon,
   Clock01Icon,
@@ -118,35 +119,25 @@ export function HourlyWeatherSection() {
 
   return (
     <View className="my-6 px-3">
-      <View className="flex pb-4 flex-row gap-2 items-center">
-        <Icon
-          icon={Clock01Icon}
-          className="text-foreground"
-          strokeWidth={2}
-          size={26}
-        />
-        <Text
-          className="flex-1 shrink text-lg text-foreground font-semibold"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {t("hourlyTitle")}
-        </Text>
-        <TouchableOpacity
-          className="flex-row flex gap-1 items-center"
-          onPress={() => {
-            router.push("/weather-table?type=hourly");
-          }}
-        >
-          <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
-            <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
-              {t("next24Hours")}
-            </Text>
-          </View>
-          <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
-        </TouchableOpacity>
-      </View>
+      <SectionHeader
+        icon={Clock01Icon}
+        title={t("hourlyTitle")}
+        rightContent={
+          <TouchableOpacity
+            className="flex-row items-center gap-1"
+            onPress={() => {
+              router.push("/weather-table?type=hourly");
+            }}
+          >
+            <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+              <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+                {t("next24Hours")}
+              </Text>
+            </View>
+            <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
+          </TouchableOpacity>
+        }
+      />
 
       <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>

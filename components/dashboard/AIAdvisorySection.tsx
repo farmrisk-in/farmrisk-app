@@ -9,7 +9,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useAI } from "@/hooks/useAI";
-import { Icon } from "../ui/Icon";
+import { Icon } from "@/components/ui/Icon";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Book02Icon, BotIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { i18n } from "@/i18n";
 import { useTranslation } from "react-i18next";
@@ -107,34 +108,28 @@ export function AIAdvisorySection({ crop }: Props) {
   };
   return (
     <View className="my-6 p-6 rounded-3xl overflow-hidden border border-emerald-400 dark:border-emerald-900/50 relative  bg-emerald-50 dark:bg-emerald-950/20">
-      <View className="flex flex-row gap-2 pb-4 justify-center items-end">
-        <Icon
-          icon={BotIcon}
-          size={30}
-          className="text-primary dark:text-white"
-        />
-        <Text
-          className="flex-1 shrink text-lg text-foreground font-semibold"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {t("aiTitle")}
-        </Text>
-        {sources && (
-          <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            activeOpacity={0.7}
-          >
-            <View className="flex flex-row rounded-xl gap-1 px-3 py-1.5 items-center bg-emerald-100 dark:bg-emerald-900/50">
-              <Icon icon={Book02Icon} size={15} color="#059669" />
-              <Text className="font-bold text-[11px] uppercase text-emerald-700 dark:text-emerald-300">
-                {t("sources")}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      </View>
+      <SectionHeader
+        icon={BotIcon}
+        title={t("aiTitle")}
+        iconSize={30}
+        iconClassName="text-primary dark:text-white"
+        containerClassName="flex flex-row gap-2 pb-4 justify-center items-end"
+        rightContent={
+          sources && (
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              activeOpacity={0.7}
+            >
+              <View className="flex flex-row rounded-xl gap-1 px-3 py-1.5 items-center bg-emerald-100 dark:bg-emerald-900/50">
+                <Icon icon={Book02Icon} size={15} color="#059669" />
+                <Text className="font-bold text-[11px] uppercase text-emerald-700 dark:text-emerald-300">
+                  {t("sources")}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )
+        }
+      />
 
       <View>
         {isLoading && (

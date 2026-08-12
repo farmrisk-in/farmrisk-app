@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { useCalendar } from "@/hooks/useCalendar";
-import { Icon } from "../ui/Icon";
+import { Icon } from "@/components/ui/Icon";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import {
   Calendar03Icon,
   CloudOffIcon,
@@ -381,30 +382,18 @@ export function CropCalendarSection({ crop }: Props) {
 
   return (
     <View className="my-6 px-4">
-      {/* ── Header ── */}
-      <View className="flex pb-2 flex-row gap-2 items-center">
-        <Icon
-          icon={Calendar03Icon}
-          className="text-foreground"
-          strokeWidth={2}
-          size={26}
-        />
-        <Text
-          className="flex-1 shrink text-lg text-foreground font-semibold"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {t("cropCalendar")}
-        </Text>
-        <View className="flex-row flex gap-1 items-center">
+      <SectionHeader
+        icon={Calendar03Icon}
+        title={t("cropCalendar")}
+        containerClassName="flex pb-2 flex-row gap-2 items-center"
+        rightContent={
           <View className="px-3 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-900 border border-emerald-200 dark:border-emerald-800">
             <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
               {crop}
             </Text>
           </View>
-        </View>
-      </View>
+        }
+      />
 
       {/* ── Global Section Legend (Shown ONCE at top) ── */}
       <View className="flex-row items-center gap-4 mb-4">

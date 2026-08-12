@@ -2,7 +2,8 @@ import React from "react";
 import { View, ScrollView, Text, TouchableOpacity } from "react-native";
 import { useForecast } from "@/hooks/useForecast";
 import type { ForecastRow } from "@/types/forecast";
-import { Icon } from "../ui/Icon";
+import { Icon } from "@/components/ui/Icon";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import {
   ChevronRightIcon,
   TickDouble01Icon,
@@ -154,42 +155,32 @@ export function ForecastSection() {
 
   return (
     <View className="my-6 px-3">
-      <View className="flex pb-4 flex-row gap-2 items-center">
-        <Icon
-          icon={TrendingUpDownIcon}
-          className="text-foreground"
-          strokeWidth={2}
-          size={26}
-        />
-        <Text
-          className="flex-1 shrink text-lg text-foreground font-semibold"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {tDash("forecast16Day")}
-        </Text>
-        <TouchableOpacity
-          className="flex-row flex gap-1 items-center"
-          onPress={() => {
-            router.push("/weather-table?type=forecast");
-          }}
-        >
-          {!isFallbackUsed && (
-            <View className="px-3 flex flex-row gap-1 items-center py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
-              <Icon
-                icon={TickDouble01Icon}
-                className="text-emerald-800 dark:text-emerald-300"
-                size={16}
-              />
-              <Text className="text-[10px] font-semibold uppercase text-emerald-800 dark:text-emerald-300">
-                {tDash("biasCorrected")}
-              </Text>
-            </View>
-          )}
-          <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
-        </TouchableOpacity>
-      </View>
+      <SectionHeader
+        icon={TrendingUpDownIcon}
+        title={tDash("forecast16Day")}
+        rightContent={
+          <TouchableOpacity
+            className="flex-row items-center gap-1"
+            onPress={() => {
+              router.push("/weather-table?type=forecast");
+            }}
+          >
+            {!isFallbackUsed && (
+              <View className="px-3 flex-row items-center gap-1 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
+                <Icon
+                  icon={TickDouble01Icon}
+                  className="text-emerald-800 dark:text-emerald-300"
+                  size={16}
+                />
+                <Text className="text-[10px] font-semibold uppercase text-emerald-800 dark:text-emerald-300">
+                  {tDash("biasCorrected")}
+                </Text>
+              </View>
+            )}
+            <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
+          </TouchableOpacity>
+        }
+      />
 
       <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
