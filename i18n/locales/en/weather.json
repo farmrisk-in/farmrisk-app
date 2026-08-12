@@ -77,6 +77,14 @@
   "moistureDry": "Dry",
   "moistureModerate": "Moderate",
   "moistureWet": "Wet",
-  "daysOfData": "{{count}} days of data \u00b7 up to {{date}}",
-  "percentMoisture": "{{value}}% moisture"
+  "daysOfData": "{{count}} days of data · up to {{date}}",
+  "percentMoisture": "{{value}}% moisture",
+  "rainCatExtremelyHeavy": "Extremely Heavy Rain",
+  "rainCatVeryHeavy": "Very Heavy Rain",
+  "rainCatHeavy": "Heavy Rain",
+  "rainCatModerate": "Moderate Rain",
+  "rainCatLight": "Light Rain",
+  "rainCatVeryLight": "Very Light Rain",
+  "peakRainAlertRange": "{{category}} Alert: A peak period of {{amount}}mm is expected between {{startDate}} and {{endDate}}. Please plan your farm activities accordingly.",
+  "peakRainAlertSingle": "{{category}} Alert: A peak period of {{amount}}mm is expected on {{date}}. Please plan your farm activities accordingly."
 }

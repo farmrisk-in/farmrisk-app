@@ -78,5 +78,13 @@
   "moistureModerate": "மிதமான",
   "moistureWet": "ஈரமான",
   "daysOfData": "{{count}} நாட்கள் தரவு · {{date}} வரை",
-  "percentMoisture": "{{value}}% ஈரப்பதம்"
+  "percentMoisture": "{{value}}% ஈரப்பதம்",
+  "rainCatExtremelyHeavy": "மிக மிக பலத்த மழை",
+  "rainCatVeryHeavy": "மிக பலத்த மழை",
+  "rainCatHeavy": "பலத்த மழை",
+  "rainCatModerate": "மிதமான மழை",
+  "rainCatLight": "லேசான மழை",
+  "rainCatVeryLight": "மிக லேசான மழை",
+  "peakRainAlertRange": "{{category}} எச்சரிக்கை: {{startDate}} முதல் {{endDate}} வரை {{amount}}mm மழை பெய்ய வாய்ப்புள்ளது. அதற்கேற்ப விவசாய பணிகளை திட்டமிடவும்.",
+  "peakRainAlertSingle": "{{category}} எச்சரிக்கை: {{date}} அன்று {{amount}}mm மழை பெய்ய வாய்ப்புள்ளது. அதற்கேற்ப விவசாய பணிகளை திட்டமிடவும்."
 }

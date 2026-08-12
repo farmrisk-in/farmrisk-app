@@ -78,5 +78,13 @@
   "moistureModerate": "मध्यम",
   "moistureWet": "गीला",
   "daysOfData": "{{count}} दिनों का डेटा · {{date}} तक",
-  "percentMoisture": "{{value}}% नमी"
+  "percentMoisture": "{{value}}% नमी",
+  "rainCatExtremelyHeavy": "अत्यधिक भारी बारिश",
+  "rainCatVeryHeavy": "बहुत भारी बारिश",
+  "rainCatHeavy": "भारी बारिश",
+  "rainCatModerate": "मध्यम बारिश",
+  "rainCatLight": "हल्की बारिश",
+  "rainCatVeryLight": "बहुत हल्की बारिश",
+  "peakRainAlertRange": "{{category}} अलर्ट: {{startDate}} और {{endDate}} के बीच {{amount}}mm बारिश होने की उम्मीद है। कृपया अपने खेत की गतिविधियों की योजना उसी के अनुसार बनाएं।",
+  "peakRainAlertSingle": "{{category}} अलर्ट: {{date}} को {{amount}}mm बारिश होने की उम्मीद है। कृपया अपने खेत की गतिविधियों की योजना उसी के अनुसार बनाएं।"
 }

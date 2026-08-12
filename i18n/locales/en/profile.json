@@ -30,5 +30,13 @@
   "downloadSuccessTitle": "Saved!",
   "downloadSuccessMsg": "Dashboard report saved to your gallery in the FarmRisk album.",
   "downloadErrorTitle": "Export Failed",
-  "downloadErrorMsg": "Could not save the image. Please try again."
+  "downloadErrorMsg": "Could not save the image. Please try again.",
+  "editProfile": "Edit Profile",
+  "saveChanges": "Save Changes",
+  "deleteAccount": "Delete Account",
+  "cancel": "Cancel",
+  "deleteAccountTitle": "Delete Account",
+  "deleteAccountDesc": "This action is irreversible. All your data will be permanently deleted.",
+  "deleteAgreeLabel": "I understand and wish to delete my account",
+  "confirmDelete": "Delete Forever"
 }

@@ -30,5 +30,13 @@
   "downloadSuccessTitle": "સાચવેલ!",
   "downloadSuccessMsg": "ડેશબોર્ડ રિપોર્ટ તમારી ગેલેરીમાં ફાર્મરિસ્ક આલ્બમમાં સાચવેલ છે.",
   "downloadErrorTitle": "નિકાસ નિષ્ફળ",
-  "downloadErrorMsg": "છબી સાચવી શકાઈ નહીં. કૃપા કરીને ફરી પ્રયાસ કરો."
+  "downloadErrorMsg": "છબી સાચવી શકાઈ નહીં. કૃપા કરીને ફરી પ્રયાસ કરો.",
+  "editProfile": "પ્રોફાઇલ સંપાદિત કરો",
+  "saveChanges": "ફેરફારો સાચવો",
+  "deleteAccount": "એકાઉન્ટ કાઢી નાખો",
+  "cancel": "રદ કરો",
+  "deleteAccountTitle": "એકાઉન્ટ કાઢી નાખો",
+  "deleteAccountDesc": "આ ક્રિયા અફર છે. તમારો બધો ડેટા કાયમ માટે કાઢી નાખવામાં આવશે.",
+  "deleteAgreeLabel": "હું સમજું છું અને મારું એકાઉન્ટ કાઢી નાખવા માંગુ છું",
+  "confirmDelete": "કાયમ માટે કાઢી નાખો"
 }

@@ -78,5 +78,13 @@
   "moistureModerate": "मध्यम",
   "moistureWet": "ओलसर",
   "daysOfData": "{{count}} दिवसांचा डेटा · {{date}} पर्यंत",
-  "percentMoisture": "{{value}}% ओलावा"
+  "percentMoisture": "{{value}}% ओलावा",
+  "rainCatExtremelyHeavy": "अत्यंत मुसळधार पाऊस",
+  "rainCatVeryHeavy": "खूप मुसळधार पाऊस",
+  "rainCatHeavy": "मुसळधार पाऊस",
+  "rainCatModerate": "मध्यम पाऊस",
+  "rainCatLight": "हलका पाऊस",
+  "rainCatVeryLight": "खूप हलका पाऊस",
+  "peakRainAlertRange": "{{category}} अलर्ट: {{startDate}} आणि {{endDate}} दरम्यान {{amount}}mm पावसाची शक्यता आहे. कृपया त्यानुसार तुमच्या शेतीच्या कामांचे नियोजन करा.",
+  "peakRainAlertSingle": "{{category}} अलर्ट: {{date}} रोजी {{amount}}mm पावसाची शक्यता आहे. कृपया त्यानुसार तुमच्या शेतीच्या कामांचे नियोजन करा."
 }

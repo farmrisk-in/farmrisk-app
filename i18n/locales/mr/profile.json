@@ -30,5 +30,13 @@
   "downloadSuccessTitle": "जतन झाले!",
   "downloadSuccessMsg": "डॅशबोर्ड अहवाल तुमच्या गॅलरीत फार्मरिस्क अल्बममध्ये जतन केला आहे.",
   "downloadErrorTitle": "एक्सपोर्ट अयशस्वी",
-  "downloadErrorMsg": "प्रतिमा जतन करता आली नाही. कृपया पुन्हा प्रयत्न करा."
+  "downloadErrorMsg": "प्रतिमा जतन करता आली नाही. कृपया पुन्हा प्रयत्न करा.",
+  "editProfile": "प्रोफाइल संपादित करा",
+  "saveChanges": "बदल जतन करा",
+  "deleteAccount": "खाते हटवा",
+  "cancel": "रद्द करा",
+  "deleteAccountTitle": "खाते हटवा",
+  "deleteAccountDesc": "ही कृती अपरिवर्तनीय आहे. तुमचा सर्व डेटा कायमचा हटवला जाईल.",
+  "deleteAgreeLabel": "मला समजले आहे आणि मला माझे खाते हटवायचे आहे",
+  "confirmDelete": "कायमचे हटवा"
 }
