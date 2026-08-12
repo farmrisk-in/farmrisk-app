@@ -190,53 +190,78 @@ export default function Auth() {
         >
           {mode === "register" && (
             <>
-              <TextInput
-                value={firstName}
-                onChangeText={setFirstName}
-                placeholder={t("firstNamePlaceholder")}
-                placeholderTextColor="#71717b"
-                className={inputClass}
-                autoCapitalize="words"
-              />
-              <TextInput
-                value={lastName}
-                onChangeText={setLastName}
-                placeholder={t("lastNamePlaceholder")}
-                placeholderTextColor="#71717b"
-                className={inputClass}
-                autoCapitalize="words"
-              />
+              <View>
+                <Text className="text-foreground text-sm font-semibold mb-1.5 ml-1">
+                  {t("firstName") || "First Name"}
+                </Text>
+                <TextInput
+                  value={firstName}
+                  onChangeText={setFirstName}
+                  placeholder="e.g. Ram"
+                  placeholderTextColor="#71717b"
+                  className={inputClass}
+                  autoCapitalize="words"
+                />
+              </View>
+              <View>
+                <Text className="text-foreground text-sm font-semibold mb-1.5 ml-1">
+                  {t("lastName") || "Last Name"}
+                </Text>
+                <TextInput
+                  value={lastName}
+                  onChangeText={setLastName}
+                  placeholder="e.g. Kumar"
+                  placeholderTextColor="#71717b"
+                  className={inputClass}
+                  autoCapitalize="words"
+                />
+              </View>
             </>
           )}
 
-          <TextInput
-            value={phone}
-            onChangeText={setPhone}
-            placeholder={t("mobilePlaceholder")}
-            placeholderTextColor="#71717b"
-            keyboardType="phone-pad"
-            maxLength={10}
-            className={inputClass}
-          />
-
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            placeholder={t("passwordPlaceholder")}
-            placeholderTextColor="#71717b"
-            secureTextEntry
-            className={inputClass}
-          />
-
-          {mode === "register" && (
+          <View>
+            <Text className="text-foreground text-sm font-semibold mb-1.5 ml-1">
+              {t("mobileLabel") || "Mobile Number"}
+            </Text>
             <TextInput
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder={t("confirmPlaceholder")}
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="e.g. 9876543210"
+              placeholderTextColor="#71717b"
+              keyboardType="phone-pad"
+              maxLength={10}
+              className={inputClass}
+            />
+          </View>
+
+          <View>
+            <Text className="text-foreground text-sm font-semibold mb-1.5 ml-1">
+              {t("passwordLabel") || "Password"}
+            </Text>
+            <TextInput
+              value={password}
+              onChangeText={setPassword}
+              placeholder="••••••••"
               placeholderTextColor="#71717b"
               secureTextEntry
               className={inputClass}
             />
+          </View>
+
+          {mode === "register" && (
+            <View>
+              <Text className="text-foreground text-sm font-semibold mb-1.5 ml-1">
+                {t("confirmPasswordLabel") || "Confirm Password"}
+              </Text>
+              <TextInput
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="••••••••"
+                placeholderTextColor="#71717b"
+                secureTextEntry
+                className={inputClass}
+              />
+            </View>
           )}
 
           {/* Error */}

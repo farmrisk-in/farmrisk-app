@@ -46,8 +46,8 @@
   "retrying": "पुनः प्रयास हो रहा है…",
   "download": "डाउनलोड",
   "useCurrentLocation": "वर्तमान स्थान उपयोग करें",
-  "tabHome": "होम",
-  "tabForecast": "पूर्वानुमान",
-  "tabTools": "उपकरण",
-  "tabAlerts": "अलर्ट"
+  "tabHome": "आज",
+  "tabWeather": "मौसम",
+  "tabFarmrisk": "farmrisk",
+  "tabInsights": "अंतर्दृष्टि"
 }

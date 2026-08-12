@@ -173,7 +173,12 @@ export function SoilMoistureSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {tW("soilMoisture")}
           </Text>
         </View>
@@ -203,7 +208,12 @@ export function SoilMoistureSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {tW("soilMoisture")}
           </Text>
         </View>
@@ -247,7 +257,12 @@ export function SoilMoistureSection({ crop }: Props) {
           strokeWidth={1.5}
           className="text-foreground"
         />
-        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+        <Text
+          className="flex-1 shrink text-lg text-foreground font-semibold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
           {tW("soilMoisture")}
         </Text>
         <View className="flex-row items-center gap-1">
@@ -257,10 +272,10 @@ export function SoilMoistureSection({ crop }: Props) {
           >
             <Icon
               icon={Calendar03Icon}
-              size={16}
+              size={14}
               className="text-emerald-800 dark:text-emerald-300"
             />
-            <Text className="text-sm text-emerald-800 dark:text-emerald-300 font-bold">
+            <Text className="text-sm text-emerald-800 dark:text-emerald-300">
               {t("irrigation")}
             </Text>
             {daysbefore !== undefined && (
@@ -546,7 +561,9 @@ export function SoilMoistureSection({ crop }: Props) {
                     <Text
                       style={{ color: "#fff", fontSize: 13, fontWeight: "700" }}
                     >
-                      {tW("percentMoisture", { value: Math.round(tooltip.datum.sm_percentile) })}
+                      {tW("percentMoisture", {
+                        value: Math.round(tooltip.datum.sm_percentile),
+                      })}
                     </Text>
                   </View>
                   {charts.P_obs && tooltip.datum.P_obs > 0 && (

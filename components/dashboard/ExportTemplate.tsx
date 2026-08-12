@@ -639,7 +639,7 @@ export default function ExportTemplate({ selectedFarm }: Props) {
           </View>
         ) : (
           <View style={s.calendarContainer}>
-            {calendar.map((event, idx) => {
+            {calendar.map((event: any, idx: any) => {
               const startSow = event.sowFromMon || 6;
               const endSow = event.sowToMon || startSow;
               const startHarv = event.harvFromMon || 11;

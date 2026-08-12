@@ -7,9 +7,9 @@ import { Icon } from "@/components/ui/Icon";
 import {
   Home01Icon,
   SunCloud01Icon,
-  Wrench01Icon,
-  Notification01Icon,
+  Analytics01Icon,
 } from "@hugeicons/core-free-icons";
+import Plant01Icon from "@hugeicons/core-free-icons/Plant01Icon";
 
 export default function TabLayout() {
   const { t } = useTranslation(["common"]);
@@ -37,7 +37,7 @@ export default function TabLayout() {
         },
       }}
     >
-      {/* 1. Home Tab */}
+      {/* 1. Today (Home) Tab */}
       <Tabs.Screen
         name="index"
         options={{
@@ -48,35 +48,35 @@ export default function TabLayout() {
         }}
       />
 
-      {/* 2. Forecast Tab */}
+      {/* 2. Weather Tab */}
       <Tabs.Screen
-        name="forecast"
+        name="weather"
         options={{
-          title: t("tabForecast"),
+          title: t("tabWeather"),
           tabBarIcon: ({ color, size }) => (
             <Icon icon={SunCloud01Icon} size={size || 22} color={color} />
           ),
         }}
       />
 
-      {/* 3. Tools Tab */}
+      {/* 3. farmrisk Tab */}
       <Tabs.Screen
-        name="tools"
+        name="farmrisk"
         options={{
-          title: t("tabTools"),
+          title: t("tabFarmrisk"),
           tabBarIcon: ({ color, size }) => (
-            <Icon icon={Wrench01Icon} size={size || 22} color={color} />
+            <Icon icon={Plant01Icon} size={size || 22} color={color} />
           ),
         }}
       />
 
-      {/* 4. Alerts Tab */}
+      {/* 4. Insights Tab */}
       <Tabs.Screen
-        name="alerts"
+        name="insights"
         options={{
-          title: t("tabAlerts"),
+          title: t("tabInsights"),
           tabBarIcon: ({ color, size }) => (
-            <Icon icon={Notification01Icon} size={size || 22} color={color} />
+            <Icon icon={Analytics01Icon} size={size || 22} color={color} />
           ),
         }}
       />

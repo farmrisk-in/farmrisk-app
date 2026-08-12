@@ -92,7 +92,7 @@ function PeriodBarSegment({
     leftPct: number,
     widthPct: number,
     keySuffix: string,
-    extraRounded: string = roundedClass
+    extraRounded: string = roundedClass,
   ) => (
     <View
       key={keySuffix}
@@ -118,13 +118,13 @@ function PeriodBarSegment({
           startCol * colW,
           seg1 * colW,
           "seg1",
-          roundedClass.includes("rounded-l") ? "rounded-l-md" : "rounded-none"
+          roundedClass.includes("rounded-l") ? "rounded-l-md" : "rounded-none",
         )}
         {renderSegment(
           0,
           seg2 * colW,
           "seg2",
-          roundedClass.includes("rounded-r") ? "rounded-r-md" : "rounded-none"
+          roundedClass.includes("rounded-r") ? "rounded-r-md" : "rounded-none",
         )}
       </>
     );
@@ -299,7 +299,12 @@ export function CropCalendarSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="flex-1 shrink text-xl font-semibold text-foreground" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg font-semibold text-foreground"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("cropCalendar")}
           </Text>
         </View>
@@ -320,7 +325,12 @@ export function CropCalendarSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="flex-1 shrink text-xl font-semibold text-foreground" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg font-semibold text-foreground"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("cropCalendar")}
           </Text>
         </View>
@@ -350,7 +360,12 @@ export function CropCalendarSection({ crop }: Props) {
             strokeWidth={1.5}
             className="text-foreground"
           />
-          <Text className="flex-1 shrink text-xl font-semibold text-foreground" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg font-semibold text-foreground"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("cropCalendar")}
           </Text>
         </View>
@@ -374,7 +389,12 @@ export function CropCalendarSection({ crop }: Props) {
           strokeWidth={2}
           size={26}
         />
-        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+        <Text
+          className="flex-1 shrink text-lg text-foreground font-semibold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
           {t("cropCalendar")}
         </Text>
         <View className="flex-row flex gap-1 items-center">

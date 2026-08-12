@@ -4,19 +4,13 @@ import { Text } from "react-native-paper";
 import { useWeather } from "@/hooks/useWeather";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Icon } from "@/components/ui/Icon";
-import {
-  CloudOffIcon,
-  Lightning,
-} from "@hugeicons/core-free-icons";
+import { CloudOffIcon, Lightning } from "@hugeicons/core-free-icons";
 import { WebView } from "react-native-webview";
 import { useColorScheme } from "nativewind";
 import { useTranslation } from "react-i18next";
 
 type LightningAdvisoryKey =
-  | "lowRisk"
-  | "moderateRisk"
-  | "highRisk"
-  | "severeRisk";
+  "lowRisk" | "moderateRisk" | "highRisk" | "severeRisk";
 
 const getLightningDetails = (category: string | undefined) => {
   switch (category) {
@@ -125,7 +119,12 @@ export function LightningRiskSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("lightningRisk")}
           </Text>
         </View>
@@ -152,7 +151,12 @@ export function LightningRiskSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("lightningRisk")}
           </Text>
         </View>
@@ -181,12 +185,17 @@ export function LightningRiskSection() {
           strokeWidth={2}
           size={26}
         />
-        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+        <Text
+          className="flex-1 shrink text-lg text-foreground font-bold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
           {t("lightningRisk")}
         </Text>
         <View className="flex-row flex gap-1 items-center">
           <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
-            <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+            <Text className="text-[10px] uppercase text-emerald-800 dark:text-emerald-300">
               {t(advisory)}
             </Text>
           </View>

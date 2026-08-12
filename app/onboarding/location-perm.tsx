@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { View, Text, Pressable, Modal } from "react-native";
+import { View, Text, Pressable, Modal, Image } from "react-native";
 import { BlurView } from "expo-blur";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import Animated, { FadeIn, ZoomIn } from "react-native-reanimated";
 import * as Location from "expo-location";
 import { useLocationContext } from "@/providers/LocationProvider";
-import { markOnboarded } from "@/lib/onboarding";
 import { Icon } from "@/components/ui/Icon";
 import { ChevronLeftIcon, PinLocation01Icon } from "@hugeicons/core-free-icons";
 
@@ -86,9 +85,14 @@ export default function LocationPerm() {
     <Modal visible transparent animationType="fade" onRequestClose={handleBack}>
       {/* Full-screen dark backdrop */}
       <View className="flex-1 bg-background">
+        <Image
+          source={require("../../assets/images/splash.png")}
+          style={{ position: "absolute", width: "100%", height: "100%" }}
+          resizeMode="cover"
+        />
         {/* Blurred underlay */}
         <BlurView
-          intensity={40}
+          intensity={60}
           tint="dark"
           style={{ position: "absolute", inset: 0 }}
         />
@@ -137,7 +141,7 @@ export default function LocationPerm() {
                   className="mt-6 w-full rounded-2xl bg-primary items-center justify-center py-4 disabled:opacity-50"
                   accessibilityRole="button"
                 >
-                  <Text className="text-foreground text-base font-semibold">
+                  <Text className="text-white text-base font-semibold">
                     {hasLocation && !error
                       ? t("continueToDashboard")
                       : t("allowLocation")}

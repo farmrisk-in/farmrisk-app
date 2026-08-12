@@ -46,8 +46,8 @@
   "retrying": "மீண்டும் முயற்சிக்கிறது…",
   "download": "பதிவிறக்கு",
   "useCurrentLocation": "தற்போதைய இருப்பிடத்தைப் பயன்படுத்து",
-  "tabHome": "முகப்பு",
-  "tabForecast": "முன்னறிவிப்பு",
-  "tabTools": "கருவிகள்",
-  "tabAlerts": "எச்சரிக்கைகள்"
+  "tabHome": "இன்று",
+  "tabWeather": "வானிலை",
+  "tabFarmrisk": "farmrisk",
+  "tabInsights": "நுண்ணறிவுகள்"
 }

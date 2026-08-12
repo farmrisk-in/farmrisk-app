@@ -146,7 +146,7 @@ export default function DownloadButton({ selectedFarm }: Props) {
           {isCapturing
             ? t("downloadGenerating") || "Generating..."
             : isDataLoading 
-              ? t("downloadLoading") || "Loading Data..." 
+              ? (t as any)("downloadLoading") || "Loading Data..." 
               : t("downloadImage") || "Export Dashboard Image"}
         </Text>
       </TouchableOpacity>

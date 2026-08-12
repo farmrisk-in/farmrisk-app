@@ -75,7 +75,12 @@ export function ForecastSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-xl text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {tDash("forecast16Day")}
           </Text>
         </View>
@@ -126,7 +131,12 @@ export function ForecastSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-xl text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {tDash("forecast16Day")}
           </Text>
         </View>
@@ -151,7 +161,12 @@ export function ForecastSection() {
           strokeWidth={2}
           size={26}
         />
-        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+        <Text
+          className="flex-1 shrink text-lg text-foreground font-semibold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
           {tDash("forecast16Day")}
         </Text>
         <TouchableOpacity
@@ -165,9 +180,9 @@ export function ForecastSection() {
               <Icon
                 icon={TickDouble01Icon}
                 className="text-emerald-800 dark:text-emerald-300"
-                size={18}
+                size={16}
               />
-              <Text className="text-[11px] font-bold uppercase text-emerald-800 dark:text-emerald-300">
+              <Text className="text-[10px] font-semibold uppercase text-emerald-800 dark:text-emerald-300">
                 {tDash("biasCorrected")}
               </Text>
             </View>

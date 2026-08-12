@@ -37,7 +37,13 @@ const { width } = Dimensions.get("window");
 const cardWidth = (width - 32 - 16) / 2;
 
 // Risk band keys (dashboard ns) for translatable bands.
-type RiskBandKey = "riskLow" | "riskModerate" | "riskHigh" | "riskSevere" | "riskMinimal" | "riskExtreme";
+type RiskBandKey =
+  | "riskLow"
+  | "riskModerate"
+  | "riskHigh"
+  | "riskSevere"
+  | "riskMinimal"
+  | "riskExtreme";
 
 const getBandKey = (band: string): RiskBandKey | null => {
   switch (band?.toLowerCase()) {
@@ -216,7 +222,12 @@ export function RiskSection() {
             strokeWidth={2}
             className="text-foreground"
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-lg text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("agricultureRisk")}
           </Text>
         </View>
@@ -298,7 +309,12 @@ export function RiskSection() {
           strokeWidth={2}
           className="text-foreground"
         />
-        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+        <Text
+          className="flex-1 shrink text-lg text-foreground font-semibold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
           {t("agricultureRisk")}
         </Text>
         <View

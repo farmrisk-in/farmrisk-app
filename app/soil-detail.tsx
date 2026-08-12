@@ -49,7 +49,11 @@ const moistureColor = (v: number) =>
   v <= 30 ? "#ef4444" : v <= 70 ? "#94a3b8" : "#3b82f6";
 
 const moistureLabel = (t: TFunction<"weather">, v: number) =>
-  v <= 30 ? t("moistureDry") : v <= 70 ? t("moistureModerate") : t("moistureWet");
+  v <= 30
+    ? t("moistureDry")
+    : v <= 70
+      ? t("moistureModerate")
+      : t("moistureWet");
 
 // ── table row ─────────────────────────────────────────────────────────────────
 function TableRow({ item, isEven }: { item: any; isEven: boolean }) {
@@ -153,7 +157,9 @@ export default function SoilDetailScreen() {
           {tDash("soilMoistureUnavailable")}
         </Text>
         <TouchableOpacity onPress={() => router.back()} className="mt-6">
-          <Text className="text-emerald-600 font-bold">← {tDash("goBack")}</Text>
+          <Text className="text-emerald-600 font-bold">
+            ← {tDash("goBack")}
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );

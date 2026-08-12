@@ -46,8 +46,8 @@
   "retrying": "Retrying…",
   "download": "Download",
   "useCurrentLocation": "Use Current Location",
-  "tabHome": "Home",
-  "tabForecast": "Forecast",
-  "tabTools": "Tools",
-  "tabAlerts": "Alerts"
+  "tabHome": "Today",
+  "tabWeather": "Weather",
+  "tabFarmrisk": "farmrisk",
+  "tabInsights": "Insights"
 }

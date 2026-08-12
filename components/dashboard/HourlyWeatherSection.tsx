@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { View, ScrollView, Text, TouchableOpacity } from "react-native";
 import { useWeather } from "@/hooks/useWeather";
 import type { HourlyWeather } from "@/types/weather";
 import { WeatherIcon } from "@/components/WeatherIcon";
@@ -41,7 +36,12 @@ export function HourlyWeatherSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-xl text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("hourlyTitle")}
           </Text>
         </View>
@@ -82,7 +82,12 @@ export function HourlyWeatherSection() {
             strokeWidth={2}
             size={26}
           />
-          <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+          <Text
+            className="flex-1 shrink text-xl text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
             {t("hourlyTitle")}
           </Text>
         </View>
@@ -120,7 +125,12 @@ export function HourlyWeatherSection() {
           strokeWidth={2}
           size={26}
         />
-        <Text className="flex-1 shrink text-xl text-foreground font-semibold" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.75}>
+        <Text
+          className="flex-1 shrink text-lg text-foreground font-semibold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
           {t("hourlyTitle")}
         </Text>
         <TouchableOpacity

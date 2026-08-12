@@ -35,9 +35,9 @@ Four tabs, header hidden, custom active/inactive tints:
 | Tab file | Tab title | Icon (Hugeicons) |
 |---|---|---|
 | `index.tsx` | Home | `Home01Icon` |
-| `forecast.tsx` | Forecast | `SunCloud01Icon` |
-| `tools.tsx` | Tools | `Wrench01Icon` |
-| `alerts.tsx` | Alerts | `Notification01Icon` |
+| `weather.tsx` | Forecast | `SunCloud01Icon` |
+| `farmrisk.tsx` | Tools | `Wrench01Icon` |
+| `insights.tsx` | Alerts | `Notification01Icon` |
 
 Tab bar styling: floating bar with `paddingBottom = max(insets.bottom, 12)`, `marginBottom: 10`, label size 11 semibold. Active tint `#4ade80` (dark) / `#007a55` (light); inactive `#9f9fa9` / `#71717a`.
 
@@ -52,16 +52,16 @@ Composes, in order: `Header` → `SearchSection` → `CurrentWeatherSection` →
 - If `!location && !isResolving && locationError` → renders `<LocationRequired />` full-screen instead.
 - Local `selectedCrop` state is passed to `AIAdvisorySection` (currently always `""`).
 
-### 2. Forecast tab — `app/(tabs)/forecast.tsx`
+### 2. Forecast tab — `app/(tabs)/weather.tsx`
 Renders `Header` → `HourlyWeatherSection` → `ForecastSection` → `SoilMoistureSection crop={selectedCrop}` → `CropCalendarSection crop={selectedCrop}`.
 
 - Reads `selectedCrop` from `useCropContext()` (set in Profile screen).
 - Same `LocationRequired` guard + pull-to-refresh.
 
-### 3. Tools tab — `app/(tabs)/tools.tsx`
+### 3. Tools tab — `app/(tabs)/farmrisk.tsx`
 Renders `Header` → section title → `AIAdvisorySection crop={selectedCrop}` → a static "Smart Field Utilities" card (Irrigation Tool, Sowing Planner placeholders).
 
-### 4. Alerts tab — `app/(tabs)/alerts.tsx`
+### 4. Alerts tab — `app/(tabs)/insights.tsx`
 Renders `Header` → section title → `LightningRiskSection` → static "Active Weather Hazards" card (Heavy Rainfall / Heatwave / Frost placeholders).
 
 ### 5. Search — `app/search.tsx` (modal)

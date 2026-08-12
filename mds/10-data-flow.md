@@ -240,7 +240,7 @@ This is the most important derived flow — see §4 below.
    - `SoilMoistureSection` — `useSoilMoisture()` (no crop → general).
    - `AIAdvisorySection crop={selectedCrop}` — local state `selectedCrop` is `useState("")` and never changed on this screen, so `useAI` treats it as `"general"`.
 
-### Forecast tab — `app/(tabs)/forecast.tsx`
+### Forecast tab — `app/(tabs)/weather.tsx`
 
 Same guard + refresh pattern, then:
 
@@ -249,12 +249,12 @@ Same guard + refresh pattern, then:
 - `SoilMoistureSection crop={selectedCrop}` — crop from `useCropContext()`.
 - `CropCalendarSection crop={selectedCrop}` — `useCalendar(activeCrop)`.
 
-### Tools tab — `app/(tabs)/tools.tsx`
+### Tools tab — `app/(tabs)/farmrisk.tsx`
 
 - `AIAdvisorySection crop={selectedCrop}` (from `useCropContext()`) — the RAG advisory tool.
 - Static "Smart Field Utilities" card (Irrigation Tool, Sowing Planner placeholders — not functional).
 
-### Alerts tab — `app/(tabs)/alerts.tsx`
+### Alerts tab — `app/(tabs)/insights.tsx`
 
 - `LightningRiskSection` — `useWeather()` lightning score/category + advisory.
 - Static "Active Weather Hazards" card (Heavy Rainfall / Heatwave / Frost rows with hardcoded "Normal/Low Risk/None" badges — placeholders, not wired to data).
