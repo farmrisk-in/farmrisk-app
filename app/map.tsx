@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -89,8 +90,12 @@ export default function MapScreen() {
         } catch(e) {}
         true;
       `);
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Failed to get current location:", err);
+      Alert.alert(
+        t("locationErrorTitle" as any) || "Location Error",
+        t("locationErrorDesc" as any) || "Could not get your current location. Please check your GPS and permissions."
+      );
     } finally {
       setIsGeolocating(false);
     }
@@ -127,7 +132,11 @@ export default function MapScreen() {
         name: `${centerLat.toFixed(4)}, ${centerLng.toFixed(4)}`,
         displayName: `${centerLat.toFixed(4)}, ${centerLng.toFixed(4)}`,
       });
-      router.back();
+      Alert.alert(
+        t("geocodeErrorTitle" as any) || "Network Error",
+        t("geocodeErrorDesc" as any) || "Could not fetch place name. Saving coordinates instead.",
+        [{ text: "OK", onPress: () => router.back() }]
+      );
     } finally {
       setIsConfirming(false);
     }

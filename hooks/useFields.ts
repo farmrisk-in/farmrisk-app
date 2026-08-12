@@ -15,12 +15,14 @@ export function useFields() {
 
   const saveMutation = useMutation({
     mutationFn: (input: NewFieldRecord) => saveField(userId, input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["saved-fields", userId] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["saved-fields", userId] }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteField(userId, id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["saved-fields", userId] }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["saved-fields", userId] }),
   });
 
   return {

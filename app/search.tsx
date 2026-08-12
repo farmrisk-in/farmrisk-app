@@ -17,6 +17,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Keyboard,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -377,6 +378,11 @@ export default function SearchScreen() {
                     saveRecent(loc);
                     Keyboard.dismiss();
                     router.back();
+                  } else {
+                    Alert.alert(
+                      t("locationErrorTitle" as any) || "Location Error",
+                      t("locationErrorDesc" as any) || "Could not get your current location. Please check your GPS and permissions."
+                    );
                   }
                 }}
                 className="flex-1 flex-row items-center gap-2 px-5 py-5 bg-muted rounded-3xl border border-border active:opacity-80"

@@ -12,3 +12,7 @@ export { AIAdvisorySection } from "./AIAdvisorySection";
 export { SoilMoistureSection } from "./SoilMoistureSection";
 export { CropCalendarSection } from "./CropCalendarSection";
 export { RiskSection } from "./RiskSection";
+export { CompactHourlySection } from "./CompactHourlySection";
+export { WhatToDoTodaySection } from "./WhatToDoTodaySection";
+export { ClimateReadoutSection } from "./ClimateReadoutSection";
+export { ModelSummarySection } from "./ModelSummarySection";

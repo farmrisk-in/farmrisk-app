@@ -9,6 +9,7 @@ import {
   TickDouble01Icon,
   TrendingUpDownIcon,
   CloudOffIcon,
+  Alert02Icon,
 } from "@hugeicons/core-free-icons";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useWeather } from "@/hooks/useWeather";
@@ -40,6 +41,48 @@ const formatDateText = (dateStr: string) => {
   return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
 };
 
+const getRainCategoryKey = (rain: number) => {
+  if (rain >= 204.5) return "rainCatExtremelyHeavy";
+  if (rain >= 115.6) return "rainCatVeryHeavy";
+  if (rain >= 64.5) return "rainCatHeavy";
+  if (rain >= 15.6) return "rainCatModerate";
+  if (rain >= 2.5) return "rainCatLight";
+  if (rain > 0) return "rainCatVeryLight";
+  return "None";
+};
+
+const getCategoryColor = (categoryKey: string) => {
+  switch (categoryKey) {
+    case "rainCatLight":
+      return {
+        bg: "bg-sky-500/15 dark:bg-sky-500/20",
+        border: "border-sky-500/30",
+        text: "text-sky-700 dark:text-sky-300",
+      };
+    case "rainCatModerate":
+      return {
+        bg: "bg-yellow-500/15 dark:bg-yellow-500/20",
+        border: "border-yellow-500/30",
+        text: "text-yellow-700 dark:text-yellow-300",
+      };
+    case "rainCatHeavy":
+      return {
+        bg: "bg-orange-500/15 dark:bg-orange-500/20",
+        border: "border-orange-500/30",
+        text: "text-orange-700 dark:text-orange-300",
+      };
+    case "rainCatVeryHeavy":
+    case "rainCatExtremelyHeavy":
+      return {
+        bg: "bg-red-500/15 dark:bg-red-500/20",
+        border: "border-red-500/30",
+        text: "text-red-700 dark:text-red-300",
+      };
+    default:
+      return null;
+  }
+};
+
 export function ForecastSection() {
   const router = useRouter();
   const { t: tDash } = useTranslation(["dashboard"]);
@@ -69,22 +112,10 @@ export function ForecastSection() {
   if (isLoading) {
     return (
       <View className="my-6 px-3">
-        <View className="flex pb-4 flex-row gap-2 items-center">
-          <Icon
-            icon={TrendingUpDownIcon}
-            className="text-foreground"
-            strokeWidth={2}
-            size={26}
-          />
-          <Text
-            className="flex-1 shrink text-xl text-foreground font-semibold"
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.75}
-          >
-            {tDash("forecast16Day")}
-          </Text>
-        </View>
+        <SectionHeader
+          icon={TrendingUpDownIcon}
+          title={tDash("forecast16Day")}
+        />
         <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -125,22 +156,10 @@ export function ForecastSection() {
   if (isError && forecastRows.length === 0) {
     return (
       <View className="my-6 px-3">
-        <View className="flex pb-4 flex-row gap-2 items-center">
-          <Icon
-            icon={TrendingUpDownIcon}
-            className="text-foreground"
-            strokeWidth={2}
-            size={26}
-          />
-          <Text
-            className="flex-1 shrink text-xl text-foreground font-semibold"
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.75}
-          >
-            {tDash("forecast16Day")}
-          </Text>
-        </View>
+        <SectionHeader
+          icon={TrendingUpDownIcon}
+          title={tDash("forecast16Day")}
+        />
         <View className="bg-card dark:bg-muted/20 border border-border rounded-2xl p-6 items-center justify-center">
           <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
           <Text className="mt-4 text-muted-foreground font-medium">
@@ -152,6 +171,65 @@ export function ForecastSection() {
   }
 
   if (!forecastRows.length) return null;
+
+  // 1. Find the maximum daily rainfall across the 16 days
+  let maxRainIndex = -1;
+  let maxRainValue = -1;
+
+  finalPredictions.forEach((day: ForecastRow, idx: number) => {
+    if (day.pcp_corrected > maxRainValue) {
+      maxRainValue = day.pcp_corrected;
+      maxRainIndex = idx;
+    }
+  });
+
+  const maxCategoryKey = getRainCategoryKey(maxRainValue);
+  let highlightedIndices: number[] = [];
+  let totalHighlightedRain = 0;
+
+  if (
+    maxCategoryKey !== "None" &&
+    maxCategoryKey !== "rainCatVeryLight" &&
+    maxRainIndex !== -1
+  ) {
+    // 3. Scan left and right for contiguous block
+    let left = maxRainIndex;
+    while (
+      left >= 0 &&
+      getRainCategoryKey(finalPredictions[left].pcp_corrected) ===
+        maxCategoryKey
+    ) {
+      left--;
+    }
+    left++;
+
+    let right = maxRainIndex;
+    while (
+      right < finalPredictions.length &&
+      getRainCategoryKey(finalPredictions[right].pcp_corrected) ===
+        maxCategoryKey
+    ) {
+      right++;
+    }
+    right--;
+
+    for (let i = left; i <= right; i++) {
+      highlightedIndices.push(i);
+      totalHighlightedRain += finalPredictions[i].pcp_corrected;
+    }
+  }
+
+  const startDateText =
+    highlightedIndices.length > 0
+      ? formatDateText(finalPredictions[highlightedIndices[0]].date)
+      : "";
+  const endDateText =
+    highlightedIndices.length > 0
+      ? formatDateText(
+          finalPredictions[highlightedIndices[highlightedIndices.length - 1]]
+            .date,
+        )
+      : "";
 
   return (
     <View className="my-6 px-3">
@@ -177,22 +255,33 @@ export function ForecastSection() {
                 </Text>
               </View>
             )}
-            <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
+            <Icon
+              icon={ChevronRightIcon}
+              size={28}
+              className="text-foreground"
+            />
           </TouchableOpacity>
         }
       />
 
-      <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden py-4">
+      <View className="relative bg-card dark:bg-muted/20 border border-border rounded-2xl overflow-hidden">
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {finalPredictions.map((day: ForecastRow, idx: number) => {
             const maxTemp = Math.round(day.tmax_corrected);
             const minTemp = Math.round(day.tmin_corrected);
             const rainVolume = day.pcp_corrected;
 
+            const isHighlighted = highlightedIndices.includes(idx);
+            const highlightStyle = isHighlighted
+              ? getCategoryColor(maxCategoryKey)
+              : null;
+
             return (
               <View
                 key={day.date}
-                className="shrink-0 w-20 flex border-r border-border last:border-0 flex-col items-center gap-1"
+                className={`shrink-0 w-20 flex border-r border-border py-3 last:border-0 flex-col items-center gap-1 ${
+                  isHighlighted ? highlightStyle?.bg : ""
+                }`}
               >
                 {/* Numeric Calendar Label */}
                 <Text className="text-xs text-muted-foreground font-semibold">
@@ -234,9 +323,42 @@ export function ForecastSection() {
             );
           })}
         </ScrollView>
-
-        {/* Floating Scroll Indicator */}
       </View>
+
+      {/* Summary Sentence Alert */}
+      {highlightedIndices.length > 0 && (
+        <View
+          className={`mt-3 p-3 flex-row gap-2 rounded-xl border ${
+            getCategoryColor(maxCategoryKey)?.bg
+          } ${getCategoryColor(maxCategoryKey)?.border}`}
+        >
+          <View className="mt-0.5">
+            <Icon
+              icon={Alert02Icon}
+              size={18}
+              className={getCategoryColor(maxCategoryKey)?.text}
+            />
+          </View>
+          <Text
+            className={`text-sm flex-1 leading-5 ${
+              getCategoryColor(maxCategoryKey)?.text
+            }`}
+          >
+            {startDateText === endDateText
+              ? tWeather("peakRainAlertSingle", {
+                  category: tWeather(maxCategoryKey as any),
+                  amount: totalHighlightedRain.toFixed(1),
+                  date: startDateText,
+                })
+              : tWeather("peakRainAlertRange", {
+                  category: tWeather(maxCategoryKey as any),
+                  amount: totalHighlightedRain.toFixed(1),
+                  startDate: startDateText,
+                  endDate: endDateText,
+                })}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

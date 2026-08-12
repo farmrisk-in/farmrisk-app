@@ -4,17 +4,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { LocationRequired } from "@/components/LocationRequired";
-import { useCropContext } from "@/providers/CropProvider";
 import {
   Header,
   HourlyWeatherSection,
   ForecastSection,
-  SoilMoistureSection,
-  CropCalendarSection,
+  RiskSection,
 } from "@/components/dashboard";
 
 export default function ForecastTabScreen() {
-  const { selectedCrop } = useCropContext();
   const { refreshing, onRefresh } = useRefreshDashboard();
   const { location, isResolving, locationError } = useLocationContext();
 
@@ -40,20 +37,13 @@ export default function ForecastTabScreen() {
           />
         }
       >
-        {/* Shared Header */}
         <Header />
 
-        {/* Hourly Forecast */}
+        <RiskSection />
+
         <HourlyWeatherSection />
 
-        {/* 16-Day Forecast */}
         <ForecastSection />
-
-        {/* Soil Moisture Assessment */}
-        <SoilMoistureSection crop={selectedCrop} />
-
-        {/* Crop Calendar */}
-        <CropCalendarSection crop={selectedCrop} />
       </ScrollView>
     </SafeAreaView>
   );

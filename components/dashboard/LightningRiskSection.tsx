@@ -95,6 +95,15 @@ const generateMapHtml = (
       weight: 2,
       radius: radius
     }).addTo(map);
+
+    // Center point marker
+    L.circleMarker([${lat}, ${lng}], {
+      color: '${isDark ? "#ffffff" : "#000000"}',
+      fillColor: '${color}',
+      fillOpacity: 1,
+      weight: 1.5,
+      radius: 4
+    }).addTo(map);
   </script>
 </body>
 </html>

@@ -18,6 +18,7 @@ import {
   RainDropIcon,
   FastWindIcon,
   Calendar01Icon,
+  Alert02Icon,
 } from "@hugeicons/core-free-icons";
 import { useWeather } from "@/hooks/useWeather";
 import { useForecast } from "@/hooks/useForecast";
@@ -228,6 +229,48 @@ export default function WeatherTableScreen() {
     );
   };
 
+  const getRainCategoryKey = (rain: number) => {
+    if (rain >= 204.5) return "rainCatExtremelyHeavy";
+    if (rain >= 115.6) return "rainCatVeryHeavy";
+    if (rain >= 64.5) return "rainCatHeavy";
+    if (rain >= 15.6) return "rainCatModerate";
+    if (rain >= 2.5) return "rainCatLight";
+    if (rain > 0) return "rainCatVeryLight";
+    return "None";
+  };
+
+  const getCategoryColor = (categoryKey: string) => {
+    switch (categoryKey) {
+      case "rainCatLight":
+        return {
+          bg: "bg-sky-500/15 dark:bg-sky-500/20",
+          border: "border-sky-500/30",
+          text: "text-sky-700 dark:text-sky-300",
+        };
+      case "rainCatModerate":
+        return {
+          bg: "bg-yellow-500/15 dark:bg-yellow-500/20",
+          border: "border-yellow-500/30",
+          text: "text-yellow-700 dark:text-yellow-300",
+        };
+      case "rainCatHeavy":
+        return {
+          bg: "bg-orange-500/15 dark:bg-orange-500/20",
+          border: "border-orange-500/30",
+          text: "text-orange-700 dark:text-orange-300",
+        };
+      case "rainCatVeryHeavy":
+      case "rainCatExtremelyHeavy":
+        return {
+          bg: "bg-red-500/15 dark:bg-red-500/20",
+          border: "border-red-500/30",
+          text: "text-red-700 dark:text-red-300",
+        };
+      default:
+        return null;
+    }
+  };
+
   const renderForecastRows = () => {
     let finalPredictions = forecastRows;
     if (forecastRows.length === 0 && weatherData?.daily) {
@@ -245,79 +288,182 @@ export default function WeatherTableScreen() {
 
     if (!finalPredictions.length) return null;
 
+    // 1. Find the maximum daily rainfall across the 16 days
+    let maxRainIndex = -1;
+    let maxRainValue = -1;
+
+    finalPredictions.forEach((day: any, idx: number) => {
+      if (day.pcp_corrected > maxRainValue) {
+        maxRainValue = day.pcp_corrected;
+        maxRainIndex = idx;
+      }
+    });
+
+    const maxCategoryKey = getRainCategoryKey(maxRainValue);
+    let highlightedIndices: number[] = [];
+    let totalHighlightedRain = 0;
+
+    if (
+      maxCategoryKey !== "None" &&
+      maxCategoryKey !== "rainCatVeryLight" &&
+      maxRainIndex !== -1
+    ) {
+      // Scan left and right
+      let left = maxRainIndex;
+      while (
+        left >= 0 &&
+        getRainCategoryKey(finalPredictions[left].pcp_corrected) ===
+          maxCategoryKey
+      ) {
+        left--;
+      }
+      left++;
+
+      let right = maxRainIndex;
+      while (
+        right < finalPredictions.length &&
+        getRainCategoryKey(finalPredictions[right].pcp_corrected) ===
+          maxCategoryKey
+      ) {
+        right++;
+      }
+      right--;
+
+      for (let i = left; i <= right; i++) {
+        highlightedIndices.push(i);
+        totalHighlightedRain += finalPredictions[i].pcp_corrected;
+      }
+    }
+
+    const startDateText =
+      highlightedIndices.length > 0
+        ? formatDateText(finalPredictions[highlightedIndices[0]].date)
+        : "";
+    const endDateText =
+      highlightedIndices.length > 0
+        ? formatDateText(
+            finalPredictions[highlightedIndices[highlightedIndices.length - 1]]
+              .date,
+          )
+        : "";
+
     return (
-      <View className="bg-card border border-border rounded-xl mx-4 my-2 overflow-hidden shadow-sm">
-        {/* Table Header */}
-        <View className="flex-row items-center border-b border-border bg-muted p-5">
-          <View className="flex-[0.5]" />
-          <View className="flex-[1.5] flex-row items-center justify-start gap-1.5 pl-2">
-            <Icon
-              icon={Calendar01Icon}
-              size={15}
-              className="text-muted-foreground"
-            />
-            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              {t("dateCol")}
-            </Text>
-          </View>
-          <View className="flex-1 flex-row items-center justify-center gap-1.5">
-            <Icon
-              icon={ThermometerIcon}
-              size={15}
-              className="text-muted-foreground"
-            />
-            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              {t("highLowCol")}
-            </Text>
-          </View>
-          <View className="flex-1 flex-row items-center justify-end gap-1.5">
-            <Icon
-              icon={RainDropIcon}
-              size={15}
-              className="text-muted-foreground"
-            />
-            <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              {t("rainCol")}
-            </Text>
-          </View>
-        </View>
-
-        {/* Rows */}
-        {finalPredictions.map((day: any, i: number) => {
-          const maxTemp = Math.round(day.tmax_corrected);
-          const minTemp = Math.round(day.tmin_corrected);
-          const rainVolume = day.pcp_corrected;
-
-          return (
-            <View
-              key={day.date}
-              className="flex-row items-center border-b border-border p-5 last:border-0"
+      <View>
+        {/* Summary Sentence Alert */}
+        {highlightedIndices.length > 0 && (
+          <View
+            className={`mx-4 mb-4 p-4 flex-row gap-3 rounded-xl border ${
+              getCategoryColor(maxCategoryKey)?.bg
+            } ${getCategoryColor(maxCategoryKey)?.border}`}
+          >
+            <View className="mt-0.5">
+              <Icon
+                icon={Alert02Icon}
+                size={20}
+                className={getCategoryColor(maxCategoryKey)?.text}
+              />
+            </View>
+            <Text
+              className={`text-sm flex-1 leading-5 ${
+                getCategoryColor(maxCategoryKey)?.text
+              }`}
             >
-              <View className="flex-[0.5] items-center justify-center">
-                <WeatherIcon name={getWeatherIcon(rainVolume)} size={36} />
-              </View>
-              <View className="flex-[1.5] justify-center pl-2">
-                <Text className="text-base font-bold text-foreground">
-                  {formatDateText(day.date)}
-                </Text>
-              </View>
-              <View className="flex-1 flex-row items-center justify-center gap-1.5">
-                <Text className="text-base font-bold text-orange-600 dark:text-orange-500">
-                  {maxTemp}°
-                </Text>
-                <Text className="text-sm text-muted-foreground/60 font-medium">
-                  /
-                </Text>
-                <Text className="text-base font-bold text-sky-600 dark:text-sky-400">
-                  {minTemp}°
-                </Text>
-              </View>
-              <Text className="flex-1 text-sm font-bold text-muted-foreground text-right">
-                {rainVolume > 0 ? `${rainVolume.toFixed(1)} mm` : "—"}
+              {startDateText === endDateText
+                ? t("peakRainAlertSingle", {
+                    category: t(maxCategoryKey as any),
+                    amount: totalHighlightedRain.toFixed(1),
+                    date: startDateText,
+                  })
+                : t("peakRainAlertRange", {
+                    category: t(maxCategoryKey as any),
+                    amount: totalHighlightedRain.toFixed(1),
+                    startDate: startDateText,
+                    endDate: endDateText,
+                  })}
+            </Text>
+          </View>
+        )}
+
+        <View className="bg-card border border-border rounded-xl mx-4 my-2 overflow-hidden shadow-sm">
+          {/* Table Header */}
+          <View className="flex-row items-center border-b border-border bg-muted p-5">
+            <View className="flex-[0.5]" />
+            <View className="flex-[1.5] flex-row items-center justify-start gap-1.5 pl-2">
+              <Icon
+                icon={Calendar01Icon}
+                size={15}
+                className="text-muted-foreground"
+              />
+              <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                {t("dateCol")}
               </Text>
             </View>
-          );
-        })}
+            <View className="flex-1 flex-row items-center justify-center gap-1.5">
+              <Icon
+                icon={ThermometerIcon}
+                size={15}
+                className="text-muted-foreground"
+              />
+              <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                {t("highLowCol")}
+              </Text>
+            </View>
+            <View className="flex-1 flex-row items-center justify-end gap-1.5">
+              <Icon
+                icon={RainDropIcon}
+                size={15}
+                className="text-muted-foreground"
+              />
+              <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                {t("rainCol")}
+              </Text>
+            </View>
+          </View>
+
+          {/* Rows */}
+          {finalPredictions.map((day: any, i: number) => {
+            const maxTemp = Math.round(day.tmax_corrected);
+            const minTemp = Math.round(day.tmin_corrected);
+            const rainVolume = day.pcp_corrected;
+
+            const isHighlighted = highlightedIndices.includes(i);
+            const highlightStyle = isHighlighted
+              ? getCategoryColor(maxCategoryKey)
+              : null;
+
+            return (
+              <View
+                key={day.date}
+                className={`flex-row items-center border-b border-border p-5 last:border-0 ${
+                  isHighlighted ? highlightStyle?.bg : ""
+                }`}
+              >
+                <View className="flex-[0.5] items-center justify-center">
+                  <WeatherIcon name={getWeatherIcon(rainVolume)} size={36} />
+                </View>
+                <View className="flex-[1.5] justify-center pl-2">
+                  <Text className="text-base font-bold text-foreground">
+                    {formatDateText(day.date)}
+                  </Text>
+                </View>
+                <View className="flex-1 flex-row items-center justify-center gap-1.5">
+                  <Text className="text-base font-bold text-orange-600 dark:text-orange-500">
+                    {maxTemp}°
+                  </Text>
+                  <Text className="text-sm text-muted-foreground/60 font-medium">
+                    /
+                  </Text>
+                  <Text className="text-base font-bold text-sky-600 dark:text-sky-400">
+                    {minTemp}°
+                  </Text>
+                </View>
+                <Text className="flex-1 text-sm font-bold text-muted-foreground text-right">
+                  {rainVolume > 0 ? `${rainVolume.toFixed(1)} mm` : "—"}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
       </View>
     );
   };

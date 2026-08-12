@@ -193,11 +193,11 @@ export function AIAdvisorySection({ crop }: Props) {
                     return (
                       <View key={i} className="flex-row p-4 gap-3 items-center">
                         <View className="w-3 h-3 rounded-full bg-emerald-500" />
-                        <Text className="text-[15px] text-foreground leading-6 flex-1 font-medium">
+                        <Text className="text-sm text-foreground leading-6 flex-1 font-medium">
                           {sourceObj.source}
                         </Text>
                         {sourceObj.page && (
-                          <Text className="text-[15px] text-muted-foreground">
+                          <Text className="text-xs text-muted-foreground">
                             {t("page")}{" "}
                             {sourceObj.page.toString().padStart(padMax, "0")}
                           </Text>

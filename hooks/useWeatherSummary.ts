@@ -3,7 +3,6 @@ import { getWeatherSummary } from "@/lib/api";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { useCalendar } from "./useCalendar";
 import { useWeather } from "./useWeather";
-import { useForecast } from "./useForecast";
 import { useSoilMoisture } from "./useSoilMoisture";
 
 export function useWeatherSummary(language: string = "en") {
@@ -11,16 +10,27 @@ export function useWeatherSummary(language: string = "en") {
 
   const calendar = useCalendar("general");
   const weather = useWeather();
-  const { forecastRows, isLoading: isForecastLoading } = useForecast();
   const soilMoisture = useSoilMoisture("general");
 
   const calendarData = calendar.data;
   const weatherData = weather.data;
   const soilMoistureResponse = soilMoisture.data;
 
+  // Extract forecast directly from useWeather instead of useForecast
+  const dailyForecastRows =
+    weatherData?.daily?.time?.map((timeStr: any, idx: number) => {
+      const dateObj = new Date(timeStr);
+      return {
+        date: dateObj.toISOString().split("T")[0],
+        tmax: weatherData.daily.temperature_2m_max[idx] ?? 0,
+        tmin: weatherData.daily.temperature_2m_min[idx] ?? 0,
+        pcp: weatherData.daily.precipitation_sum[idx] ?? 0,
+      };
+    }) || [];
+
   // Construct exact VillageReportAPIResponse schema for AI backend compatibility
   const villageReport =
-    forecastRows.length > 0 && location
+    dailyForecastRows.length > 0 && location
       ? {
           requested_lat: location.lat,
           requested_lon: location.lng,
@@ -33,15 +43,15 @@ export function useWeatherSummary(language: string = "en") {
               elevation_m: weatherData?.elevation || 0,
             },
             grids_used: [],
-            forecast_source: "bias-corrected",
-            forecast: forecastRows.map((row: any) => ({
+            forecast_source: "open-meteo",
+            forecast: dailyForecastRows.map((row: any) => ({
               date: row.date,
-              tmax_raw: row.tmax ?? row.tmax_corrected ?? 0,
-              tmax_corrected: row.tmax_corrected ?? row.tmax ?? 0,
-              tmin_raw: row.tmin ?? row.tmin_corrected ?? 0,
-              tmin_corrected: row.tmin_corrected ?? row.tmin ?? 0,
-              pcp_raw: row.pcp ?? row.pcp_corrected ?? 0,
-              pcp_corrected: row.pcp_corrected ?? row.pcp ?? 0,
+              tmax_raw: row.tmax,
+              tmax_corrected: row.tmax,
+              tmin_raw: row.tmin,
+              tmin_corrected: row.tmin,
+              pcp_raw: row.pcp,
+              pcp_corrected: row.pcp,
             })),
             runtime_seconds: 0,
           },
@@ -80,8 +90,8 @@ export function useWeatherSummary(language: string = "en") {
       : undefined;
 
   const forecastHash =
-    forecastRows.length > 0
-      ? forecastRows.map((d: any) => `${d.date}:${d.pcp_corrected}`).join(",")
+    dailyForecastRows.length > 0
+      ? dailyForecastRows.map((d: any) => `${d.date}:${d.pcp}`).join(",")
       : "none";
 
   const query = useQuery({
@@ -107,7 +117,6 @@ export function useWeatherSummary(language: string = "en") {
     },
     enabled:
       !isResolving &&
-      !isForecastLoading &&
       !calendar.isLoading &&
       !weather.isLoading &&
       !!location?.lat &&
@@ -125,7 +134,6 @@ export function useWeatherSummary(language: string = "en") {
       isResolving ||
       !location ||
       query.isLoading ||
-      isForecastLoading ||
       calendar.isLoading ||
       weather.isLoading,
     isFetching: query.isFetching,

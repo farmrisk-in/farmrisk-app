@@ -11,8 +11,10 @@ import {
   AIAdvisorySection,
   RiskSection,
   HourlyWeatherSection,
+  CompactHourlySection,
   ForecastSection,
   SoilMoistureSection,
+  WhatToDoTodaySection,
 } from "@/components/dashboard";
 
 export default function HomeScreen() {
@@ -43,25 +45,15 @@ export default function HomeScreen() {
           />
         }
       >
-        {/* Shared Header */}
         <Header />
 
-        {/* 1. Location Search */}
         <SearchSection />
 
-        {/* 2. Current Weather Overview */}
         <CurrentWeatherSection />
 
-        {/* 3. Risk Analysis */}
-        <RiskSection />
+        <WhatToDoTodaySection />
 
-        {/* TEMP */}
-        <HourlyWeatherSection />
-        <ForecastSection />
-        <SoilMoistureSection />
-
-        {/* 4. AI Advisory Recommendations */}
-        <AIAdvisorySection crop={selectedCrop} />
+        <CompactHourlySection />
       </ScrollView>
     </SafeAreaView>
   );
