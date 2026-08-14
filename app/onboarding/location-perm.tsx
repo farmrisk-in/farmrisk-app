@@ -1,53 +1,63 @@
-import { useState } from "react";
-import { View, Text, Pressable, Modal, Image } from "react-native";
-import { BlurView } from "expo-blur";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { router } from "expo-router";
-import Animated, { FadeIn, ZoomIn } from "react-native-reanimated";
+import { useRouter } from "expo-router";
 import * as Location from "expo-location";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { Icon } from "@/components/ui/Icon";
-import { ChevronLeftIcon, PinLocation01Icon } from "@hugeicons/core-free-icons";
+import {
+  PinLocation01Icon,
+  Search01Icon,
+  Tick01Icon,
+} from "@hugeicons/core-free-icons";
 
 /**
- * Step 4 — Geolocation permission dialog.
+ * Step 3 of 4 — Geolocation permission screen.
  *
- * Renders as a transparent modal overlay. Two actions:
+ * Full-screen layout with OnboardingProgress bar.
+ * Actions:
  *   - "Allow Location Access" → requestForegroundPermissionsAsync + resolve GPS.
  *   - "Select Location Manually" → push to /search.
- *
- * Once a location is available (either path), the "Continue to Dashboard"
- * primary button appears. Tapping it completes onboarding (Step 5).
+ *   - "Continue" → advances to farm-select (Step 4 of 4).
  */
 export default function LocationPerm() {
+  const router = useRouter();
   const { t } = useTranslation(["onboarding"]);
-  const { location } = useLocationContext();
+  const { location, requestCurrentLocation } = useLocationContext();
 
   const [granting, setGranting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { requestCurrentLocation } = useLocationContext();
 
   const hasLocation = !!location;
 
-  /* ──────────────────────────────────────────────────────────
-   * Android back button — treat as "stay", since leaving
-   * without a location would land the user on an empty tabs.
-   * The user must tap one of the two primary actions.
-   * ────────────────────────────────────────────────────────── */
-  const handleBack = () => router.replace("/onboarding/auth");
-
-  /* ──────────────────────────────────────────────────────────
-   * Mark onboarded and jump to the main Dashboard.
-   * ────────────────────────────────────────────────────────── */
-  const complete = async () => {
-    router.replace("/onboarding/farm-select");
+  const handleBack = () => {
+    try {
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
+    } catch {
+      // fallback
+    }
+    router.replace("/onboarding/auth");
   };
 
-  /* ──────────────────────────────────────────────────────────
-   * "Allow Location Access" — request permission → GPS → geocode.
-   * If the user already has a location from the manual flow,
-   * we still allow the "Continue" button (no extra prompt).
-   * ────────────────────────────────────────────────────────── */
+  const goNext = () => {
+    try {
+      router.push("/onboarding/farm-select");
+    } catch {
+      router.replace("/onboarding/farm-select");
+    }
+  };
+
   const allowLocation = async () => {
     setGranting(true);
     setError(null);
@@ -57,7 +67,7 @@ export default function LocationPerm() {
       if (status === "granted") {
         const resolved = await requestCurrentLocation();
         if (resolved) {
-          await complete();
+          goNext();
         } else {
           setError(t("permissionError"));
         }
@@ -72,114 +82,123 @@ export default function LocationPerm() {
     }
   };
 
-  /* ──────────────────────────────────────────────────────────
-   * "Select Location Manually" — push to the existing search
-   * screen.  When the user selects a village/city there, the
-   * LocationProvider's `setLocation` is called, which updates
-   * the `location` context variable we watch above.  When the
-   * user returns, the primary CTA will reflect the new state.
-   * ────────────────────────────────────────────────────────── */
   const selectManually = () => router.push("/search");
 
   return (
-    <Modal visible transparent animationType="fade" onRequestClose={handleBack}>
-      {/* Full-screen dark backdrop */}
-      <View className="flex-1 bg-background">
-        <Image
-          source={require("../../assets/images/splash.png")}
-          style={{ position: "absolute", width: "100%", height: "100%" }}
-          resizeMode="cover"
-        />
-        {/* Blurred underlay */}
-        <BlurView
-          intensity={60}
-          tint="dark"
-          style={{ position: "absolute", inset: 0 }}
-        />
+    <SafeAreaView edges={["bottom"]} className="flex-1 bg-background">
+      {/* Progress bar — Step 3 of 4 */}
+      <OnboardingProgress
+        currentStep={3}
+        totalSteps={4}
+        onBack={handleBack}
+        stepLabel={t("step") ?? "Step"}
+        ofLabel={t("of") ?? "of"}
+      />
 
-        {/* Centered card */}
-        <View className="flex-1 items-center justify-center px-6">
-          <Animated.View
-            entering={ZoomIn.delay(150).duration(500).springify()}
-            className="w-full max-w-sm rounded-3xl overflow-hidden border border-border"
-          >
-            <BlurView intensity={20} tint="dark">
-              <View className="p-7 items-center bg-card">
-                {/* Icon */}
-                <Animated.View
-                  entering={FadeIn.delay(300).duration(400)}
-                  className="w-16 h-16 rounded-full bg-emerald-600/20 items-center justify-center mb-5"
-                >
-                  <Icon
-                    icon={PinLocation01Icon}
-                    size={32}
-                    className="text-emerald-500"
-                  />
-                </Animated.View>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 24,
+          paddingBottom: 32,
+          justifyContent: "space-between",
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          {/* Header & Icon */}
+          <View className="items-center my-6">
+            <View className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 items-center justify-center mb-6">
+              <Icon
+                icon={PinLocation01Icon}
+                size={40}
+                className="text-primary"
+              />
+            </View>
 
-                {/* Title */}
-                <Text className="text-xl font-bold text-foreground text-center">
-                  {t("enableTelemetryTitle")}
-                </Text>
+            <Text className="text-3xl font-bold text-foreground text-center leading-tight">
+              {t("enableTelemetryTitle")}
+            </Text>
 
-                {/* Description */}
-                <Text className="mt-3 text-sm leading-5 text-muted-foreground text-center">
-                  {t("enableTelemetryDesc")}
-                </Text>
+            <Text className="text-base text-muted-foreground text-center mt-3 leading-7 px-2">
+              {t("enableTelemetryDesc")}
+            </Text>
+          </View>
 
-                {/* Error */}
-                {error && (
-                  <Text className="mt-3 text-sm text-destructive text-center">
-                    {error}
-                  </Text>
-                )}
-
-                {/* Primary CTA — conditionally changes based on state */}
-                <Pressable
-                  onPress={hasLocation && !error ? complete : allowLocation}
-                  disabled={granting}
-                  className="mt-6 w-full rounded-2xl bg-primary items-center justify-center py-4 disabled:opacity-50"
-                  accessibilityRole="button"
-                >
-                  <Text className="text-white text-base font-semibold">
-                    {hasLocation && !error
-                      ? t("continueToDashboard")
-                      : t("allowLocation")}
-                  </Text>
-                </Pressable>
-
-                {/* Secondary CTA */}
-                <Pressable
-                  onPress={selectManually}
-                  disabled={granting}
-                  className="mt-3 w-full rounded-2xl border border-border bg-card items-center justify-center py-4"
-                  accessibilityRole="button"
-                >
-                  <Text className="text-muted-foreground text-sm font-medium w-full text-center">
-                    {t("selectManually")}
-                  </Text>
-                </Pressable>
-
-                {/* Back link */}
-                <Pressable
-                  onPress={handleBack}
-                  className="mt-4 flex flex-row items-center gap-0.5"
-                  accessibilityRole="button"
-                >
-                  <Icon
-                    icon={ChevronLeftIcon}
-                    size={20}
-                    className="text-muted-foreground"
-                  />
-                  <Text className="text-muted-foreground text-sm">
-                    Back to auth
-                  </Text>
-                </Pressable>
+          {/* Current Location Badge if already acquired */}
+          {hasLocation && (
+            <View className="bg-primary/10 border border-primary/30 rounded-2xl p-4 flex-row items-center gap-3 my-2">
+              <View className="w-8 h-8 rounded-full bg-primary items-center justify-center">
+                <Icon
+                  icon={Tick01Icon}
+                  size={18}
+                  className="text-primary-foreground"
+                />
               </View>
-            </BlurView>
-          </Animated.View>
+              <View className="flex-1">
+                <Text className="text-xs font-semibold text-primary uppercase tracking-wider">
+                  Location Set
+                </Text>
+                <Text
+                  className="text-sm font-bold text-foreground mt-0.5"
+                  numberOfLines={1}
+                >
+                  {location.displayName || location.name}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {/* Error message */}
+          {error && (
+            <View className="bg-destructive/10 border border-destructive/30 rounded-2xl p-4 my-2">
+              <Text className="text-sm text-destructive font-medium text-center">
+                {error}
+              </Text>
+            </View>
+          )}
         </View>
-      </View>
-    </Modal>
+
+        {/* Action Buttons pinned towards bottom */}
+        <View className="gap-3 mt-8">
+          {/* Primary CTA */}
+          <TouchableOpacity
+            onPress={hasLocation && !error ? goNext : allowLocation}
+            disabled={granting}
+            activeOpacity={0.85}
+            className="rounded-2xl bg-primary items-center justify-center py-4 disabled:opacity-60"
+            accessibilityRole="button"
+          >
+            {granting ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <Text className="text-primary-foreground text-lg font-bold">
+                {hasLocation && !error
+                  ? t("continueToDashboard")
+                  : t("allowLocation")}
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          {/* Secondary CTA — Manual search */}
+          <TouchableOpacity
+            onPress={selectManually}
+            disabled={granting}
+            activeOpacity={0.75}
+            className="rounded-2xl border border-border bg-card flex-row items-center justify-center py-4 gap-2"
+            accessibilityRole="button"
+          >
+            <Icon
+              icon={Search01Icon}
+              size={18}
+              className="text-muted-foreground"
+            />
+            <Text className="text-foreground text-base font-semibold">
+              {t("selectManually")}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+

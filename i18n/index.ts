@@ -56,40 +56,70 @@ export const getStoredLanguage = async (): Promise<LanguageCode | null> => {
   return null;
 };
 
+// Synchronously register with react-i18next so an instance is always available immediately
+if (!i18n.isInitialized) {
+  i18n.use(initReactI18next).init({
+    resources,
+    lng: "en",
+    fallbackLng: "en",
+    defaultNS: "common",
+    ns: [
+      "common",
+      "dashboard",
+      "weather",
+      "search",
+      "profile",
+      "auth",
+      "calendar",
+      "landing",
+      "onboarding",
+      "fields",
+    ],
+    fallbackNS: [
+      "common",
+      "dashboard",
+      "weather",
+      "search",
+      "profile",
+      "auth",
+      "calendar",
+      "landing",
+      "onboarding",
+      "fields",
+    ],
+    interpolation: {
+      escapeValue: false,
+    },
+    returnNull: false,
+    react: {
+      useSuspense: false,
+    },
+  });
+}
+
 let initPromise: Promise<LanguageCode> | null = null;
 
 /**
- * Initializes i18next exactly once and returns the resolved language.
+ * Resolves the stored/device language and switches i18next to it.
  * Safe to call multiple times (returns the same in-flight promise).
  */
 export const initI18n = (): Promise<LanguageCode> => {
   if (!initPromise) {
     initPromise = (async (): Promise<LanguageCode> => {
-      const stored = await getStoredLanguage();
-      const resolved = stored ?? getDeviceLanguage();
-
-      await use(initReactI18next).init({
-        resources,
-        lng: resolved,
-        fallbackLng: "en",
-        defaultNS: "common",
-        ns: ["common", "dashboard", "weather", "search", "profile", "auth", "calendar", "landing", "onboarding", "fields"],
-        fallbackNS: ["common", "dashboard", "weather", "search", "profile", "auth", "calendar", "landing", "onboarding", "fields"],
-        interpolation: {
-          // React Native renders text already; no HTML to escape.
-          escapeValue: false,
-        },
-        returnNull: false,
-        react: {
-          // No suspense — we gate on the provider's `ready` flag instead.
-          useSuspense: false,
-        },
-      });
-
-      return resolved as LanguageCode;
+      try {
+        const stored = await getStoredLanguage();
+        const resolved = stored ?? getDeviceLanguage();
+        if (resolved !== i18n.language) {
+          await changeLanguage(resolved);
+        }
+        return resolved;
+      } catch (e) {
+        console.error("Failed to resolve language on startup", e);
+        return (i18n.language as LanguageCode) || "en";
+      }
     })();
   }
-  return initPromise as Promise<LanguageCode>;
+  return initPromise;
 };
 
 /**

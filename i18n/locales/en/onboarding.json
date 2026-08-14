@@ -2,6 +2,12 @@
   "welcomeTitle": "Welcome to",
   "welcomeSubtitle": "Hyper-local weather telemetry, lightning hazard alerts, and predictive AI agronomist intelligence at your fingertips.",
   "getStarted": "Get Started",
+  "carouselTitle1": "Hyper-local Weather Forecast",
+  "carouselSub1": "Get minute-by-minute weather updates calibrated to your exact field coordinates — temperature, rainfall, wind, and more.",
+  "carouselTitle2": "Farm-level Risk Monitoring",
+  "carouselSub2": "Detect pest pressure, disease risk, and lightning hazard in real time so you can act before your crops are at risk.",
+  "carouselTitle3": "Crop-specific Farm Advisory",
+  "carouselSub3": "AI-powered recommendations tailored to your soil, climate, and current conditions — in your own language.",
   "enableTelemetryTitle": "Enable Field Telemetry",
   "enableTelemetryDesc": "FarmRisk uses your location to deliver village-level weather, lightning alerts, and soil-moisture intelligence — right on your field.",
   "allowLocation": "Allow Location Access",
@@ -9,5 +15,14 @@
   "continueToDashboard": "Continue to Dashboard",
   "permissionDenied": "Location permission was denied. Choose a location manually to continue.",
   "permissionError": "Something went wrong while requesting location access.",
-  "locationSet": "Location enabled. Setting up your dashboard..."
+  "locationSet": "Location enabled. Setting up your dashboard...",
+  "langSelectTitle": "Choose your language",
+  "langSelectSubtitle": "You'll see all advisories and analysis in your selected language. This can be changed in Settings anytime.",
+  "langContinue": "Continue",
+  "step": "Step",
+  "of": "of",
+  "authLoginTitle": "Welcome back",
+  "authLoginSubtitle": "Sign in with your mobile number and password to access your farm dashboard.",
+  "authRegisterTitle": "Create your account",
+  "authRegisterSubtitle": "Register with your mobile number to get personalized crop advisories and risk alerts."
 }

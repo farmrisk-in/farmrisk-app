@@ -6,25 +6,28 @@ export default function OnboardingLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: "#09090b" },
+        animation: "slide_from_right",
       }}
     >
       <Stack.Screen name="index" options={{ animation: "none" }} />
       <Stack.Screen name="welcome" options={{ animation: "fade" }} />
-      <Stack.Screen name="auth" options={{ animation: "slide_from_bottom" }} />
+      <Stack.Screen
+        name="language"
+        options={{ animation: "slide_from_right" }}
+      />
+      <Stack.Screen
+        name="auth"
+        options={{ animation: "slide_from_right" }}
+      />
       <Stack.Screen
         name="location-perm"
-        options={{
-          presentation: "transparentModal",
-          animation: "fade",
-        }}
+        options={{ animation: "slide_from_right" }}
       />
       <Stack.Screen
         name="farm-select"
-        options={{
-          presentation: "transparentModal",
-          animation: "fade",
-        }}
+        options={{ animation: "slide_from_right" }}
       />
     </Stack>
   );
 }
+

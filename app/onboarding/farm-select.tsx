@@ -1,106 +1,157 @@
-/**
- * Onboarding Step 5 — Farm Selection (optional).
- *
- * Shows a compact farm selection prompt with a "Draw Farm" CTA and a "Skip"
- * button. Drawing happens on the same FarmSelectScreen (pushed as modal).
- * Once a farm is selected or skipped, marks onboarding complete and navigates
- * to the dashboard.
- */
-import { useState } from "react";
-import { View, Text, Pressable, Modal, Image } from "react-native";
-import { BlurView } from "expo-blur";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { router } from "expo-router";
-import Animated, { FadeIn, ZoomIn } from "react-native-reanimated";
+import { useRouter } from "expo-router";
 import { useFarmContext } from "@/providers/FarmProvider";
 import { markOnboarded } from "@/lib/onboarding";
+import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { Icon } from "@/components/ui/Icon";
-import { MapPinIcon } from "@hugeicons/core-free-icons";
+import {
+  MapPinIcon,
+  Tick01Icon,
+  PencilEdit02Icon,
+} from "@hugeicons/core-free-icons";
 
+/**
+ * Step 4 of 4 — Farm Selection / Drawing screen.
+ *
+ * Full-screen layout with OnboardingProgress bar.
+ * Actions:
+ *   - "Draw Farm" → opens /farm-select map screen.
+ *   - "Skip / Continue to Dashboard" → marks onboarding complete and navigates to "/".
+ */
 export default function OnboardingFarmSelect() {
-  const { t } = useTranslation(["fields", "onboarding"]);
+  const router = useRouter();
+  const { t: tFields } = useTranslation(["fields"]);
+  const { t: tOB } = useTranslation(["onboarding"]);
   const { selectedFarm } = useFarmContext();
-  const [wentToMap, setWentToMap] = useState(false);
+
+  const handleBack = () => {
+    try {
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
+    } catch {
+      // fallback
+    }
+    router.replace("/onboarding/location-perm");
+  };
 
   const complete = async () => {
     await markOnboarded();
     router.replace("/");
   };
 
-  // If user returns from farm-select with a farm, auto-complete
-  if (wentToMap && selectedFarm) {
-    // complete on next render via effect — but simpler: just show the ready state
-  }
-
   return (
-    <Modal visible transparent animationType="fade" onRequestClose={complete}>
-      <View className="flex-1 bg-background">
-        <Image
-          source={require("../../assets/images/splash.png")}
-          style={{ position: "absolute", width: "100%", height: "100%" }}
-          resizeMode="cover"
-        />
-        {/* Blurred underlay */}
-        <BlurView
-          intensity={60}
-          tint="dark"
-          style={{ position: "absolute", inset: 0 }}
-        />
+    <SafeAreaView edges={["bottom"]} className="flex-1 bg-background">
+      {/* Progress bar — Step 4 of 4 */}
+      <OnboardingProgress
+        currentStep={4}
+        totalSteps={4}
+        onBack={handleBack}
+        stepLabel={tOB("step") ?? "Step"}
+        ofLabel={tOB("of") ?? "of"}
+      />
 
-        <View className="flex-1 items-center justify-center px-6">
-          <Animated.View
-            entering={ZoomIn.delay(150).duration(500).springify()}
-            className="w-full max-w-sm rounded-3xl overflow-hidden border border-border"
-          >
-            <BlurView intensity={20} tint="dark">
-              <View className="p-7 items-center bg-card">
-                {/* Icon */}
-                <Animated.View
-                  entering={FadeIn.delay(300).duration(400)}
-                  className="w-16 h-16 rounded-full bg-emerald-600/20 items-center justify-center mb-5"
-                >
-                  <Icon
-                    icon={MapPinIcon}
-                    size={32}
-                    className="text-emerald-500"
-                  />
-                </Animated.View>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 24,
+          paddingBottom: 32,
+          justifyContent: "space-between",
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          {/* Header & Icon */}
+          <View className="items-center my-6">
+            <View className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 items-center justify-center mb-6">
+              <Icon
+                icon={MapPinIcon}
+                size={40}
+                className="text-primary"
+              />
+            </View>
 
-                <Text className="text-xl font-bold text-foreground text-center">
-                  {t("onboardingTitle")}
-                </Text>
+            <Text className="text-3xl font-bold text-foreground text-center leading-tight">
+              {tFields("onboardingTitle") || "Map Your Field"}
+            </Text>
 
-                <Text className="mt-3 text-sm leading-5 text-muted-foreground text-center">
-                  {t("onboardingHint")}
-                </Text>
+            <Text className="text-base text-muted-foreground text-center mt-3 leading-7 px-2">
+              {tFields("onboardingHint") ||
+                "Draw your field boundary on the satellite map to receive high-resolution soil moisture analysis and customized crop risk telemetry."}
+            </Text>
+          </View>
 
-                {/* Primary CTA — Draw Farm */}
-                <Pressable
-                  onPress={async () => {
-                    setWentToMap(true);
-                    router.push("/farm-select");
-                  }}
-                  className="mt-6 w-full rounded-2xl bg-primary items-center justify-center py-4"
-                >
-                  <Text className="text-white text-base font-semibold">
-                    {t("drawNew")}
-                  </Text>
-                </Pressable>
-
-                {/* Continue / Skip */}
-                <Pressable
-                  onPress={complete}
-                  className="mt-3 w-full rounded-2xl border border-border bg-card items-center justify-center py-4"
-                >
-                  <Text className="text-muted-foreground text-sm font-medium">
-                    {selectedFarm ? t("ready") : t("skip")}
-                  </Text>
-                </Pressable>
+          {/* Selected Farm Card if already drawn */}
+          {selectedFarm && (
+            <View className="bg-primary/10 border border-primary/30 rounded-2xl p-4 flex-row items-center gap-3 my-2">
+              <View className="w-8 h-8 rounded-full bg-primary items-center justify-center">
+                <Icon
+                  icon={Tick01Icon}
+                  size={18}
+                  className="text-primary-foreground"
+                />
               </View>
-            </BlurView>
-          </Animated.View>
+              <View className="flex-1">
+                <Text className="text-xs font-semibold text-primary uppercase tracking-wider">
+                  Farm Boundary Ready
+                </Text>
+                <Text
+                  className="text-sm font-bold text-foreground mt-0.5"
+                  numberOfLines={1}
+                >
+                  {selectedFarm.name || selectedFarm.fieldId}
+                </Text>
+              </View>
+            </View>
+          )}
         </View>
-      </View>
-    </Modal>
+
+        {/* Action Buttons pinned towards bottom */}
+        <View className="gap-3 mt-8">
+          {/* Primary CTA — Draw farm */}
+          <TouchableOpacity
+            onPress={() => router.push("/farm-select")}
+            activeOpacity={0.85}
+            className="rounded-2xl bg-primary flex-row items-center justify-center py-4 gap-2"
+            accessibilityRole="button"
+          >
+            <Icon
+              icon={PencilEdit02Icon}
+              size={18}
+              className="text-primary-foreground"
+            />
+            <Text className="text-primary-foreground text-lg font-bold">
+              {selectedFarm
+                ? tFields("drawNew") || "Redraw Farm"
+                : tFields("drawNew") || "Draw Farm Boundary"}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Secondary CTA — Skip / Continue to Dashboard */}
+          <TouchableOpacity
+            onPress={complete}
+            activeOpacity={0.75}
+            className="rounded-2xl border border-border bg-card items-center justify-center py-4"
+            accessibilityRole="button"
+          >
+            <Text className="text-muted-foreground text-base font-semibold">
+              {selectedFarm
+                ? tFields("ready") || "Go to Dashboard"
+                : tFields("skip") || "Skip for now"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
