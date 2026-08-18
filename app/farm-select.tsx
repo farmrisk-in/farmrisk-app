@@ -22,7 +22,13 @@ import { useLocationContext } from "@/providers/LocationProvider";
 import { areaToHectares } from "@/lib/drawField";
 import { generateFieldId } from "@/lib/drawField";
 import { Icon } from "@/components/ui/Icon";
-import { Cancel01Icon, Location01Icon } from "@hugeicons/core-free-icons";
+import {
+  Cancel01Icon,
+  Location01Icon,
+  Tick01Icon,
+  ArrowRight01Icon,
+  Add01Icon,
+} from "@hugeicons/core-free-icons";
 import type { FieldInfo, SavedField } from "@/types/fields";
 
 export default function FarmSelectScreen() {
@@ -33,7 +39,7 @@ export default function FarmSelectScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const { location } = useLocationContext();
-  const { selectFarm } = useFarmContext();
+  const { selectedFarm, selectFarm } = useFarmContext();
   const { fields, saveField, isSaving, refetch } = useFields();
 
   const mapRef = useRef<FarmMapHandle>(null);
@@ -46,6 +52,7 @@ export default function FarmSelectScreen() {
   const [completedCenterLng, setCompletedCenterLng] = useState<number | null>(null);
   const [mapReady, setMapReady] = useState(false);
   const [isGeolocating, setIsGeolocating] = useState(false);
+  const [hasMadeChanges, setHasMadeChanges] = useState(false);
 
   const initialLat = location?.lat ?? 23.0225;
   const initialLng = location?.lng ?? 72.5714;
@@ -128,12 +135,12 @@ export default function FarmSelectScreen() {
           const farm = fields.find((f) => f.id === evt.fieldId || f.fieldId === evt.fieldId);
           if (farm) {
             selectFarm(farm);
-            router.back();
+            setHasMadeChanges(true);
           }
         }
         break;
     }
-  }, [fields, selectFarm, router]);
+  }, [fields, selectFarm]);
 
   const toggleDrawMode = () => {
     if (drawMode) {
@@ -175,6 +182,13 @@ export default function FarmSelectScreen() {
         season: info.season,
         cropStage: info.cropStage,
       });
+
+      // Automatically select the freshly saved farm
+      if (saved) {
+        await selectFarm(saved);
+      }
+      setHasMadeChanges(true);
+
       // Close dialog and reset all drawing state
       setSaveDialogVisible(false);
       setDrawMode(false);
@@ -182,6 +196,7 @@ export default function FarmSelectScreen() {
       setPolygonArea(0);
       setCompletedGeometry(null);
       mapRef.current?.setDrawMode(false);
+
       // Refresh the farm list from storage and re-render on map
       const updated = await refetch();
       if (updated.data) {
@@ -204,6 +219,12 @@ export default function FarmSelectScreen() {
     }
   };
 
+  const handleContinue = () => {
+    router.back();
+  };
+
+  const hasConfirmedSelection = hasMadeChanges || !!selectedFarm;
+
   return (
     <View className="flex-1 bg-[#09090b]">
       <FarmMapView
@@ -215,19 +236,52 @@ export default function FarmSelectScreen() {
 
       {/* Top bar */}
       <View
-        style={[styles.topBar, { paddingTop: insets.top + 8, backgroundColor: isDark ? "rgba(9,9,11,0.85)" : "rgba(255,255,255,0.88)" }]}
+        style={[
+          styles.topBar,
+          {
+            paddingTop: insets.top + 8,
+            backgroundColor: isDark ? "rgba(9,9,11,0.85)" : "rgba(255,255,255,0.88)",
+          },
+        ]}
       >
         <TouchableOpacity
-          onPress={() => router.back()}
-          style={[styles.topBtn, { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)" }]}
+          onPress={handleContinue}
+          style={[
+            styles.topBtn,
+            hasConfirmedSelection
+              ? { backgroundColor: "#10b981" }
+              : { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)" },
+          ]}
+          accessibilityLabel={hasConfirmedSelection ? "Confirm & Continue" : "Cancel"}
+          accessibilityRole="button"
         >
-          <Icon icon={Cancel01Icon} size={20} color={isDark ? "#fff" : "#09090b"} />
+          <Icon
+            icon={hasConfirmedSelection ? Tick01Icon : Cancel01Icon}
+            size={20}
+            color={hasConfirmedSelection ? "#ffffff" : isDark ? "#fff" : "#09090b"}
+          />
         </TouchableOpacity>
-        <Text className="text-lg font-bold text-foreground">{t(drawMode ? "drawNew" : "title")}</Text>
+
+        <View className="items-center">
+          <Text className="text-lg font-bold text-foreground">
+            {t(drawMode ? "drawNew" : "title")}
+          </Text>
+          {hasConfirmedSelection && !drawMode && (
+            <Text className="text-[11px] font-semibold text-emerald-500">
+              ✓ Farm selected
+            </Text>
+          )}
+        </View>
+
         <TouchableOpacity
           onPress={goToCurrentLocation}
           disabled={isGeolocating}
-          style={[styles.topBtn, { backgroundColor: isDark ? "rgba(52,211,153,0.2)" : "rgba(5,150,105,0.1)" }]}
+          style={[
+            styles.topBtn,
+            { backgroundColor: isDark ? "rgba(52,211,153,0.2)" : "rgba(5,150,105,0.1)" },
+          ]}
+          accessibilityLabel="My Location"
+          accessibilityRole="button"
         >
           {isGeolocating ? (
             <ActivityIndicator size="small" color="#10b981" />
@@ -240,7 +294,13 @@ export default function FarmSelectScreen() {
       {/* Drawing toolbar */}
       {drawMode && (
         <View
-          style={[styles.drawBar, { top: insets.top + 68, backgroundColor: isDark ? "rgba(9,9,11,0.92)" : "rgba(255,255,255,0.94)" }]}
+          style={[
+            styles.drawBar,
+            {
+              top: insets.top + 68,
+              backgroundColor: isDark ? "rgba(9,9,11,0.92)" : "rgba(255,255,255,0.94)",
+            },
+          ]}
         >
           <View className="flex-row items-center gap-3">
             <Text className="text-zinc-300 text-xs">
@@ -263,7 +323,10 @@ export default function FarmSelectScreen() {
             >
               <Text className="text-white text-xs font-semibold">{t("finish")}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={toggleDrawMode} className="px-3 py-1.5 rounded-xl bg-zinc-800 border border-white/10">
+            <TouchableOpacity
+              onPress={toggleDrawMode}
+              className="px-3 py-1.5 rounded-xl bg-zinc-800 border border-white/10"
+            >
               <Text className="text-zinc-300 text-xs font-semibold">{t("cancel")}</Text>
             </TouchableOpacity>
           </View>
@@ -273,12 +336,81 @@ export default function FarmSelectScreen() {
       {/* Bottom action bar */}
       {!drawMode && (
         <View
-          style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom + 12, 24), backgroundColor: isDark ? "rgba(9,9,11,0.92)" : "rgba(255,255,255,0.94)" }]}
+          style={[
+            styles.bottomBar,
+            {
+              paddingBottom: Math.max(insets.bottom + 12, 24),
+              backgroundColor: isDark ? "rgba(9,9,11,0.95)" : "rgba(255,255,255,0.96)",
+            },
+          ]}
         >
-          <Text className="text-zinc-400 text-xs mb-2">{t("drawHint")}</Text>
-          <TouchableOpacity onPress={toggleDrawMode} className="w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 items-center justify-center py-4">
-            <Text className="text-white text-base font-semibold">{t("drawNew")}</Text>
-          </TouchableOpacity>
+          {selectedFarm ? (
+            <View className="gap-3">
+              {/* Selected farm summary card */}
+              <View className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3.5 flex-row items-center justify-between">
+                <View className="flex-1 mr-2">
+                  <View className="flex-row items-center gap-1.5">
+                    <View className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <Text className="text-xs font-bold text-emerald-500 uppercase tracking-wider">
+                      Selected Field
+                    </Text>
+                  </View>
+                  <Text className="text-base font-bold text-foreground mt-0.5" numberOfLines={1}>
+                    {selectedFarm.name || selectedFarm.fieldId}
+                  </Text>
+                  {selectedFarm.areaM2 != null && (
+                    <Text className="text-xs text-muted-foreground mt-0.5">
+                      {areaToHectares(selectedFarm.areaM2)}
+                      {selectedFarm.crops && selectedFarm.crops.length > 0
+                        ? ` • ${selectedFarm.crops.join(", ")}`
+                        : ""}
+                    </Text>
+                  )}
+                </View>
+              </View>
+
+              {/* Primary continue action */}
+              <TouchableOpacity
+                onPress={handleContinue}
+                activeOpacity={0.85}
+                className="w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 flex-row items-center justify-center py-4 gap-2"
+                accessibilityRole="button"
+              >
+                <Icon icon={Tick01Icon} size={20} color="#ffffff" />
+                <Text className="text-white text-base font-bold">
+                  Continue with this Farm
+                </Text>
+                <Icon icon={ArrowRight01Icon} size={18} color="#ffffff" />
+              </TouchableOpacity>
+
+              {/* Secondary draw another button */}
+              <TouchableOpacity
+                onPress={toggleDrawMode}
+                activeOpacity={0.75}
+                className="w-full rounded-2xl border border-zinc-700/50 bg-zinc-900/50 flex-row items-center justify-center py-3 gap-2"
+                accessibilityRole="button"
+              >
+                <Icon icon={Add01Icon} size={16} color="#a1a1aa" />
+                <Text className="text-zinc-300 text-sm font-semibold">
+                  {t("drawNew") || "Draw Another Farm"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View className="gap-2">
+              <Text className="text-zinc-400 text-xs text-center mb-1">
+                {t("drawHint")}
+              </Text>
+              <TouchableOpacity
+                onPress={toggleDrawMode}
+                activeOpacity={0.85}
+                className="w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 items-center justify-center py-4"
+                accessibilityRole="button"
+              >
+                <Text className="text-white text-base font-bold">{t("drawNew")}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       )}
 
@@ -303,23 +435,49 @@ export default function FarmSelectScreen() {
 
 const styles = StyleSheet.create({
   topBar: {
-    position: "absolute", top: 0, left: 0, right: 0,
-    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    paddingHorizontal: 16, paddingBottom: 12,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    zIndex: 10,
   },
   topBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    alignItems: "center", justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   drawBar: {
-    position: "absolute", left: 16, right: 16,
-    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    paddingHorizontal: 14, paddingVertical: 10,
-    borderRadius: 16, borderWidth: 1, borderColor: "rgba(255,255,255,0.08)",
+    position: "absolute",
+    left: 16,
+    right: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+    zIndex: 10,
   },
   bottomBar: {
-    position: "absolute", bottom: 0, left: 0, right: 0,
-    paddingHorizontal: 20, paddingTop: 16,
-    borderTopLeftRadius: 24, borderTopRightRadius: 24,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    borderTopWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+    zIndex: 10,
   },
 });

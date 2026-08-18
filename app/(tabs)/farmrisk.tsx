@@ -44,7 +44,7 @@ export default function ToolsTabScreen() {
 
         <AIAdvisorySection crop={selectedCrop} />
 
-        <PestAndDiseaseSection />
+        <PestAndDiseaseSection crop={selectedCrop} />
 
         <SoilMoistureSection />
 

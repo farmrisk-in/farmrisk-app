@@ -45,7 +45,7 @@ export default function Auth() {
         border: "#2a2a2a",
         foreground: "#f4f4f5",
         mutedFg: "#71717a",
-        primary: "#10b981",
+        primary: "#005f44",
         primaryFg: "#ffffff",
       }
     : {
@@ -287,6 +287,6 @@ const s = StyleSheet.create({
   bottomArea: { paddingHorizontal: 24, paddingBottom: 24, paddingTop: 8, gap: 12 },
   guestBtn: { borderRadius: 16, borderWidth: 1, alignItems: "center", justifyContent: "center", paddingVertical: 11 },
   guestBtnText: { fontSize: 14, fontWeight: "600" },
-  submitBtn: { borderRadius: 20, alignItems: "center", justifyContent: "center", paddingVertical: 12 },
+  submitBtn: { borderRadius: 16, alignItems: "center", justifyContent: "center", paddingVertical: 12 },
   submitBtnText: { fontSize: 16, fontWeight: "700" },
 });
