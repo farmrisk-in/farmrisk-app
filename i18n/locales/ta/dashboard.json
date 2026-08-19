@@ -160,5 +160,10 @@
   "value": "மதிப்பு",
   "outlookFavorable": "சாதகமான",
   "outlookCautionary": "எச்சரிக்கை",
-  "outlookUnfavorable": "பாதகமான"
+  "outlookUnfavorable": "பாதகமான",
+  "whatToDoToday": "இன்று என்ன செய்வது",
+  "generatingOverview": "இன்றைய பரிந்துரைகள் தயாரிக்கப்படுகின்றன...",
+  "categoryPest": "பூச்சி மற்றும் நோய்",
+  "categoryIrrigation": "நீர்ப்பாசனம்",
+  "categoryWeather": "வானிலை"
 }

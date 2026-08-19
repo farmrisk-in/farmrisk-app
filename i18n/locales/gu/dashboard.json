@@ -160,5 +160,10 @@
   "value": "મૂલ્ય",
   "outlookFavorable": "અનુકૂળ",
   "outlookCautionary": "સાવધાન",
-  "outlookUnfavorable": "પ્રતિકૂળ"
+  "outlookUnfavorable": "પ્રતિકૂળ",
+  "whatToDoToday": "આજે શું કરવું",
+  "generatingOverview": "આજની ભલામણો તૈયાર થઈ રही છે...",
+  "categoryPest": "જીવાત અને રોગ",
+  "categoryIrrigation": "સિંચાઈ",
+  "categoryWeather": "હવામાન"
 }

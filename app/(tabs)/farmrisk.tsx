@@ -5,6 +5,8 @@ import { useRefreshDashboard } from "@/hooks/useRefreshDashboard";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { LocationRequired } from "@/components/LocationRequired";
 import { useCropContext } from "@/providers/CropProvider";
+import { useAI } from "@/hooks/useAI";
+import { i18n } from "@/i18n";
 import {
   Header,
   AIAdvisorySection,
@@ -12,11 +14,15 @@ import {
 } from "@/components/dashboard";
 import { SoilMoistureSection } from "@/components/dashboard/SoilMoistureSection";
 import { PestAndDiseaseSection } from "@/components/dashboard/PestAndDiseaseSection";
+import { WhatToDoTodaySection } from "@/components/dashboard/WhatToDoTodaySection";
 
 export default function ToolsTabScreen() {
   const { selectedCrop } = useCropContext();
   const { refreshing, onRefresh } = useRefreshDashboard();
   const { location, isResolving, locationError } = useLocationContext();
+
+  // Shared with AIOverview / AIAdvisorySection via React Query — same query key, single request.
+  const { irrigationInsight } = useAI(selectedCrop, i18n.language);
 
   if (!location && !isResolving && locationError) {
     return (
@@ -42,11 +48,16 @@ export default function ToolsTabScreen() {
       >
         <Header />
 
+        <WhatToDoTodaySection crop={selectedCrop} />
+
         <AIAdvisorySection crop={selectedCrop} />
 
         <PestAndDiseaseSection crop={selectedCrop} />
 
-        <SoilMoistureSection />
+        <SoilMoistureSection
+          crop={selectedCrop}
+          irrigationInsight={irrigationInsight}
+        />
 
         <CropCalendarSection crop={selectedCrop} />
       </ScrollView>

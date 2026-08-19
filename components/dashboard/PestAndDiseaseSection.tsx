@@ -158,7 +158,7 @@ const CROP_NAME_TERMS = [
 
 function buildHighlightTerms(
   card: PestDiseaseCardResponse | undefined,
-  isGeneral: boolean
+  isGeneral: boolean,
 ): string[] {
   const set = new Set<string>();
   if (!isGeneral && card?.crop_name) set.add(card.crop_name);
@@ -187,10 +187,14 @@ function buildHighlightTerms(
 
 function getActionIcon(title: string) {
   const t = (title || "").toLowerCase();
-  if (/air|flow|spacing|prun|foliage|ventilat|wind/i.test(t)) return CloudFastWindIcon;
-  if (/inspect|scout|check|monitor|look|underside|examin|sign|watch/i.test(t)) return EyeIcon;
-  if (/drain|waterlog|water|moisture|drainage|irrigat|rain/i.test(t)) return RainDropIcon;
-  if (/pest|insect|bug|bollworm|aphid|jassid|whitefly|suck|infest/i.test(t)) return Bug01Icon;
+  if (/air|flow|spacing|prun|foliage|ventilat|wind/i.test(t))
+    return CloudFastWindIcon;
+  if (/inspect|scout|check|monitor|look|underside|examin|sign|watch/i.test(t))
+    return EyeIcon;
+  if (/drain|waterlog|water|moisture|drainage|irrigat|rain/i.test(t))
+    return RainDropIcon;
+  if (/pest|insect|bug|bollworm|aphid|jassid|whitefly|suck|infest/i.test(t))
+    return Bug01Icon;
   if (/weed|residue|remove|clean|destroy/i.test(t)) return Delete01Icon;
   return Leaf01Icon;
 }
@@ -202,8 +206,8 @@ function renderHighlightedText(text: string, terms: string[]) {
       terms
         .map((t) => t.trim())
         .filter((t) => t.length >= 2)
-        .sort((a, b) => b.length - a.length)
-    )
+        .sort((a, b) => b.length - a.length),
+    ),
   );
 
   if (unique.length === 0) {
@@ -218,7 +222,7 @@ function renderHighlightedText(text: string, terms: string[]) {
     <Text className="text-sm text-foreground leading-6">
       {parts.map((part, i) => {
         const isMatch = unique.some(
-          (t) => t.toLowerCase() === part.toLowerCase()
+          (t) => t.toLowerCase() === part.toLowerCase(),
         );
         if (isMatch) {
           return (
@@ -251,52 +255,61 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
   // Forecast, weather and soil data for live conditions pills
   const { forecastRows, isLoading: isForecastLoading } = useForecast();
   const { data: weatherData, isLoading: isWeatherLoading } = useWeather();
-  const { data: soilData, isLoading: isSoilLoading } = useSoilMoisture(activeCrop);
+  const { data: soilData, isLoading: isSoilLoading } =
+    useSoilMoisture(activeCrop);
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const isStaleCrop = isFetching && card?.crop_id && card.crop_id !== activeCrop;
+  const isStaleCrop =
+    isFetching && card?.crop_id && card.crop_id !== activeCrop;
   const isLoading = isCardLoading || isStaleCrop;
 
   const band = card?.risk || "LOW";
   const color = getRiskColor(band);
-  const isGeneral =
-    card?.is_general ?? activeCrop.toLowerCase() === "general";
+  const isGeneral = card?.is_general ?? activeCrop.toLowerCase() === "general";
   const sources = card?.potential_sources || card?.sources || [];
   const actions = card?.actions || [];
   const potential = card?.potential || [];
 
   const summaryTerms = useMemo(
     () => buildHighlightTerms(card, isGeneral),
-    [card, isGeneral]
+    [card, isGeneral],
   );
 
   // Live environmental metrics
-  const soilRows = soilData?.soil_moisture ?? [];
-  const latestHistoricalRow = [...soilRows]
-    .filter((r) => (r as any).is_forecast === 0)
-    .at(-1);
+  // API returns either a raw SoilMoistureRow[] or { soil_moisture: SoilMoistureRow[] }
+  const soilRows: any[] = Array.isArray(soilData)
+    ? soilData
+    : (soilData?.soil_moisture ?? []);
+  // Filter to historical rows (is_forecast == 0 or false). Fall back to last row if none found.
+  const historicalRows = soilRows.filter(
+    // eslint-disable-next-line eqeqeq
+    (r: any) => r.is_forecast == 0 || r.is_forecast === false,
+  );
+  const latestHistoricalRow = (
+    historicalRows.length > 0 ? historicalRows : soilRows
+  ).at(-1);
   const soilPercentile = (latestHistoricalRow as any)?.sm_percentile ?? null;
 
   const next5Rows = forecastRows.slice(0, 5);
   const rainNext5 =
     next5Rows.length > 0
       ? next5Rows.map((r: any) => r.pcp_corrected ?? r.pcp ?? 0)
-      : weatherData?.daily?.precipitation_sum?.slice(0, 5) ?? null;
+      : (weatherData?.daily?.precipitation_sum?.slice(0, 5) ?? null);
 
   const avgMaxTemp =
     next5Rows.length > 0
       ? next5Rows.reduce(
           (sum: number, r: any) => sum + (r.tmax_corrected ?? r.tmax ?? 0),
-          0
+          0,
         ) / next5Rows.length
       : weatherData?.daily?.temperature_2m_max &&
-        weatherData.daily.temperature_2m_max.length > 0
-      ? weatherData.daily.temperature_2m_max.reduce(
-          (a: number, b: number) => a + b,
-          0
-        ) / weatherData.daily.temperature_2m_max.length
-      : null;
+          weatherData.daily.temperature_2m_max.length > 0
+        ? weatherData.daily.temperature_2m_max.reduce(
+            (a: number, b: number) => a + b,
+            0,
+          ) / weatherData.daily.temperature_2m_max.length
+        : null;
 
   const humidity = weatherData?.current?.relative_humidity_2m ?? null;
   const rainTotal = rainNext5
@@ -388,15 +401,10 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
       />
 
       {/* Main Advisory Box */}
-      <View
-        className="gap-4"
-      >
+      <View className="gap-4">
         {isLoading ? (
           <View className="py-8 items-center justify-center gap-3">
             <ActivityIndicator size="small" color="#059669" />
-            <Text className="text-muted-foreground text-xs font-medium">
-              {tDash("generatingPestDisease") || "Generating Pest & Disease Advisory..."}
-            </Text>
           </View>
         ) : cardError ? (
           <View className="py-3">
@@ -463,7 +471,7 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
                         key={i}
                         className="flex-row items-start gap-3 p-3 rounded-2xl bg-card border border-border"
                       >
-                          <Icon icon={ActionIcon} size={22} color={color} />
+                        <Icon icon={ActionIcon} size={22} color={color} />
 
                         <View className="flex-1 gap-0.5">
                           <Text className="text-sm font-bold text-foreground">
@@ -473,7 +481,7 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
                             <View className="mt-0.5">
                               {renderHighlightedText(
                                 action.detail,
-                                summaryTerms
+                                summaryTerms,
                               )}
                             </View>
                           )}
@@ -489,7 +497,7 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
       </View>
 
       {/* CURRENT CONDITIONS PILLS */}
-      <View className="mt-4">
+      {/*<View className="mt-4">
         <Text className="text-sm font-extrabold text-foreground my-2.5 pl-1">
           {tDash("pestCurrentConditions")}
         </Text>
@@ -541,7 +549,7 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
             }}
           />
         </View>
-      </View>
+      </View>*/}
 
       {/* Sources Modal */}
       <Modal
@@ -556,25 +564,21 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
           onPressOut={() => setModalVisible(false)}
         >
           <TouchableWithoutFeedback>
-            <View className="bg-card w-full max-h-[80%] rounded-[32px] p-5 border border-border shadow-lg">
-              <View className="flex-row items-center justify-between mb-4">
-                <View className="flex-row items-center gap-3">
-                  <View className="w-10 h-10 rounded-xl items-center justify-center bg-emerald-100 dark:bg-emerald-900/50">
-                    <Icon icon={Book02Icon} size={22} color="#059669" />
-                  </View>
+            <View className="bg-card w-full max-h-[80%] rounded-3xl p-5 border border-border shadow-lg">
+              <View className="flex flex-row gap-3 mb-3">
+                <View className="w-10 h-10 rounded-xl items-center justify-center bg-emerald-100 dark:bg-emerald-900/50">
+                  <Icon icon={Book02Icon} size={22} color="#059669" />
+                </View>
+                <View className="flex-row items-center gap-3 grow">
                   <View>
                     <Text className="text-lg font-bold text-foreground">
                       {tDash("retrievedSources") || "Retrieved Sources"}
-                    </Text>
-                    <Text className="text-xs text-muted-foreground">
-                      {tDash("sourcesDescription") ||
-                        "Citations from ICAR extension guidelines"}
                     </Text>
                   </View>
                 </View>
                 <TouchableOpacity
                   onPress={() => setModalVisible(false)}
-                  className="p-2 bg-muted rounded-full"
+                  className="p-2 bg-muted rounded-full ml-auto"
                 >
                   <Icon
                     icon={Cancel01Icon}
@@ -583,7 +587,6 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
                   />
                 </TouchableOpacity>
               </View>
-
               <ScrollView showsVerticalScrollIndicator={false} className="mb-1">
                 <View className="gap-2 mt-2">
                   {Array.from(
@@ -592,16 +595,16 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
                         (s: any) =>
                           s.source ||
                           tDash("icarGuideline") ||
-                          "ICAR Guideline"
-                      )
-                    )
+                          "ICAR Guideline",
+                      ),
+                    ),
                   ).map((sourceName: string, idx: number) => (
                     <View
                       key={idx}
                       className="p-3 rounded-xl border border-border bg-emerald-50/10 dark:bg-emerald-950/20 flex-row items-center gap-2.5"
                     >
                       <View className="w-2 h-2 rounded-full bg-emerald-500" />
-                      <Text className="text-xs font-mono text-foreground/90 flex-1">
+                      <Text className="text-xs font-mono text-foreground flex-1">
                         {sourceName}
                       </Text>
                     </View>

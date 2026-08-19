@@ -15,4 +15,6 @@ export interface AIAdvisoryRequestPayload {
 export interface AIAPIResponse {
   success?: boolean;
   advisory_summary: string;
+  irrigation_insight?: string | null;
+  sources?: any[];
 }

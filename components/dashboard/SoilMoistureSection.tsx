@@ -22,6 +22,7 @@ import {
   ChevronRightIcon,
   Cancel,
   CloudOffIcon,
+  Plant01Icon,
 } from "@hugeicons/core-free-icons";
 import { Skeleton } from "@/components/ui/Skeleton";
 import {
@@ -35,6 +36,7 @@ import { useTranslation } from "react-i18next";
 
 interface Props {
   crop?: string;
+  irrigationInsight?: string | null;
 }
 
 // ── constants ────────────────────────────────────────────────────────────────
@@ -45,6 +47,15 @@ const PAD = { left: 6, right: 6, top: 16, bottom: 20 };
 // ── helpers ──────────────────────────────────────────────────────────────────
 const getMoistureColor = (v: number) =>
   v <= 30 ? "#ef4444" : v <= 70 ? "#94a3b8" : "#3b82f6";
+
+const getSMStatus = (pct: number): { label: string; color: string } => {
+  if (pct > 80) return { label: "Very Wet", color: "#0ea5e9" };
+  if (pct > 70) return { label: "Wet", color: "#7dd3fc" };
+  if (pct > 30) return { label: "Normal", color: "#10b981" };
+  if (pct > 20) return { label: "Dry", color: "#fbbf24" };
+  if (pct > 10) return { label: "Moderate Dry", color: "#f97316" };
+  return { label: "Very Dry", color: "#ef4444" };
+};
 
 const MONTHS = [
   "Jan",
@@ -72,7 +83,7 @@ const formatShortDate = (raw: string): string => {
 };
 
 // ── component ────────────────────────────────────────────────────────────────
-export function SoilMoistureSection({ crop }: Props) {
+export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
   const router = useRouter();
   const { t } = useTranslation(["dashboard"]);
   const { t: tW } = useTranslation(["weather"]);
@@ -275,7 +286,11 @@ export function SoilMoistureSection({ crop }: Props) {
               onPress={() => setSettingsOpen(true)}
               className="pl-1"
             >
-              <Icon icon={Settings01Icon} size={22} className="text-foreground" />
+              <Icon
+                icon={Settings01Icon}
+                size={22}
+                className="text-foreground"
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push("/soil-detail")}
@@ -290,6 +305,20 @@ export function SoilMoistureSection({ crop }: Props) {
           </>
         }
       />
+
+      {/* IRRIGATION INSIGHT — compact AI-generated advisory above the chart */}
+      {irrigationInsight ? (
+        <View className="flex-row items-start gap-2.5 p-3 mb-3 rounded-2xl border border-emerald-500/30 bg-emerald-50/80 dark:bg-emerald-950/30">
+          <Icon
+            icon={Plant01Icon}
+            size={18}
+            className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5"
+          />
+          <Text className="text-foreground/90 font-medium text-xs flex-1 leading-5">
+            {irrigationInsight}
+          </Text>
+        </View>
+      ) : null}
 
       {/* ── Chart Area ── */}
       <View>
@@ -525,11 +554,34 @@ export function SoilMoistureSection({ crop }: Props) {
                     borderColor: "rgba(255,255,255,0.08)",
                   }}
                 >
-                  <Text
-                    style={{ color: "#9ca3af", fontSize: 11, marginBottom: 5 }}
+                  <View
+                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6, gap: 8 }}
                   >
-                    {tooltip.datum.date}
-                  </Text>
+                    <Text
+                      style={{ color: "#9ca3af", fontSize: 11 }}
+                    >
+                      {tooltip.datum.date}
+                    </Text>
+                    {(() => {
+                      const status = getSMStatus(tooltip.datum.sm_percentile);
+                      return (
+                        <View
+                          style={{
+                            backgroundColor: status.color + "25",
+                            borderColor: status.color + "60",
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            paddingHorizontal: 6,
+                            paddingVertical: 2,
+                          }}
+                        >
+                          <Text style={{ color: status.color, fontSize: 9, fontWeight: "700" }}>
+                            {status.label.toUpperCase()}
+                          </Text>
+                        </View>
+                      );
+                    })()}
+                  </View>
                   <View
                     style={{
                       flexDirection: "row",

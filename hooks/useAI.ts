@@ -57,6 +57,7 @@ export function useAI(cropId?: string, language: string = "en") {
 
   return {
     data: query.data?.advisory_summary ?? askMutation.data?.advisory_summary,
+    irrigationInsight: query.data?.irrigation_insight || null,
     sources: query.data?.sources || [],
     isLoading: isContextLoading || query.isLoading || askMutation.isPending,
     isFetching: isContextFetching || query.isFetching,

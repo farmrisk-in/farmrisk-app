@@ -60,13 +60,13 @@ export function AIAdvisorySection({ crop }: Props) {
               className={`flex-row ${isBullet ? "pl-3" : ""} mb-1`}
             >
               {isBullet && (
-                <Text className="text-emerald-500 mr-2 text-[15px] leading-6">
+                <Text className="text-emerald-500 mr-2 text-sm leading-6">
                   •
                 </Text>
               )}
               {/* Ensure the parent Text component wraps the inline spans correctly */}
               <Text
-                className={`flex-1 text-foreground ${isHeader ? "text-lg font-bold mb-1" : "text-[15px] leading-6"}`}
+                className={`flex-1 text-foreground ${isHeader ? "text-lg font-bold mb-1" : "text-sm leading-6"}`}
               >
                 {parts.map((part, index) => {
                   if (!part) return null; // Skip empty string segments safely

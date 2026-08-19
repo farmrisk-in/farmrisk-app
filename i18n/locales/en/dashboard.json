@@ -160,5 +160,10 @@
   "value": "Value",
   "outlookFavorable": "Favorable",
   "outlookCautionary": "Cautionary",
-  "outlookUnfavorable": "Unfavorable"
+  "outlookUnfavorable": "Unfavorable",
+  "whatToDoToday": "What To Do Today",
+  "generatingOverview": "Generating today's recommendations...",
+  "categoryPest": "Pest & Disease",
+  "categoryIrrigation": "Irrigation",
+  "categoryWeather": "Weather"
 }

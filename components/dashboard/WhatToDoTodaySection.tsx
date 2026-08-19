@@ -1,22 +1,136 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
+import { i18n } from "@/i18n";
+import { useCropContext } from "@/providers/CropProvider";
+import { useWhatToDo } from "@/hooks/useWhatToDo";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { TractorIcon } from "@hugeicons/core-free-icons";
+import { Icon } from "@/components/ui/Icon";
+import {
+  CheckListIcon,
+  Bug01Icon,
+  RainDropIcon,
+  CloudFastWindIcon,
+} from "@hugeicons/core-free-icons";
+import type { WhatToDoCategory } from "@/lib/api/whatToDo";
 
-export function WhatToDoTodaySection() {
-  const { t: tDash } = useTranslation(["dashboard"]);
-  const title = tDash("whatToDoToday");
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+/** Icon per category — stable, never derived from text. */
+function categoryIcon(category: WhatToDoCategory) {
+  switch (category) {
+    case "pest":
+      return Bug01Icon;
+    case "irrigation":
+      return RainDropIcon;
+    case "weather":
+      return CloudFastWindIcon;
+    default:
+      return CheckListIcon;
+  }
+}
+
+/** Accent colour per category — mirrors the webapp's categoryColor. */
+function categoryColor(category: WhatToDoCategory): string {
+  switch (category) {
+    case "pest":
+      return "#10b981"; // emerald-500 — matches Pest & Disease card
+    case "irrigation":
+      return "#0ea5e9"; // sky-500 — matches Soil Moisture card
+    case "weather":
+      return "#f59e0b"; // amber-500
+    default:
+      return "#10b981";
+  }
+}
+
+// ── props ─────────────────────────────────────────────────────────────────────
+interface Props {
+  crop?: string;
+}
+
+// ── component ─────────────────────────────────────────────────────────────────
+export function WhatToDoTodaySection({ crop }: Props) {
+  const { t } = useTranslation(["dashboard"]);
+  const { selectedCrop } = useCropContext();
+  const activeCrop = crop || selectedCrop || "general";
+
+  const { data, recommendations, isLoading, isFetching, isError } = useWhatToDo(
+    activeCrop,
+    i18n.language,
+  );
+
+  // While re-fetching for a crop/language switch show loader so stale text
+  // doesn't linger (keepPreviousData means query.data still holds old value).
+  const isStaleCrop = isFetching && !!data && data.crop_id !== activeCrop;
+  const isStaleLanguage =
+    isFetching && !!data && data.language !== i18n.language;
+
+  const showLoader = isLoading || isStaleCrop || isStaleLanguage;
 
   return (
-    <View className="my-6 px-3">
-      <SectionHeader icon={TractorIcon} title={title} />
-      <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-6 shadow-sm min-h-[150px] justify-center items-center">
-        {/* Placeholder for empty state */}
-        <Text className="text-muted-foreground font-medium text-sm text-center">
-          {/* Will add items here in the future */}
-          No tasks scheduled for today.
-        </Text>
+    <View className="my-6 mx-2">
+      {/* ── Header ── */}
+      <SectionHeader icon={CheckListIcon} title={t("whatToDoToday")} />
+      <View className="bg-card border border-border rounded-2xl p-4 shadow-sm">
+        {/* ── Loading ── */}
+        {showLoader && (
+          <View className="items-center justify-center gap-3 py-3 min-h-28">
+            <ActivityIndicator color="#10b981" size="small" />
+            <Text className="text-xs font-medium text-muted-foreground">
+              {t("generatingOverview")}
+            </Text>
+          </View>
+        )}
+
+        {/* ── Error ── */}
+        {!showLoader && isError && (
+          <View className="py-2">
+            <Text className="text-xs text-muted-foreground leading-relaxed">
+              {t("advisoryError")}
+            </Text>
+          </View>
+        )}
+
+        {/* ── Recommendations (max two) ── */}
+        {!showLoader && !isError && recommendations.length > 0 && (
+          <View>
+            {recommendations.map((rec, i) => {
+              const IconComp = categoryIcon(rec.category);
+              const color = categoryColor(rec.category);
+              const isLast = i === recommendations.length - 1;
+              return (
+                <View
+                  key={i}
+                  className={
+                    "flex-row items-start gap-3 py-3" +
+                    (!isLast ? " border-b border-border/50" : "")
+                  }
+                >
+                  {/* Category icon (no box wrapper) */}
+                  <View className="mt-0.5 shrink-0">
+                    <Icon icon={IconComp} size={18} color={color} />
+                  </View>
+
+                  {/* Text content */}
+                  <View className="flex-1 min-w-0">
+                    <Text
+                      className="text-[13px] font-semibold text-foreground leading-snug"
+                      numberOfLines={3}
+                    >
+                      {rec.title}
+                    </Text>
+                    {!!rec.hint && (
+                      <Text className="text-xs text-muted-foreground leading-snug mt-0.5">
+                        {rec.hint}
+                      </Text>
+                    )}
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
       </View>
     </View>
   );
