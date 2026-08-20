@@ -72,11 +72,11 @@ export function WhatToDoTodaySection({ crop }: Props) {
     <View className="my-6 mx-2">
       {/* ── Header ── */}
       <SectionHeader icon={CheckListIcon} title={t("whatToDoToday")} />
-      <View className="bg-card border border-border rounded-2xl p-4 shadow-sm">
+      <View className="bg-card border border-border rounded-3xl p-3 shadow-sm">
         {/* ── Loading ── */}
         {showLoader && (
           <View className="items-center justify-center gap-3 py-3 min-h-28">
-            <ActivityIndicator color="#10b981" size="small" />
+            <ActivityIndicator color="#10b981" size="large" />
             <Text className="text-xs font-medium text-muted-foreground">
               {t("generatingOverview")}
             </Text>
@@ -104,7 +104,7 @@ export function WhatToDoTodaySection({ crop }: Props) {
                   key={i}
                   className={
                     "flex-row items-start gap-3 py-3" +
-                    (!isLast ? " border-b border-border/50" : "")
+                    (!isLast ? " border-b border-border" : "")
                   }
                 >
                   {/* Category icon (no box wrapper) */}

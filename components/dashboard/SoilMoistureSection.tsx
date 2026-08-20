@@ -314,7 +314,7 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
             size={18}
             className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5"
           />
-          <Text className="text-foreground/90 font-medium text-xs flex-1 leading-5">
+          <Text className="text-foreground font-medium text-xs flex-1 leading-5">
             {irrigationInsight}
           </Text>
         </View>
@@ -555,11 +555,15 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
                   }}
                 >
                   <View
-                    style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6, gap: 8 }}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 6,
+                      gap: 8,
+                    }}
                   >
-                    <Text
-                      style={{ color: "#9ca3af", fontSize: 11 }}
-                    >
+                    <Text style={{ color: "#9ca3af", fontSize: 11 }}>
                       {tooltip.datum.date}
                     </Text>
                     {(() => {
@@ -575,7 +579,13 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
                             paddingVertical: 2,
                           }}
                         >
-                          <Text style={{ color: status.color, fontSize: 9, fontWeight: "700" }}>
+                          <Text
+                            style={{
+                              color: status.color,
+                              fontSize: 9,
+                              fontWeight: "700",
+                            }}
+                          >
                             {status.label.toUpperCase()}
                           </Text>
                         </View>

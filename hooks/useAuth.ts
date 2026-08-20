@@ -6,6 +6,7 @@ const defaultAuthContext: AuthContextType = {
   session: null,
   loading: false,
   signOut: async () => {},
+  refreshUser: async () => {},
 };
 
 export function useAuth(): AuthContextType {

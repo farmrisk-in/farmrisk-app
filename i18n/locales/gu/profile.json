@@ -25,6 +25,7 @@
   "myFarms": "મારા ખેતો",
   "downloadImage": "ડેશબોર્ડ છબી નિકાસ કરો",
   "downloadGenerating": "બનાવવામાં આવી રહ્યું છે...",
+  "downloadLoading": "ડેટા લોડ થઈ રહ્યો છે...",
   "downloadPermissionTitle": "પરવાનગી જરૂરી",
   "downloadPermissionMsg": "છબી તમારી ગેલેરીમાં સાચવવા માટે સ્ટોરેજ પરવાનગી જરૂરી છે.",
   "downloadSuccessTitle": "સાચવેલ!",
@@ -38,5 +39,17 @@
   "deleteAccountTitle": "એકાઉન્ટ કાઢી નાખો",
   "deleteAccountDesc": "આ ક્રિયા અફર છે. તમારો બધો ડેટા કાયમ માટે કાઢી નાખવામાં આવશે.",
   "deleteAgreeLabel": "હું સમજું છું અને મારું એકાઉન્ટ કાઢી નાખવા માંગુ છું",
-  "confirmDelete": "કાયમ માટે કાઢી નાખો"
+  "confirmDelete": "કાયમ માટે કાઢી નાખો",
+  "signIn": "સાઇન ઇન કરો",
+  "createAccount": "ખાતું બનાવો",
+  "guestUser": "મહેમાન ખેડૂત",
+  "signInPrompt": "વ્યક્તિગત સલાહ, ખેતરો સાચવવા અને નિકાસ સુવિધાઓ મેળવવા માટે સાઇન ઇન કરો",
+  "preferences": "પસંદગીઓ",
+  "account": "ખાતું",
+  "dataAndExport": "ડેટા અને નિકાસ",
+  "dangerZone": "જોખમ ક્ષેત્ર",
+  "dangerZoneDesc": "અપરિવર્તનીય એકાઉન્ટ કામગીરી",
+  "editProfileTitle": "પ્રોફાઇલ વિગતો સંપાદિત કરો",
+  "location": "સ્થાન",
+  "age": "ઉંમર"
 }

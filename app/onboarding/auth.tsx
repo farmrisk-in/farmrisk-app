@@ -12,22 +12,26 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { supabase } from "@/lib/supabase";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
+import { Icon } from "@/components/ui/Icon";
+import { ChevronLeftIcon } from "@hugeicons/core-free-icons";
 
 type Mode = "login" | "register";
 
 export default function Auth() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ from?: string; mode?: Mode }>();
+  const isFromProfile = params.from === "profile";
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const { t: tAuth } = useTranslation(["auth"]);
   const { t: tOB } = useTranslation(["onboarding"]);
 
-  const [mode, setMode] = useState<Mode>("login");
+  const [mode, setMode] = useState<Mode>(params.mode === "register" ? "register" : "login");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -60,6 +64,14 @@ export default function Auth() {
       };
 
   const goNext = () => {
+    if (isFromProfile) {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace("/profile");
+      }
+      return;
+    }
     try {
       router.push("/onboarding/location-perm");
     } catch {
@@ -68,6 +80,14 @@ export default function Auth() {
   };
 
   const handleBack = () => {
+    if (isFromProfile) {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace("/profile");
+      }
+      return;
+    }
     try {
       if (router.canGoBack()) {
         router.back();
@@ -125,14 +145,31 @@ export default function Auth() {
   };
 
   return (
-    <SafeAreaView edges={["bottom"]} style={[s.flex1, { backgroundColor: colors.background }]}>
-      <OnboardingProgress
-        currentStep={2}
-        totalSteps={4}
-        onBack={handleBack}
-        stepLabel={tOB("step") ?? "Step"}
-        ofLabel={tOB("of") ?? "of"}
-      />
+    <SafeAreaView edges={["top", "bottom"]} style={[s.flex1, { backgroundColor: colors.background }]}>
+      {isFromProfile ? (
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12 }}>
+          <TouchableOpacity
+            onPress={handleBack}
+            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, alignItems: "center", justifyContent: "center" }}
+          >
+            <Icon icon={ChevronLeftIcon} size={24} className="text-foreground" />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 16, fontWeight: "700", color: colors.foreground }}>
+            {mode === "login" ? tAuth("signInBtn") || "Sign In" : tAuth("registerBtn") || "Register"}
+          </Text>
+          <View style={{ width: 40 }} />
+        </View>
+      ) : (
+        <OnboardingProgress
+          currentStep={2}
+          totalSteps={4}
+          onBack={handleBack}
+          stepLabel={tOB("step") ?? "Step"}
+          ofLabel={tOB("of") ?? "of"}
+        />
+      )}
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -247,12 +284,14 @@ export default function Auth() {
 
         {/* Bottom pinned */}
         <View style={[s.bottomArea, { backgroundColor: colors.background }]}>
-          <TouchableOpacity onPress={goNext} activeOpacity={0.75} accessibilityRole="button"
-            style={[s.guestBtn, { borderColor: colors.border, backgroundColor: colors.card }]}>
-            <Text style={[s.guestBtnText, { color: colors.mutedFg }]}>
-              {tAuth("continueAsGuest") || "Continue to Free Dashboard →"}
-            </Text>
-          </TouchableOpacity>
+          {!isFromProfile && (
+            <TouchableOpacity onPress={goNext} activeOpacity={0.75} accessibilityRole="button"
+              style={[s.guestBtn, { borderColor: colors.border, backgroundColor: colors.card }]}>
+              <Text style={[s.guestBtnText, { color: colors.mutedFg }]}>
+                {tAuth("continueAsGuest") || "Continue to Free Dashboard →"}
+              </Text>
+            </TouchableOpacity>
+          )}
 
           <TouchableOpacity onPress={handleAuth} disabled={submitting} activeOpacity={0.85} accessibilityRole="button"
             style={[s.submitBtn, { backgroundColor: colors.primary, opacity: submitting ? 0.6 : 1 }]}>

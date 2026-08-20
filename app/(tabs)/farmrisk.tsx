@@ -48,7 +48,7 @@ export default function ToolsTabScreen() {
       >
         <Header />
 
-        <WhatToDoTodaySection crop={selectedCrop} />
+        {/*<WhatToDoTodaySection crop={selectedCrop} />*/}
 
         <AIAdvisorySection crop={selectedCrop} />
 

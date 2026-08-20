@@ -25,6 +25,7 @@
   "myFarms": "My Farms",
   "downloadImage": "Export Dashboard Image",
   "downloadGenerating": "Generating...",
+  "downloadLoading": "Loading Data...",
   "downloadPermissionTitle": "Permission Required",
   "downloadPermissionMsg": "Storage permission is needed to save the image to your gallery.",
   "downloadSuccessTitle": "Saved!",
@@ -38,5 +39,17 @@
   "deleteAccountTitle": "Delete Account",
   "deleteAccountDesc": "This action is irreversible. All your data will be permanently deleted.",
   "deleteAgreeLabel": "I understand and wish to delete my account",
-  "confirmDelete": "Delete Forever"
+  "confirmDelete": "Delete Forever",
+  "signIn": "Sign In",
+  "createAccount": "Create Account",
+  "guestUser": "Guest Farmer",
+  "signInPrompt": "Sign in to access personalized advisory, farm saving & export features",
+  "preferences": "Preferences",
+  "account": "Account",
+  "dataAndExport": "Data & Export",
+  "dangerZone": "Danger Zone",
+  "dangerZoneDesc": "Irreversible account operations",
+  "editProfileTitle": "Edit Profile Details",
+  "location": "Location",
+  "age": "Age"
 }

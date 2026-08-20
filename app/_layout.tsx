@@ -62,6 +62,14 @@ export default function RootLayout() {
                     }}
                   />
                   <Stack.Screen
+                    name="edit-profile"
+                    options={{
+                      presentation: "modal",
+                      headerShown: false,
+                      animation: "slide_from_bottom",
+                    }}
+                  />
+                  <Stack.Screen
                     name="farm-select"
                     options={{
                       presentation: "fullScreenModal",

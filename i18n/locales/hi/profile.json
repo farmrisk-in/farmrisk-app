@@ -25,6 +25,7 @@
   "myFarms": "मेरे खेत",
   "downloadImage": "डैशबोर्ड इमेज एक्सपोर्ट करें",
   "downloadGenerating": "बन रहा है...",
+  "downloadLoading": "डेटा लोड हो रहा है...",
   "downloadPermissionTitle": "अनुमति आवश्यक",
   "downloadPermissionMsg": "छवि को अपनी गैलरी में सहेजने के लिए स्टोरेज अनुमति आवश्यक है।",
   "downloadSuccessTitle": "सहेजा गया!",
@@ -38,5 +39,17 @@
   "deleteAccountTitle": "खाता हटाएं",
   "deleteAccountDesc": "यह क्रिया अपरिवर्तनीय है। आपका सारा डेटा स्थायी रूप से हटा दिया जाएगा।",
   "deleteAgreeLabel": "मैं समझता हूं और अपना खाता हटाना चाहता हूं",
-  "confirmDelete": "हमेशा के लिए हटाएं"
+  "confirmDelete": "हमेशा के लिए हटाएं",
+  "signIn": "साइन इन करें",
+  "createAccount": "खाता बनाएं",
+  "guestUser": "अतिथि किसान",
+  "signInPrompt": "व्यक्तिगत सलाह, खेत सहेजने और निर्यात सुविधाओं तक पहुंचने के लिए साइन इन करें",
+  "preferences": "प्राथमिकताएं",
+  "account": "खाता",
+  "dataAndExport": "डेटा और निर्यात",
+  "dangerZone": "खतरे का क्षेत्र",
+  "dangerZoneDesc": "अपरिवर्तनीय खाता संचालन",
+  "editProfileTitle": "प्रोफ़ाइल विवरण संपादित करें",
+  "location": "स्थान",
+  "age": "उम्र"
 }
