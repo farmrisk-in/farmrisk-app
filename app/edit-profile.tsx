@@ -22,7 +22,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
 import { supabase } from "@/lib/supabase";
 import { Icon } from "@/components/ui/Icon";
-import { AVATAR_PRESETS, getAvatarSource } from "@/lib/avatar";
+import { getAvatarSource } from "@/lib/avatar";
 import { Avatar } from "react-native-paper";
 import {
   ChevronLeftIcon,
@@ -37,10 +37,8 @@ import {
   LockPasswordIcon,
   Tick01Icon,
   Cancel01Icon,
-  Image01Icon,
   PlusSignIcon,
   MinusSignIcon,
-  Alert01Icon,
 } from "@hugeicons/core-free-icons";
 
 export default function EditProfileScreen() {
@@ -61,13 +59,10 @@ export default function EditProfileScreen() {
   const [phone, setPhone] = useState("");
   const [age, setAge] = useState("");
   const [location, setLocation] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("pic5");
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  // Avatar Picker Modal
-  const [avatarModalVisible, setAvatarModalVisible] = useState(false);
 
   // Gallery Cropping / Zoom Modal
   const [cropModalVisible, setCropModalVisible] = useState(false);
@@ -98,31 +93,25 @@ export default function EditProfileScreen() {
       setPhone(profile.phone || "");
       setAge(profile.age ? String(profile.age) : "");
       setLocation(profile.location || "");
-      setAvatarUrl(profile.avatar_url || "pic5");
+      setAvatarUrl(profile.avatar_url || "");
     } else if (user) {
       setFirstName(user.user_metadata?.first_name || "");
       setLastName(user.user_metadata?.last_name || "");
-      setPhone(
-        user.user_metadata?.phone ||
-          user.email?.replace("@farmrisk.app", "") ||
-          "",
-      );
+      setPhone(user.user_metadata?.phone || user.email?.replace("@farmrisk.app", "") || "");
       setAge(user.user_metadata?.age ? String(user.user_metadata.age) : "");
       setLocation(user.user_metadata?.location || "");
-      setAvatarUrl(user.user_metadata?.avatar_url || "pic5");
+      setAvatarUrl(user.user_metadata?.avatar_url || "");
     }
   }, [profile, user]);
 
-  // Launch native gallery picker
+  // Directly launch native gallery picker
   const handlePickFromGallery = async () => {
     try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
           t("permissionDenied") || "Permission Denied",
-          t("galleryPermissionNeeded") ||
-            "Please grant access to your photo gallery to upload a profile picture.",
+          t("galleryPermissionNeeded") || "Please grant access to your photo gallery to upload a profile picture."
         );
         return;
       }
@@ -139,7 +128,6 @@ export default function EditProfileScreen() {
         setImageWidth(asset.width || 300);
         setImageHeight(asset.height || 300);
         setZoomLevel(1);
-        setAvatarModalVisible(false);
         setCropModalVisible(true);
       }
     } catch (err: any) {
@@ -156,14 +144,8 @@ export default function EditProfileScreen() {
     try {
       const minDim = Math.min(imageWidth, imageHeight);
       const cropSize = Math.max(minDim / zoomLevel, 50);
-      const originX = Math.max(
-        0,
-        Math.min((imageWidth - cropSize) / 2, imageWidth - cropSize),
-      );
-      const originY = Math.max(
-        0,
-        Math.min((imageHeight - cropSize) / 2, imageHeight - cropSize),
-      );
+      const originX = Math.max(0, Math.min((imageWidth - cropSize) / 2, imageWidth - cropSize));
+      const originY = Math.max(0, Math.min((imageHeight - cropSize) / 2, imageHeight - cropSize));
 
       const manipResult = await ImageManipulator.manipulateAsync(
         pickedImageUri,
@@ -187,7 +169,7 @@ export default function EditProfileScreen() {
           compress: 0.8,
           format: ImageManipulator.SaveFormat.JPEG,
           base64: true,
-        },
+        }
       );
 
       if (manipResult.base64) {
@@ -224,10 +206,7 @@ export default function EditProfileScreen() {
     if (phone.trim()) {
       const normalizedPhone = normalizePhoneNumber(phone.trim());
       if (!normalizedPhone) {
-        setError(
-          t("auth:errorPhoneText") ||
-            "Please enter a valid 10-digit Indian phone number.",
-        );
+        setError(t("auth:errorPhoneText") || "Please enter a valid 10-digit Indian phone number.");
         return;
       }
     }
@@ -261,30 +240,21 @@ export default function EditProfileScreen() {
     setPasswordSuccess(null);
 
     if (!currentPassword) {
-      setPasswordError(
-        t("currentPasswordRequired") || "Please enter your current password.",
-      );
+      setPasswordError(t("currentPasswordRequired") || "Please enter your current password.");
       return;
     }
     if (!newPassword || newPassword.length < 6) {
-      setPasswordError(
-        t("passwordTooShort") ||
-          "New password must be at least 6 characters long.",
-      );
+      setPasswordError(t("passwordTooShort") || "New password must be at least 6 characters long.");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError(
-        t("passwordsDoNotMatch") || "New passwords do not match.",
-      );
+      setPasswordError(t("passwordsDoNotMatch") || "New passwords do not match.");
       return;
     }
 
     try {
       await updatePassword({ currentPassword, newPassword });
-      setPasswordSuccess(
-        t("passwordUpdated") || "Password changed successfully!",
-      );
+      setPasswordSuccess(t("passwordUpdated") || "Password changed successfully!");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -369,36 +339,24 @@ export default function EditProfileScreen() {
               {/* Alert Feedback */}
               {error && (
                 <View className="flex-row items-center gap-2.5 p-3.5 rounded-2xl bg-card border border-destructive">
-                  <Icon
-                    icon={AlertCircleIcon}
-                    size={18}
-                    className="text-destructive shrink-0"
-                  />
-                  <Text className="text-xs font-semibold text-destructive flex-1">
-                    {error}
-                  </Text>
+                  <Icon icon={AlertCircleIcon} size={18} className="text-destructive shrink-0" />
+                  <Text className="text-xs font-semibold text-destructive flex-1">{error}</Text>
                 </View>
               )}
 
               {success && (
                 <View className="flex-row items-center gap-2.5 p-3.5 rounded-2xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800">
-                  <Icon
-                    icon={CheckmarkCircle02Icon}
-                    size={18}
-                    className="text-emerald-600 dark:text-emerald-400 shrink-0"
-                  />
-                  <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex-1">
-                    {success}
-                  </Text>
+                  <Icon icon={CheckmarkCircle02Icon} size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <Text className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex-1">{success}</Text>
                 </View>
               )}
 
-              {/* ── Avatar Section ── */}
+              {/* ── Avatar Section (Direct Gallery Picker) ── */}
               <View className="items-center justify-center py-2">
                 <View className="relative">
                   <Avatar.Image size={96} source={getAvatarSource(avatarUrl)} />
                   <TouchableOpacity
-                    onPress={() => setAvatarModalVisible(true)}
+                    onPress={handlePickFromGallery}
                     className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-emerald-600 border-2 border-background items-center justify-center shadow-sm"
                     accessibilityRole="button"
                     accessibilityLabel={t("changePhoto") || "Change Photo"}
@@ -407,7 +365,7 @@ export default function EditProfileScreen() {
                   </TouchableOpacity>
                 </View>
                 <TouchableOpacity
-                  onPress={() => setAvatarModalVisible(true)}
+                  onPress={handlePickFromGallery}
                   className="mt-2.5"
                   accessibilityRole="button"
                 >
@@ -425,16 +383,10 @@ export default function EditProfileScreen() {
                     {t("auth:firstName") || "First Name"}
                   </Text>
                   <View className="flex-row items-center bg-muted border border-border rounded-2xl px-4 py-3 gap-3">
-                    <Icon
-                      icon={User02Icon}
-                      size={18}
-                      className="text-muted-foreground shrink-0"
-                    />
+                    <Icon icon={User02Icon} size={18} className="text-muted-foreground shrink-0" />
                     <TextInput
                       className="flex-1 text-sm text-foreground p-0"
-                      placeholder={
-                        t("auth:firstNamePlaceholder") || "Enter first name"
-                      }
+                      placeholder={t("auth:firstNamePlaceholder") || "Enter first name"}
                       placeholderTextColor="#9ca3af"
                       value={firstName}
                       onChangeText={setFirstName}
@@ -449,16 +401,10 @@ export default function EditProfileScreen() {
                     {t("auth:lastName") || "Last Name"}
                   </Text>
                   <View className="flex-row items-center bg-muted border border-border rounded-2xl px-4 py-3 gap-3">
-                    <Icon
-                      icon={User02Icon}
-                      size={18}
-                      className="text-muted-foreground shrink-0"
-                    />
+                    <Icon icon={User02Icon} size={18} className="text-muted-foreground shrink-0" />
                     <TextInput
                       className="flex-1 text-sm text-foreground p-0"
-                      placeholder={
-                        t("auth:lastNamePlaceholder") || "Enter last name"
-                      }
+                      placeholder={t("auth:lastNamePlaceholder") || "Enter last name"}
                       placeholderTextColor="#9ca3af"
                       value={lastName}
                       onChangeText={setLastName}
@@ -473,16 +419,10 @@ export default function EditProfileScreen() {
                     {t("phone") || "Phone Number"}
                   </Text>
                   <View className="flex-row items-center bg-muted border border-border rounded-2xl px-4 py-3 gap-3">
-                    <Icon
-                      icon={SmartPhone01Icon}
-                      size={18}
-                      className="text-muted-foreground shrink-0"
-                    />
+                    <Icon icon={SmartPhone01Icon} size={18} className="text-muted-foreground shrink-0" />
                     <TextInput
                       className="flex-1 text-sm text-foreground p-0"
-                      placeholder={
-                        t("auth:mobilePlaceholder") || "10-digit mobile"
-                      }
+                      placeholder={t("auth:mobilePlaceholder") || "10-digit mobile"}
                       placeholderTextColor="#9ca3af"
                       value={phone}
                       onChangeText={setPhone}
@@ -498,11 +438,7 @@ export default function EditProfileScreen() {
                     {t("age") || "Age"}
                   </Text>
                   <View className="flex-row items-center bg-muted border border-border rounded-2xl px-4 py-3 gap-3">
-                    <Icon
-                      icon={Calendar03Icon}
-                      size={18}
-                      className="text-muted-foreground shrink-0"
-                    />
+                    <Icon icon={Calendar03Icon} size={18} className="text-muted-foreground shrink-0" />
                     <TextInput
                       className="flex-1 text-sm text-foreground p-0"
                       placeholder={t("agePlaceholder") || "e.g. 35"}
@@ -521,16 +457,10 @@ export default function EditProfileScreen() {
                     {t("location") || "Location / Village"}
                   </Text>
                   <View className="flex-row items-center bg-muted border border-border rounded-2xl px-4 py-3 gap-3">
-                    <Icon
-                      icon={MapPinIcon}
-                      size={18}
-                      className="text-muted-foreground shrink-0"
-                    />
+                    <Icon icon={MapPinIcon} size={18} className="text-muted-foreground shrink-0" />
                     <TextInput
                       className="flex-1 text-sm text-foreground p-0"
-                      placeholder={
-                        t("locationPlaceholder") || "Village, district, or city"
-                      }
+                      placeholder={t("locationPlaceholder") || "Village, district, or city"}
                       placeholderTextColor="#9ca3af"
                       value={location}
                       onChangeText={setLocation}
@@ -571,11 +501,7 @@ export default function EditProfileScreen() {
                   className="bg-card border border-border rounded-2xl py-3.5 items-center justify-center flex-row gap-2"
                   accessibilityRole="button"
                 >
-                  <Icon
-                    icon={LockPasswordIcon}
-                    size={18}
-                    className="text-foreground"
-                  />
+                  <Icon icon={LockPasswordIcon} size={18} className="text-foreground" />
                   <Text className="text-foreground font-bold text-sm">
                     {t("changePassword") || "Change Password"}
                   </Text>
@@ -590,22 +516,17 @@ export default function EditProfileScreen() {
                   </Text>
                   <View className="bg-card border border-destructive rounded-3xl p-4 gap-3">
                     <View className="flex-row items-center gap-2">
-                      <Icon
-                        icon={Alert01Icon}
-                        size={16}
-                        className="text-destructive shrink-0"
-                      />
+                      <Icon icon={AlertSquareIcon} size={16} className="text-destructive shrink-0" />
                       <Text className="text-xs text-muted-foreground flex-1">
-                        {t("dangerZoneDesc") ||
-                          "Irreversible account operations. Proceed with caution."}
+                        {t("dangerZoneDesc") || "Irreversible account operations. Proceed with caution."}
                       </Text>
                     </View>
                     <TouchableOpacity
                       onPress={startDeleteCountdown}
-                      className="bg-destructive rounded-2xl py-3 flex-row items-center justify-center"
+                      className="border border-destructive rounded-2xl py-3 flex-row items-center justify-center"
                       accessibilityRole="button"
                     >
-                      <Text className="text-white font-bold text-md">
+                      <Text className="text-destructive font-bold text-sm">
                         {t("deleteAccount") || "Delete Account"}
                       </Text>
                     </TouchableOpacity>
@@ -617,56 +538,6 @@ export default function EditProfileScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* ── Avatar Picker Modal (Gallery) ── */}
-      <Modal
-        visible={avatarModalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setAvatarModalVisible(false)}
-      >
-        <TouchableOpacity
-          className="flex-1 justify-end"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-          activeOpacity={1}
-          onPressOut={() => setAvatarModalVisible(false)}
-        >
-          <View className="bg-card border-t border-border rounded-t-3xl p-6 pb-10">
-            <View className="w-12 h-1 bg-border rounded-full self-center mb-4" />
-            <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-lg font-bold text-foreground">
-                {t("selectAvatarTitle") || "Choose Profile Picture"}
-              </Text>
-              <TouchableOpacity
-                onPress={() => setAvatarModalVisible(false)}
-                className="w-8 h-8 rounded-full bg-muted border border-border items-center justify-center"
-              >
-                <Icon
-                  icon={Cancel01Icon}
-                  size={16}
-                  className="text-foreground"
-                />
-              </TouchableOpacity>
-            </View>
-
-            {/* Gallery Upload Button */}
-            <TouchableOpacity
-              onPress={handlePickFromGallery}
-              className="bg-muted border border-border rounded-2xl p-4 mb-5 flex-row items-center justify-center gap-2.5 active:bg-muted"
-              accessibilityRole="button"
-            >
-              <Icon
-                icon={Image01Icon}
-                size={20}
-                className="text-emerald-600 dark:text-emerald-400"
-              />
-              <Text className="text-foreground font-bold text-sm">
-                {t("chooseFromGallery") || "Upload from Gallery"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-
       {/* ── Gallery Photo Crop & Zoom Modal ── */}
       <Modal
         visible={cropModalVisible}
@@ -674,10 +545,7 @@ export default function EditProfileScreen() {
         animationType="slide"
         onRequestClose={() => !isProcessingImage && setCropModalVisible(false)}
       >
-        <View
-          className="flex-1 justify-end"
-          style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-        >
+        <View className="flex-1 justify-end" style={{ backgroundColor: "rgba(0,0,0,0.6)" }}>
           <View className="bg-card border-t border-border rounded-t-3xl p-6 pb-10">
             <View className="w-12 h-1 bg-border rounded-full self-center mb-4" />
             <View className="flex-row items-center justify-between mb-4">
@@ -689,11 +557,7 @@ export default function EditProfileScreen() {
                 disabled={isProcessingImage}
                 className="w-8 h-8 rounded-full bg-muted border border-border items-center justify-center"
               >
-                <Icon
-                  icon={Cancel01Icon}
-                  size={16}
-                  className="text-foreground"
-                />
+                <Icon icon={Cancel01Icon} size={16} className="text-foreground" />
               </TouchableOpacity>
             </View>
 
@@ -716,20 +580,14 @@ export default function EditProfileScreen() {
             {/* Zoom Controls */}
             <View className="flex-row items-center justify-center gap-6 mb-6">
               <TouchableOpacity
-                onPress={() =>
-                  setZoomLevel((prev) => Math.max(1, +(prev - 0.25).toFixed(2)))
-                }
+                onPress={() => setZoomLevel((prev) => Math.max(1, +(prev - 0.25).toFixed(2)))}
                 disabled={zoomLevel <= 1 || isProcessingImage}
                 className={`w-12 h-12 rounded-full border border-border items-center justify-center ${
                   zoomLevel <= 1 ? "bg-muted opacity-40" : "bg-muted"
                 }`}
                 accessibilityRole="button"
               >
-                <Icon
-                  icon={MinusSignIcon}
-                  size={20}
-                  className="text-foreground"
-                />
+                <Icon icon={MinusSignIcon} size={20} className="text-foreground" />
               </TouchableOpacity>
 
               <View className="items-center min-w-[70px]">
@@ -742,20 +600,14 @@ export default function EditProfileScreen() {
               </View>
 
               <TouchableOpacity
-                onPress={() =>
-                  setZoomLevel((prev) => Math.min(3, +(prev + 0.25).toFixed(2)))
-                }
+                onPress={() => setZoomLevel((prev) => Math.min(3, +(prev + 0.25).toFixed(2)))}
                 disabled={zoomLevel >= 3 || isProcessingImage}
                 className={`w-12 h-12 rounded-full border border-border items-center justify-center ${
                   zoomLevel >= 3 ? "bg-muted opacity-40" : "bg-muted"
                 }`}
                 accessibilityRole="button"
               >
-                <Icon
-                  icon={PlusSignIcon}
-                  size={20}
-                  className="text-foreground"
-                />
+                <Icon icon={PlusSignIcon} size={20} className="text-foreground" />
               </TouchableOpacity>
             </View>
 
@@ -808,37 +660,21 @@ export default function EditProfileScreen() {
                   onPress={() => setPasswordModalVisible(false)}
                   className="w-8 h-8 rounded-full bg-muted border border-border items-center justify-center"
                 >
-                  <Icon
-                    icon={Cancel01Icon}
-                    size={16}
-                    className="text-foreground"
-                  />
+                  <Icon icon={Cancel01Icon} size={16} className="text-foreground" />
                 </TouchableOpacity>
               </View>
 
               {passwordError && (
                 <View className="flex-row items-center gap-2 p-3 rounded-xl bg-card border border-destructive mb-3">
-                  <Icon
-                    icon={AlertCircleIcon}
-                    size={16}
-                    className="text-destructive shrink-0"
-                  />
-                  <Text className="text-xs font-medium text-destructive flex-1">
-                    {passwordError}
-                  </Text>
+                  <Icon icon={AlertCircleIcon} size={16} className="text-destructive shrink-0" />
+                  <Text className="text-xs font-medium text-destructive flex-1">{passwordError}</Text>
                 </View>
               )}
 
               {passwordSuccess && (
                 <View className="flex-row items-center gap-2 p-3 rounded-xl bg-emerald-100 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 mb-3">
-                  <Icon
-                    icon={CheckmarkCircle02Icon}
-                    size={16}
-                    className="text-emerald-600 dark:text-emerald-400 shrink-0"
-                  />
-                  <Text className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex-1">
-                    {passwordSuccess}
-                  </Text>
+                  <Icon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <Text className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex-1">{passwordSuccess}</Text>
                 </View>
               )}
 
@@ -850,10 +686,7 @@ export default function EditProfileScreen() {
                   <View className="bg-muted border border-border rounded-2xl px-4 py-3">
                     <TextInput
                       className="text-sm text-foreground p-0"
-                      placeholder={
-                        t("currentPasswordPlaceholder") ||
-                        "Enter current password"
-                      }
+                      placeholder={t("currentPasswordPlaceholder") || "Enter current password"}
                       placeholderTextColor="#9ca3af"
                       secureTextEntry
                       value={currentPassword}
@@ -869,9 +702,7 @@ export default function EditProfileScreen() {
                   <View className="bg-muted border border-border rounded-2xl px-4 py-3">
                     <TextInput
                       className="text-sm text-foreground p-0"
-                      placeholder={
-                        t("newPasswordPlaceholder") || "At least 6 characters"
-                      }
+                      placeholder={t("newPasswordPlaceholder") || "At least 6 characters"}
                       placeholderTextColor="#9ca3af"
                       secureTextEntry
                       value={newPassword}
@@ -887,10 +718,7 @@ export default function EditProfileScreen() {
                   <View className="bg-muted border border-border rounded-2xl px-4 py-3">
                     <TextInput
                       className="text-sm text-foreground p-0"
-                      placeholder={
-                        t("confirmNewPasswordPlaceholder") ||
-                        "Re-enter new password"
-                      }
+                      placeholder={t("confirmNewPasswordPlaceholder") || "Re-enter new password"}
                       placeholderTextColor="#9ca3af"
                       secureTextEntry
                       value={confirmPassword}
@@ -920,28 +748,18 @@ export default function EditProfileScreen() {
       </Modal>
 
       {/* ── Delete Confirm Modal ── */}
-      <Modal
-        visible={deleteModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setDeleteModalVisible(false)}
-      >
-        <View
-          className="flex-1 justify-center px-6"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
+      <Modal visible={deleteModalVisible} transparent animationType="fade" onRequestClose={() => setDeleteModalVisible(false)}>
+        <View className="flex-1 justify-center px-6" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
           <View className="bg-card border border-border rounded-3xl p-6">
             <Text className="text-xl font-bold text-destructive mb-2 text-center">
               {t("deleteAccountTitle") || "Delete Account"}
             </Text>
             <Text className="text-sm font-medium text-foreground text-center mb-5 leading-relaxed">
-              {t("deleteAccountDesc") ||
-                "This action is irreversible. All your data will be permanently deleted."}
+              {t("deleteAccountDesc") || "This action is irreversible. All your data will be permanently deleted."}
             </Text>
             <View className="bg-muted border border-destructive p-4 rounded-2xl mb-5">
               <Text className="text-sm font-bold text-destructive text-center">
-                {t("deleteAgreeLabel") ||
-                  "I understand and wish to delete my account"}
+                {t("deleteAgreeLabel") || "I understand and wish to delete my account"}
               </Text>
             </View>
             <View className="gap-3">
@@ -953,9 +771,7 @@ export default function EditProfileScreen() {
                 {isDeleting ? (
                   <ActivityIndicator color="#fff" size="small" />
                 ) : (
-                  <Text
-                    className={`font-bold text-sm ${deleteCountdown > 0 || isDeleting ? "text-destructive" : "text-white"}`}
-                  >
+                  <Text className={`font-bold text-sm ${deleteCountdown > 0 || isDeleting ? "text-destructive" : "text-white"}`}>
                     {deleteCountdown > 0
                       ? `${t("confirmDelete") || "Delete Forever"} (${deleteCountdown})`
                       : t("confirmDelete") || "Delete Forever"}
@@ -967,9 +783,7 @@ export default function EditProfileScreen() {
                 disabled={isDeleting}
                 className="py-3.5 rounded-xl items-center border border-border bg-muted"
               >
-                <Text className="text-muted-foreground font-bold text-sm">
-                  {t("cancel") || "Cancel"}
-                </Text>
+                <Text className="text-muted-foreground font-bold text-sm">{t("cancel") || "Cancel"}</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -420,7 +420,7 @@ export default function ProfileScreen() {
               <Icon
                 icon={ChevronRightIcon}
                 size={22}
-                className="text=foreground"
+                className="text-foreground"
               />
             </TouchableOpacity>
           </View>
