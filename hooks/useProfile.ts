@@ -10,6 +10,7 @@ export interface ProfileData {
   age: number | null;
   location: string;
   phone: string;
+  avatar_url: string;
 }
 
 export function useProfile() {
@@ -54,6 +55,7 @@ export function useProfile() {
       const age =
         data?.age ?? (userMeta.age ? Number(userMeta.age) : null);
       const location = data?.location || userMeta.location || "";
+      const avatarUrl = meta.avatar_url || userMeta.avatar_url || "pic5";
 
       let phone = meta.phone || userMeta.phone || "";
       if (!phone && user.email && user.email.endsWith("@farmrisk.app")) {
@@ -67,6 +69,7 @@ export function useProfile() {
         age,
         location,
         phone,
+        avatar_url: avatarUrl,
       };
     },
     enabled: !!user,
@@ -84,6 +87,7 @@ export function useProfile() {
         age: null,
         location: "",
         phone: "",
+        avatar_url: "pic5",
       };
 
       const firstName =
@@ -97,6 +101,8 @@ export function useProfile() {
       const location =
         updated.location !== undefined ? updated.location : current.location;
       const phone = updated.phone !== undefined ? updated.phone : current.phone;
+      const avatarUrl =
+        updated.avatar_url !== undefined ? updated.avatar_url : current.avatar_url;
 
       const basePayload: any = {
         id: user.id,
@@ -105,6 +111,7 @@ export function useProfile() {
         location: location || null,
         metadata: {
           phone,
+          avatar_url: avatarUrl,
           first_name: firstName,
           last_name: lastName,
         },
@@ -157,6 +164,7 @@ export function useProfile() {
           age: age ? Number(age) : null,
           location: location || null,
           phone,
+          avatar_url: avatarUrl,
         },
       });
       if (authError) {
@@ -173,11 +181,61 @@ export function useProfile() {
         age,
         location,
         phone,
+        avatar_url: avatarUrl,
       };
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["profile", user?.id], data);
       queryClient.invalidateQueries({ queryKey: ["profile", user?.id] });
+    },
+  });
+
+  const updatePasswordMutation = useMutation({
+    mutationFn: async ({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+    }) => {
+      if (!user) throw new Error("User must be logged in to update password");
+      if (!currentPassword) {
+        throw new Error("Current password is required");
+      }
+      if (!newPassword || newPassword.length < 6) {
+        throw new Error("New password must be at least 6 characters long");
+      }
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+        current_password: currentPassword,
+      } as any);
+
+      if (updateError) {
+        if (user.email) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: user.email,
+            password: currentPassword,
+          });
+
+          if (signInError) {
+            throw new Error("Current password is incorrect. Please check and try again.");
+          }
+
+          const { error: retryError } = await supabase.auth.updateUser({
+            password: newPassword,
+          });
+
+          if (retryError) {
+            throw new Error(retryError.message || "Failed to update password");
+          }
+          return true;
+        }
+
+        throw new Error(updateError.message || "Failed to update password");
+      }
+
+      return true;
     },
   });
 
@@ -188,5 +246,7 @@ export function useProfile() {
     error: query.error,
     updateProfile: updateMutation.mutateAsync,
     isUpdating: updateMutation.isPending,
+    updatePassword: updatePasswordMutation.mutateAsync,
+    isUpdatingPassword: updatePasswordMutation.isPending,
   };
 }
