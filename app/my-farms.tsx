@@ -1,11 +1,18 @@
 /**
  * My Farms — list of saved farms with select, delete, and export.
- * Entry point from profile page.
+ * Accessible from the Profile page.
  */
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Alert, Share, StyleSheet, ActivityIndicator } from "react-native";
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  Share,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useColorScheme } from "nativewind";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useFields } from "@/hooks/useFields";
@@ -13,22 +20,28 @@ import { useFarmContext } from "@/providers/FarmProvider";
 import { areaToHectares } from "@/lib/drawField";
 import { SEASONS, CROP_STAGES, type Season, type CropStage } from "@/constants/farm";
 import { Icon } from "@/components/ui/Icon";
-import { Cancel01Icon, MapPinIcon, Add01Icon, Delete01Icon, ArrowUpRightIcon } from "@hugeicons/core-free-icons";
+import {
+  Cancel01Icon,
+  MapPinIcon,
+  Add01Icon,
+  Delete01Icon,
+  Share01Icon,
+  Tick01Icon,
+  ArrowRight01Icon,
+  WheatIcon,
+} from "@hugeicons/core-free-icons";
 import type { SavedField } from "@/types/fields";
 
 export default function MyFarmsScreen() {
-  const { t } = useTranslation(["fields"]);
-  const { t: tProfile } = useTranslation(["profile"]);
+  const { t } = useTranslation(["fields", "common", "profile"]);
   const router = useRouter();
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
   const { fields, deleteField, isDeleting, isLoading } = useFields();
   const { selectedFarm, selectFarm } = useFarmContext();
 
   const seasonLabel = (s?: string) =>
-    s && SEASONS.includes(s as Season) ? t(`seasons.${s as Season}`) : "";
+    s && SEASONS.includes(s as Season) ? t(`seasons.${s as Season}`) : s || "";
   const stageLabel = (s?: string) =>
-    s && CROP_STAGES.includes(s as CropStage) ? t(`stages.${s as CropStage}`) : "";
+    s && CROP_STAGES.includes(s as CropStage) ? t(`stages.${s as CropStage}`) : s || "";
   const isActive = (f: SavedField) => selectedFarm?.id === f.id;
 
   const handleSelect = async (farm: SavedField) => {
@@ -37,16 +50,24 @@ export default function MyFarmsScreen() {
   };
 
   const handleDelete = (farm: SavedField) => {
-    Alert.alert(t("deleteConfirm", { name: farm.name || farm.fieldId }), t("deleteHint"), [
-      { text: t("cancel"), style: "cancel" },
-      {
-        text: t("deleteConfirm", { name: "" }).replace('" ', "").replace('"', ""),
-        style: "destructive",
-        onPress: async () => {
-          try { await deleteField(farm.id); } catch {}
+    Alert.alert(
+      t("deleteConfirm", { name: farm.name || farm.fieldId }) || `Delete "${farm.name || farm.fieldId}"?`,
+      t("deleteHint") || "This removes the farm from your account.",
+      [
+        { text: t("common:cancel") || "Cancel", style: "cancel" },
+        {
+          text: t("profile:deleteAccount") || "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteField(farm.id);
+            } catch (err: any) {
+              Alert.alert("Error", err?.message || "Failed to delete farm.");
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const handleExport = async () => {
@@ -55,7 +76,13 @@ export default function MyFarmsScreen() {
       type: "FeatureCollection",
       features: fields.map((sf) => ({
         type: "Feature",
-        properties: { name: sf.name, crops: sf.crops, season: sf.season, cropStage: sf.cropStage, year: sf.year },
+        properties: {
+          name: sf.name,
+          crops: sf.crops,
+          season: sf.season,
+          cropStage: sf.cropStage,
+          year: sf.year,
+        },
         geometry: sf.geometry,
       })),
     };
@@ -64,137 +91,216 @@ export default function MyFarmsScreen() {
     } catch {}
   };
 
-  const cardBg = isDark ? "bg-zinc-900" : "bg-white";
-  const borderCls = isDark ? "border-white/8" : "border-zinc-200";
-  const textPrimary = isDark ? "text-white" : "text-zinc-900";
-  const textSecondary = isDark ? "text-zinc-400" : "text-zinc-500";
-
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? "#09090b" : "#fafafa" }} edges={["top"]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={[styles.headerBtn, { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)" }]}>
-          <Icon icon={Cancel01Icon} size={20} color={isDark ? "#fff" : "#09090b"} />
+    <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-background">
+      {/* ── Top Header Bar ── */}
+      <View className="flex-row items-center justify-between px-5 pt-2 pb-4 border-b border-border">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center"
+          accessibilityRole="button"
+          accessibilityLabel={t("common:cancel") || "Close"}
+        >
+          <Icon icon={Cancel01Icon} size={20} className="text-foreground" />
         </TouchableOpacity>
-        <Text className={`text-lg font-bold ${textPrimary}`}>{t("listTitle")}</Text>
+
+        <Text className="text-lg font-bold text-foreground">
+          {t("listTitle") || "My Farms"}
+        </Text>
+
         <TouchableOpacity
           onPress={() => router.push("/farm-select")}
-          style={[styles.headerBtn, { backgroundColor: "rgba(16,185,129,0.15)" }]}
+          className="w-10 h-10 rounded-full bg-emerald-600 items-center justify-center"
+          accessibilityRole="button"
+          accessibilityLabel={t("drawNew") || "Add Farm"}
         >
-          <Icon icon={Add01Icon} size={20} color="#10b981" />
+          <Icon icon={Add01Icon} size={20} color="#ffffff" />
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Actions */}
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ── Top Actions ── */}
         {fields.length > 0 && (
-          <View className="flex-row gap-2 mb-4 mt-2">
+          <View className="flex-row gap-3 mb-5">
             <TouchableOpacity
               onPress={handleExport}
-              className="flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl bg-zinc-800 border border-white/10"
+              className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-2xl bg-card border border-border"
+              accessibilityRole="button"
             >
-              <Text className="text-zinc-300 text-xs font-semibold">{t("exportGeoJson")}</Text>
+              <Icon icon={Share01Icon} size={16} className="text-foreground" />
+              <Text className="text-foreground text-xs font-bold">
+                {t("exportGeoJson") || "Export GeoJSON"}
+              </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() => router.push("/farm-select")}
-              className="flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-600"
+              className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-600 active:bg-emerald-700"
+              accessibilityRole="button"
             >
-              <Icon icon={ArrowUpRightIcon} size={14} color="#fff" />
-              <Text className="text-white text-xs font-semibold">{t("selectOnMap")}</Text>
+              <Icon icon={Add01Icon} size={16} color="#ffffff" />
+              <Text className="text-white text-xs font-bold">
+                {t("drawNew") || "Draw New Farm"}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
 
+        {/* ── Content ── */}
         {isLoading ? (
-          <View className="items-center py-20">
+          <View className="items-center justify-center py-20">
             <ActivityIndicator size="large" color="#10b981" />
           </View>
         ) : fields.length === 0 ? (
-          <View className="items-center py-20">
-            <Icon icon={MapPinIcon} size={48} className="text-zinc-600 mb-3" />
-            <Text className={`text-sm font-medium ${textPrimary}`}>{t("emptyList")}</Text>
-            <Text className={`text-xs ${textSecondary} mt-1 mb-4`}>{t("noFarmsHint")}</Text>
+          <View className="items-center justify-center py-20 px-4">
+            <View className="w-16 h-16 rounded-3xl bg-muted border border-border items-center justify-center mb-4">
+              <Icon icon={MapPinIcon} size={32} className="text-muted-foreground" />
+            </View>
+            <Text className="text-base font-bold text-foreground text-center mb-1">
+              {t("emptyList") || "No farms saved yet"}
+            </Text>
+            <Text className="text-xs text-muted-foreground text-center mb-6 leading-relaxed max-w-[260px]">
+              {t("noFarmsHint") || "Draw your farm boundary on the map to get localized climate and field advisories."}
+            </Text>
             <TouchableOpacity
               onPress={() => router.push("/farm-select")}
-              className="flex-row items-center gap-2 bg-emerald-600 px-5 py-3 rounded-xl"
+              className="flex-row items-center gap-2 bg-emerald-600 active:bg-emerald-700 px-5 py-3.5 rounded-2xl"
+              accessibilityRole="button"
             >
-              <Icon icon={ArrowUpRightIcon} size={16} color="#fff" />
-              <Text className="text-white text-sm font-semibold">{t("selectOnMap")}</Text>
+              <Icon icon={Add01Icon} size={18} color="#ffffff" />
+              <Text className="text-white text-sm font-bold">
+                {t("selectOnMap") || "Draw Farm on Map"}
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
-          fields.map((farm) => (
-            <TouchableOpacity
-              key={farm.id}
-              onPress={() => handleSelect(farm)}
-              activeOpacity={0.7}
-              className={`${cardBg} rounded-2xl border ${borderCls} p-4 mb-3 ${isActive(farm) ? "border-emerald-500/50 bg-emerald-950/20" : ""}`}
-            >
-              <View className="flex-row items-center justify-between">
-                <View className="flex-1 mr-2">
-                  <Text className={`text-sm font-bold ${textPrimary}`} numberOfLines={1}>
-                    {farm.name || farm.fieldId}
-                  </Text>
-                  {farm.areaM2 != null && (
-                    <Text className={`text-xs ${textSecondary} mt-0.5`}>
-                      {t("areaLabel")}: {areaToHectares(farm.areaM2)}
-                    </Text>
-                  )}
-                </View>
-                {isActive(farm) && (
-                  <View className="bg-emerald-600/20 px-2 py-1 rounded-full">
-                    <Text className="text-emerald-400 text-[10px] font-bold">{t("active")}</Text>
-                  </View>
-                )}
-              </View>
-
-              {/* Crops */}
-              {farm.crops && farm.crops.length > 0 && (
-                <View className="flex-row flex-wrap gap-1 mt-2">
-                  {farm.crops.map((c) => (
-                    <View key={c} className="bg-zinc-800 px-2 py-0.5 rounded-full">
-                      <Text className="text-zinc-300 text-[10px]">{c}</Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-
-              {/* Season / Stage */}
-              <View className="flex-row gap-3 mt-2">
-                {farm.season && (
-                  <Text className={`text-[11px] ${textSecondary}`}>{seasonLabel(farm.season)}</Text>
-                )}
-                {farm.cropStage && (
-                  <Text className={`text-[11px] ${textSecondary}`}>{stageLabel(farm.cropStage)}</Text>
-                )}
-              </View>
-
-              {/* Actions */}
-              <View className="flex-row gap-2 mt-3 pt-3 border-t border-white/5">
+          <View className="gap-3.5">
+            {fields.map((farm) => {
+              const active = isActive(farm);
+              return (
                 <TouchableOpacity
-                  onPress={() => handleDelete(farm)}
-                  disabled={isDeleting}
-                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-950/30 border border-red-500/20"
+                  key={farm.id}
+                  onPress={() => handleSelect(farm)}
+                  activeOpacity={0.7}
+                  className={`rounded-3xl p-5 border ${
+                    active
+                      ? "bg-emerald-100 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800"
+                      : "bg-card border-border"
+                  }`}
+                  accessibilityRole="button"
                 >
-                  <Icon icon={Delete01Icon} size={13} color="#ef4444" />
-                  <Text className="text-red-400 text-xs font-medium">{t("cancel")}</Text>
+                  {/* Top Row: Name on Left, Area + Active Status on Right */}
+                  <View className="flex-row items-start justify-between gap-3 mb-2.5">
+                    <View className="flex-1">
+                      <Text className="text-base font-bold text-foreground leading-tight" numberOfLines={1}>
+                        {farm.name || farm.fieldId}
+                      </Text>
+                      {farm.year && (
+                        <Text className="text-[11px] text-muted-foreground mt-0.5">
+                          {t("addedLabel") || "Season"} {farm.year}
+                        </Text>
+                      )}
+                    </View>
+
+                    <View className="items-end shrink-0">
+                      {farm.areaM2 != null && (
+                        <Text className="text-sm font-bold text-foreground">
+                          {areaToHectares(farm.areaM2)}
+                        </Text>
+                      )}
+                      {active ? (
+                        <View className="flex-row items-center gap-1 mt-1 px-2.5 py-0.5 rounded-full bg-emerald-600">
+                          <Icon icon={Tick01Icon} size={11} color="#ffffff" />
+                          <Text className="text-white text-[10px] font-bold uppercase tracking-wider">
+                            {t("active") || "Active"}
+                          </Text>
+                        </View>
+                      ) : (
+                        <Text className="text-[11px] text-muted-foreground mt-0.5">
+                          {t("tapToActivate") || "Tap to select"}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Middle Row: Crops Tags & Season/Stage Info */}
+                  <View className="flex-row items-center justify-between flex-wrap gap-2 pt-2 border-t border-border">
+                    {/* Left: Crops */}
+                    <View className="flex-row flex-wrap items-center gap-1.5 flex-1">
+                      {farm.crops && farm.crops.length > 0 ? (
+                        farm.crops.map((c) => (
+                          <View
+                            key={c}
+                            className="flex-row items-center gap-1 bg-muted border border-border px-2.5 py-1 rounded-xl"
+                          >
+                            <Icon icon={WheatIcon} size={12} className="text-emerald-600 dark:text-emerald-400" />
+                            <Text className="text-foreground text-[11px] font-medium">
+                              {c}
+                            </Text>
+                          </View>
+                        ))
+                      ) : (
+                        <Text className="text-[11px] text-muted-foreground italic">
+                          {t("noCrops") || "No crops assigned"}
+                        </Text>
+                      )}
+                    </View>
+
+                    {/* Right: Season / Stage chips */}
+                    {(farm.season || farm.cropStage) && (
+                      <View className="flex-row items-center gap-1.5 shrink-0">
+                        {farm.season && (
+                          <View className="bg-muted border border-border px-2.5 py-1 rounded-xl">
+                            <Text className="text-[11px] font-medium text-foreground">
+                              {seasonLabel(farm.season)}
+                            </Text>
+                          </View>
+                        )}
+                        {farm.cropStage && (
+                          <View className="bg-muted border border-border px-2.5 py-1 rounded-xl">
+                            <Text className="text-[11px] font-medium text-foreground">
+                              {stageLabel(farm.cropStage)}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Bottom Row: Delete action button */}
+                  <View className="flex-row items-center justify-between pt-3 mt-3 border-t border-border">
+                    <View className="flex-row items-center gap-1">
+                      <Icon icon={MapPinIcon} size={13} className="text-muted-foreground" />
+                      <Text className="text-[11px] text-muted-foreground">
+                        {farm.fieldId || "Saved Field"}
+                      </Text>
+                    </View>
+
+                    <TouchableOpacity
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleDelete(farm);
+                      }}
+                      disabled={isDeleting}
+                      className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-destructive"
+                      accessibilityRole="button"
+                    >
+                      <Icon icon={Delete01Icon} size={14} className="text-destructive" />
+                      <Text className="text-destructive text-xs font-bold">
+                        {t("common:cancel") ? t("profile:deleteAccount") || "Delete" : "Delete"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          ))
+              );
+            })}
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    paddingHorizontal: 16, paddingVertical: 12,
-  },
-  headerBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    alignItems: "center", justifyContent: "center",
-  },
-});
