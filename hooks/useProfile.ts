@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
+import { uploadAvatarBase64, deleteAvatarImage } from "@/lib/storage/avatar";
 
 export interface ProfileData {
   first_name: string;
@@ -14,7 +15,7 @@ export interface ProfileData {
 }
 
 export function useProfile() {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, signOut } = useAuth();
   const queryClient = useQueryClient();
 
   const query = useQuery<ProfileData | null, Error>({
@@ -55,7 +56,7 @@ export function useProfile() {
       const age =
         data?.age ?? (userMeta.age ? Number(userMeta.age) : null);
       const location = data?.location || userMeta.location || "";
-      const avatarUrl = meta.avatar_url || userMeta.avatar_url || "pic5";
+      const avatarUrl = meta.avatar_url || userMeta.avatar_url || "";
 
       let phone = meta.phone || userMeta.phone || "";
       if (!phone && user.email && user.email.endsWith("@farmrisk.app")) {
@@ -77,7 +78,9 @@ export function useProfile() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async (updated: Partial<ProfileData>) => {
+    mutationFn: async (
+      updated: Partial<ProfileData> & { pendingAvatarBase64?: string | null }
+    ) => {
       if (!user) throw new Error("User must be logged in to update profile");
 
       const current = query.data || {
@@ -87,7 +90,7 @@ export function useProfile() {
         age: null,
         location: "",
         phone: "",
-        avatar_url: "pic5",
+        avatar_url: "",
       };
 
       const firstName =
@@ -101,8 +104,21 @@ export function useProfile() {
       const location =
         updated.location !== undefined ? updated.location : current.location;
       const phone = updated.phone !== undefined ? updated.phone : current.phone;
-      const avatarUrl =
+
+      // Handle Avatar upload to Supabase Storage bucket
+      let avatarUrl =
         updated.avatar_url !== undefined ? updated.avatar_url : current.avatar_url;
+
+      if (updated.pendingAvatarBase64) {
+        avatarUrl = await uploadAvatarBase64(
+          supabase,
+          user.id,
+          updated.pendingAvatarBase64
+        );
+      } else if (updated.avatar_url === "" && current.avatar_url) {
+        await deleteAvatarImage(supabase, user.id);
+        avatarUrl = "";
+      }
 
       const basePayload: any = {
         id: user.id,
@@ -141,7 +157,7 @@ export function useProfile() {
         throw new Error(dbError.message);
       }
 
-      // 2. If phone changed, call update_user_phone RPC or update Auth email
+      // 2. If phone changed, call update_user_phone RPC
       if (phone) {
         const normalizedPhone = normalizePhoneNumber(phone);
         if (normalizedPhone) {
@@ -239,6 +255,66 @@ export function useProfile() {
     },
   });
 
+  const deleteAccountMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("User must be logged in to delete account");
+      const userId = user.id;
+
+      // 1. Delete user avatars from Supabase Storage bucket
+      try {
+        await deleteAvatarImage(supabase, userId);
+      } catch (storageErr) {
+        console.warn("[deleteAccount] Storage cleanup warning:", storageErr);
+      }
+
+      // 2. Delete user saved fields
+      try {
+        await supabase.from("saved_fields").delete().eq("user_id", userId);
+      } catch (fieldsErr) {
+        console.warn("[deleteAccount] saved_fields delete warning:", fieldsErr);
+      }
+
+      // 3. Delete user profile record
+      try {
+        await supabase.from("profiles").delete().eq("id", userId);
+      } catch (profileErr) {
+        console.warn("[deleteAccount] profiles delete warning:", profileErr);
+      }
+
+      // 4. Delete user auth record via RPC
+      let deletedAuth = false;
+      try {
+        const { error: rpcError } = await supabase.rpc("delete_user_account");
+        if (!rpcError) {
+          deletedAuth = true;
+        } else {
+          console.warn("[deleteAccount] RPC delete_user_account error:", rpcError.message);
+        }
+      } catch (rpcEx) {
+        console.warn("[deleteAccount] RPC exception:", rpcEx);
+      }
+
+      // Fallback: If direct deletion failed, sanitize metadata
+      if (!deletedAuth) {
+        await supabase.auth.updateUser({
+          data: {
+            account_deleted: true,
+            deleted_at: new Date().toISOString(),
+            first_name: null,
+            last_name: null,
+            phone: null,
+            avatar_url: null,
+          },
+        });
+      }
+
+      // 5. Sign out & clear queries
+      await signOut();
+      queryClient.clear();
+      return true;
+    },
+  });
+
   return {
     profile: query.data,
     isLoading: query.isLoading,
@@ -248,5 +324,7 @@ export function useProfile() {
     isUpdating: updateMutation.isPending,
     updatePassword: updatePasswordMutation.mutateAsync,
     isUpdatingPassword: updatePasswordMutation.isPending,
+    deleteAccount: deleteAccountMutation.mutateAsync,
+    isDeletingAccount: deleteAccountMutation.isPending,
   };
 }

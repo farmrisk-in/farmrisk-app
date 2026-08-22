@@ -5,12 +5,15 @@ import { Icon } from "@/components/ui/Icon";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
+import { getAvatarSource } from "@/lib/avatar";
 import { Logo } from "@/components/Logo";
 import { useTranslation } from "react-i18next";
 
 export function Header() {
   const router = useRouter();
   const { user } = useAuth();
+  const { profile } = useProfile();
   const { t } = useTranslation(["common"]);
 
   // Time-based greeting helper
@@ -25,10 +28,13 @@ export function Header() {
   // Extract user's name if logged in
   const meta = user?.user_metadata || {};
   const userName =
+    profile?.full_name ||
     [meta.first_name, meta.last_name].filter(Boolean).join(" ") ||
     meta.name ||
     user?.email?.split("@")[0] ||
     t("defaultUserName");
+
+  const avatarKey = profile?.avatar_url || meta.avatar_url;
 
   return (
     <View className="flex-row items-center justify-between py-1">
@@ -41,12 +47,7 @@ export function Header() {
         >
           <Avatar.Image
             size={45}
-            // label={
-            //   userName.split(" ")[0][0].toUpperCase() +
-            //   userName.split(" ")[1][0].toUpperCase()
-            // }
-            source={require("../../assets/pic5.webp")}
-            // color="white"
+            source={getAvatarSource(avatarKey)}
           />
           <View>
             <Text className="text-sm text-muted-foreground font-medium">

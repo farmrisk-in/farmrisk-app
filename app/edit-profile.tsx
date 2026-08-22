@@ -20,7 +20,6 @@ import * as ImageManipulator from "expo-image-manipulator";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
-import { supabase } from "@/lib/supabase";
 import { Icon } from "@/components/ui/Icon";
 import { getAvatarSource } from "@/lib/avatar";
 import { Avatar } from "react-native-paper";
@@ -32,14 +31,13 @@ import {
   Calendar03Icon,
   CheckmarkCircle02Icon,
   AlertCircleIcon,
-  AlertSquareIcon,
+  Alert01Icon,
   Camera01Icon,
   LockPasswordIcon,
   Tick02Icon,
   Cancel01Icon,
   PlusSignIcon,
   MinusSignIcon,
-  Alert01Icon,
 } from "@hugeicons/core-free-icons";
 
 export default function EditProfileScreen() {
@@ -52,6 +50,8 @@ export default function EditProfileScreen() {
     isUpdating,
     updatePassword,
     isUpdatingPassword,
+    deleteAccount,
+    isDeletingAccount,
   } = useProfile();
   const { t } = useTranslation(["profile", "common", "auth"]);
 
@@ -61,6 +61,9 @@ export default function EditProfileScreen() {
   const [age, setAge] = useState("");
   const [location, setLocation] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [pendingAvatarBase64, setPendingAvatarBase64] = useState<string | null>(
+    null,
+  );
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -84,7 +87,6 @@ export default function EditProfileScreen() {
   // Delete Account State
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(5);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   // Sync state with fetched profile or auth user metadata
   useEffect(() => {
@@ -143,7 +145,7 @@ export default function EditProfileScreen() {
     }
   };
 
-  // Crop to square, scale to 300x300, and compress to JPEG Base64
+  // Crop to square, scale to 300x300, and compress to JPEG Base64 (~30KB)
   const handleApplyCropAndCompress = async () => {
     if (!pickedImageUri) return;
     setIsProcessingImage(true);
@@ -179,15 +181,15 @@ export default function EditProfileScreen() {
           },
         ],
         {
-          compress: 0.8,
+          compress: 0.85,
           format: ImageManipulator.SaveFormat.JPEG,
           base64: true,
         },
       );
 
       if (manipResult.base64) {
-        const dataUrl = `data:image/jpeg;base64,${manipResult.base64}`;
-        setAvatarUrl(dataUrl);
+        setPendingAvatarBase64(manipResult.base64);
+        setAvatarUrl(`data:image/jpeg;base64,${manipResult.base64}`);
       } else {
         setAvatarUrl(manipResult.uri);
       }
@@ -235,8 +237,10 @@ export default function EditProfileScreen() {
         age: ageNum,
         location: location.trim(),
         avatar_url: avatarUrl,
+        pendingAvatarBase64: pendingAvatarBase64,
       });
 
+      setPendingAvatarBase64(null);
       setSuccess(t("saveChanges") + " ✓" || "Changes saved successfully!");
       setTimeout(() => {
         if (router.canGoBack()) {
@@ -307,16 +311,12 @@ export default function EditProfileScreen() {
   };
 
   const executeDeleteAccount = async () => {
-    setIsDeleting(true);
     try {
-      const { error: delError } = await supabase.rpc("delete_user_account");
-      if (delError) throw delError;
-      await supabase.auth.signOut();
+      await deleteAccount();
       setDeleteModalVisible(false);
       router.replace("/");
     } catch (err: any) {
       Alert.alert("Error", err?.message || "Failed to delete account");
-      setIsDeleting(false);
     }
   };
 
@@ -597,7 +597,7 @@ export default function EditProfileScreen() {
                     </View>
                     <TouchableOpacity
                       onPress={startDeleteCountdown}
-                      className="bg-destructive  rounded-2xl py-3 flex-row items-center justify-center"
+                      className="bg-destructive rounded-2xl py-3 flex-row items-center justify-center"
                       accessibilityRole="button"
                     >
                       <Text className="text-white font-bold text-sm">
@@ -892,14 +892,14 @@ export default function EditProfileScreen() {
             <View className="gap-3">
               <TouchableOpacity
                 onPress={executeDeleteAccount}
-                disabled={deleteCountdown > 0 || isDeleting}
-                className={`py-3.5 rounded-xl items-center flex-row justify-center gap-2 ${deleteCountdown > 0 || isDeleting ? "bg-muted border border-destructive" : "bg-destructive active:bg-destructive"}`}
+                disabled={deleteCountdown > 0 || isDeletingAccount}
+                className={`py-3.5 rounded-xl items-center flex-row justify-center gap-2 ${deleteCountdown > 0 || isDeletingAccount ? "bg-muted border border-destructive" : "bg-destructive active:bg-destructive"}`}
               >
-                {isDeleting ? (
+                {isDeletingAccount ? (
                   <ActivityIndicator color="#fff" size="small" />
                 ) : (
                   <Text
-                    className={`font-bold text-sm ${deleteCountdown > 0 || isDeleting ? "text-destructive" : "text-white"}`}
+                    className={`font-bold text-sm ${deleteCountdown > 0 || isDeletingAccount ? "text-destructive" : "text-white"}`}
                   >
                     {deleteCountdown > 0
                       ? `${t("confirmDelete") || "Delete Forever"} (${deleteCountdown})`
@@ -909,7 +909,7 @@ export default function EditProfileScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => setDeleteModalVisible(false)}
-                disabled={isDeleting}
+                disabled={isDeletingAccount}
                 className="py-3.5 rounded-xl items-center border border-border bg-muted"
               >
                 <Text className="text-muted-foreground font-bold text-sm">
