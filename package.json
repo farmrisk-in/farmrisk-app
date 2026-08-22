@@ -23,6 +23,7 @@
     "@turf/area": "^7.4.0",
     "@turf/helpers": "^7.4.0",
     "@turf/kinks": "^7.4.0",
+    "base64-arraybuffer": "^1.0.2",
     "expo": "~54.0.36",
     "expo-blur": "~15.0.8",
     "expo-constants": "~18.0.13",
