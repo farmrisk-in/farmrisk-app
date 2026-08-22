@@ -11,7 +11,6 @@ import {
 import { useAI } from "@/hooks/useAI";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { LockedFeature } from "@/components/ui/LockedFeature";
 import { Book02Icon, BotIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { i18n } from "@/i18n";
 import { useTranslation } from "react-i18next";
@@ -108,7 +107,6 @@ export function AIAdvisorySection({ crop }: Props) {
     );
   };
   return (
-    <LockedFeature>
       <View className="my-6 p-6 rounded-3xl overflow-hidden border border-emerald-400 dark:border-emerald-900/50 relative  bg-emerald-50 dark:bg-emerald-950/20">
         <SectionHeader
           icon={BotIcon}
@@ -219,6 +217,5 @@ export function AIAdvisorySection({ crop }: Props) {
           </TouchableOpacity>
         </Modal>
       </View>
-    </LockedFeature>
   );
 }

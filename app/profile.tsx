@@ -55,7 +55,7 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   const { selectedCrop, setSelectedCrop } = useCropContext();
-  const { selectedFarm } = useFarmContext();
+  const { selectedFarm, clearFarm } = useFarmContext();
   const { crops } = useCrops();
   const [cropModalVisible, setCropModalVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
@@ -89,6 +89,17 @@ export default function ProfileScreen() {
         },
       ],
     );
+  };
+
+  const handleSignOut = async () => {
+    try {
+      if (clearFarm) await clearFarm();
+      if (setSelectedCrop) setSelectedCrop("");
+      await AsyncStorage.removeItem("farmrisk:local_fields"); // clear local fields just in case
+      await signOut();
+    } catch (err) {
+      console.error("Logout cleanup failed:", err);
+    }
   };
 
   if (loading) {
@@ -234,7 +245,7 @@ export default function ProfileScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={signOut}
+                onPress={handleSignOut}
                 className="flex-1 bg-muted border border-border rounded-xl py-2.5 items-center justify-center flex-row gap-1.5"
                 accessibilityRole="button"
               >

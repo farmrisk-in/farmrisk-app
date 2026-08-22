@@ -11,7 +11,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { i18n } from "@/i18n";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { LockedFeature } from "@/components/ui/LockedFeature";
 import { Icon } from "@/components/ui/Icon";
 import { usePestDisease } from "@/hooks/usePestDisease";
 import { useCropContext } from "@/providers/CropProvider";
@@ -366,7 +365,6 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
   );
 
   return (
-    <LockedFeature>
       <View className="my-6 px-2">
         {/* Section Header */}
         <SectionHeader
@@ -568,6 +566,5 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
           </TouchableOpacity>
         </Modal>
       </View>
-    </LockedFeature>
   );
 }

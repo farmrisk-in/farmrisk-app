@@ -3,7 +3,6 @@ import { View, Text } from "react-native";
 import { useCalendar } from "@/hooks/useCalendar";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { LockedFeature } from "@/components/ui/LockedFeature";
 import {
   Calendar03Icon,
   CloudOffIcon,
@@ -382,7 +381,6 @@ export function CropCalendarSection({ crop }: Props) {
   }
 
   return (
-    <LockedFeature>
     <View className="my-6 px-4">
       <SectionHeader
         icon={Calendar03Icon}
@@ -421,6 +419,5 @@ export function CropCalendarSection({ crop }: Props) {
         <SeasonCard key={i} entry={entry} />
       ))}
     </View>
-    </LockedFeature>
   );
 }

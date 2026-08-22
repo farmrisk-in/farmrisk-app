@@ -15,7 +15,6 @@ import {
 import { useSoilMoisture } from "@/hooks/useSoilMoisture";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { LockedFeature } from "@/components/ui/LockedFeature";
 import {
   Settings01Icon,
   SoilMoistureFieldIcon,
@@ -261,7 +260,6 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
 
   // ── render ────────────────────────────────────────────────────────────────
   return (
-    <LockedFeature>
     <View className="my-6 px-4">
       <SectionHeader
         icon={SoilMoistureFieldIcon}
@@ -815,6 +813,5 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
         </TouchableOpacity>
       </Modal>
     </View>
-    </LockedFeature>
   );
 }

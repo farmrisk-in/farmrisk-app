@@ -15,6 +15,7 @@ import {
 import { SoilMoistureSection } from "@/components/dashboard/SoilMoistureSection";
 import { PestAndDiseaseSection } from "@/components/dashboard/PestAndDiseaseSection";
 import { WhatToDoTodaySection } from "@/components/dashboard/WhatToDoTodaySection";
+import { LockedFeature } from "@/components/ui/LockedFeature";
 
 export default function ToolsTabScreen() {
   const { selectedCrop } = useCropContext();
@@ -50,16 +51,24 @@ export default function ToolsTabScreen() {
 
         {/*<WhatToDoTodaySection crop={selectedCrop} />1*/}
 
-        <AIAdvisorySection crop={selectedCrop} />
+        <LockedFeature>
+          <AIAdvisorySection crop={selectedCrop} />
+        </LockedFeature>
 
-        <PestAndDiseaseSection crop={selectedCrop} />
+        <LockedFeature>
+          <PestAndDiseaseSection crop={selectedCrop} />
+        </LockedFeature>
 
-        <SoilMoistureSection
-          crop={selectedCrop}
-          irrigationInsight={irrigationInsight}
-        />
+        <LockedFeature>
+          <SoilMoistureSection
+            crop={selectedCrop}
+            irrigationInsight={irrigationInsight}
+          />
+        </LockedFeature>
 
-        <CropCalendarSection crop={selectedCrop} />
+        <LockedFeature>
+          <CropCalendarSection crop={selectedCrop} />
+        </LockedFeature>
       </ScrollView>
     </SafeAreaView>
   );
