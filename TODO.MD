@@ -1,5 +1,7 @@
 redo export template
 
-new compoenent are not theme synced
+delete account db func
 
-onboarding auth page isnt theme synced !!!
+pro/free features seperations
+
+farm selection page theme syning

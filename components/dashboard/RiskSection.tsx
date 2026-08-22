@@ -34,8 +34,8 @@ import {
 } from "@hugeicons/core-free-icons";
 
 const { width } = Dimensions.get("window");
-// 2 columns with padding
-const cardWidth = (width - 32 - 16) / 2;
+// 3 columns with padding
+const cardWidth = (width - 32 - 16) / 3;
 
 // Risk band keys (dashboard ns) for translatable bands.
 type RiskBandKey =
@@ -82,23 +82,23 @@ function getRiskColor(band: string) {
       return "#10b981"; // emerald-500
     case "minimal":
     default:
-      return "gray"; // blue-500
+      return "#718096"; // gray-500
   }
 }
 
 function getRiskIcon(band: string) {
   switch (band?.toLowerCase()) {
     case "extreme":
-      return DangerIcon; // red-500
+      return DangerIcon;
     case "high":
-      return Alert02Icon; // orange-500
+      return Alert02Icon;
     case "moderate":
-      return SecurityWarningIcon; // yellow-500
+      return SecurityWarningIcon;
     case "low":
-      return Plant01Icon; // emerald-500
+      return Plant01Icon;
     case "minimal":
     default:
-      return TractorIcon; // blue-500
+      return TractorIcon;
   }
 }
 
@@ -120,7 +120,7 @@ function RiskGauge({
   const { t } = useTranslation(["dashboard"]);
   if (!data) return null;
 
-  const score = data.score ?? 0;
+  const score = Math.max(0, Math.min(100, data.score ?? 0));
   const band = data.band ?? "Minimal";
   const riskcolor = getRiskColor(band);
 
@@ -130,54 +130,53 @@ function RiskGauge({
   ];
 
   return (
-    <View
-      className="p-4 rounded-[30px] grow"
-      style={{ backgroundColor: color + 10 }}
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
+      style={{ width: cardWidth }}
+      className="bg-card border border-border p-2.5 rounded-2xl items-center justify-between"
     >
-      <TouchableOpacity onPress={onPress}>
-        <View className="flex-row items-center gap-2 mb-4">
-          <View className="w-8 h-8 rounded-full items-center justify-center">
-            <Icon icon={icon} size={22} strokeWidth={2} color={color} />
-          </View>
-          <Text
-            style={{ color: color }}
-            className="font-semibold text-sm flex-1"
-          >
-            {hazard}
-          </Text>
-          <Icon
-            icon={ChevronRightIcon}
-            size={22}
-            strokeWidth={2}
-            color={color}
-          />
-        </View>
-      </TouchableOpacity>
+      {/* Top Hazard Title */}
+      <Text
+        className="text-xs text-foreground text-center mb-2 w-full"
+        numberOfLines={1}
+      >
+        {hazard}
+      </Text>
 
-      <View className="items-center justify-center relative w-full h-28">
-        <Svg viewBox="0 0 100 100" className="w-full h-full">
+      {/* Center Semi-Circle Gauge with Centered Icon */}
+      <View className="items-center justify-center relative w-full h-[52px] overflow-hidden">
+        <Svg viewBox="0 0 100 65" className="w-full h-full">
           <VictoryPie
             data={chartData}
             standalone={false}
             animate={true}
-            startAngle={-110}
-            endAngle={110}
-            innerRadius={40}
-            radius={60}
-            colorScale={[riskcolor, isDark ? "#27272a80" : "#e4e4e780"]}
+            startAngle={-120}
+            endAngle={120}
+            innerRadius={32}
+            radius={45}
+            colorScale={[riskcolor, isDark ? "#27272a" : "#e4e4e7"]}
             labels={() => null}
             width={100}
-            height={130}
+            height={90}
             cornerRadius={10}
           />
         </Svg>
-        <View className="absolute inset-0 items-center justify-center pt-2">
-          <Text className="font-bold text-sm" style={{ color: riskcolor }}>
-            {formatBand(t, band)}
-          </Text>
+        {/* Icon placed in the center cavity of the gauge */}
+        <View className="absolute inset-0 items-center justify-end pb-2 pointer-events-none">
+          <Icon icon={icon} size={20} color={riskcolor} />
         </View>
       </View>
-    </View>
+
+      {/* Bottom Risk Band Pill */}
+      <Text
+        className="font-bold pt-2 text-[10px] uppercase text-center"
+        style={{ color: riskcolor }}
+        numberOfLines={1}
+      >
+        {formatBand(t, band)}
+      </Text>
+    </TouchableOpacity>
   );
 }
 
@@ -233,14 +232,13 @@ export function RiskSection() {
           </Text>
         </View>
         <Skeleton className="mb-4" />
-        <View className="flex-row flex-wrap justify-between">
+        <View className="flex-row flex-wrap justify-between gap-y-2.5">
           {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton
               key={i}
               width={cardWidth}
-              height={140}
-              borderRadius={24}
-              className="mb-4"
+              height={108}
+              borderRadius={16}
             />
           ))}
         </View>
@@ -308,14 +306,11 @@ export function RiskSection() {
         title={t("agricultureRisk")}
         containerClassName="flex flex-row gap-2 mt-6 mb-3 px-3 items-center"
         rightContent={
-          <View
-            style={{ backgroundColor: overallColor + 20 }}
-            className="flex flex-row rounded-xl gap-1.5 px-3 py-1.5 h-min items-end"
-          >
-            <Icon icon={overallIcon} size={18} color={overallColor} />
+          <View className="flex flex-row rounded-xl gap-1.5 px-3 py-1.5 h-min items-center bg-card border border-border">
+            <Icon icon={overallIcon} size={16} color={overallColor} />
             <Text
               style={{ color: overallColor }}
-              className="font-semibold text-sm uppercase"
+              className="font-bold text-xs uppercase"
             >
               {formatBand(t, overall.band).toUpperCase()}
             </Text>
@@ -323,68 +318,19 @@ export function RiskSection() {
         }
       />
 
-      {/* 2-Column Hazard Grid */}
-      <View className="flex gap-4 px-2">
-        <View className="flex flex-row gap-3">
+      {/* 3-Column (3x2) Hazard Grid */}
+      <View className="flex-row flex-wrap justify-between gap-y-3">
+        {hazards.map((hazard) => (
           <RiskGauge
-            key={hazards[0].id}
-            hazard={hazards[0].name}
-            icon={hazards[0].icon}
-            data={hazards[0].scoreData}
+            key={hazard.id}
+            hazard={hazard.name}
+            icon={hazard.icon}
+            data={hazard.scoreData}
             isDark={isDark}
-            color={hazards[0].color}
-            onPress={() => handlePress(hazards[0])}
+            color={hazard.color}
+            onPress={() => handlePress(hazard)}
           />
-          <RiskGauge
-            key={hazards[1].id}
-            hazard={hazards[1].name}
-            icon={hazards[1].icon}
-            data={hazards[1].scoreData}
-            isDark={isDark}
-            color={hazards[1].color}
-            onPress={() => handlePress(hazards[1])}
-          />
-        </View>
-        <View className="flex flex-row gap-3">
-          <RiskGauge
-            key={hazards[2].id}
-            hazard={hazards[2].name}
-            icon={hazards[2].icon}
-            data={hazards[2].scoreData}
-            isDark={isDark}
-            color={hazards[2].color}
-            onPress={() => handlePress(hazards[2])}
-          />
-          <RiskGauge
-            key={hazards[3].id}
-            hazard={hazards[3].name}
-            icon={hazards[3].icon}
-            data={hazards[3].scoreData}
-            isDark={isDark}
-            color={hazards[3].color}
-            onPress={() => handlePress(hazards[3])}
-          />
-        </View>
-        <View className="flex flex-row gap-3">
-          <RiskGauge
-            key={hazards[4].id}
-            hazard={hazards[4].name}
-            icon={hazards[4].icon}
-            data={hazards[4].scoreData}
-            isDark={isDark}
-            color={hazards[4].color}
-            onPress={() => handlePress(hazards[4])}
-          />
-          <RiskGauge
-            key={hazards[5].id}
-            hazard={hazards[5].name}
-            icon={hazards[5].icon}
-            data={hazards[5].scoreData}
-            isDark={isDark}
-            color={hazards[5].color}
-            onPress={() => handlePress(hazards[5])}
-          />
-        </View>
+        ))}
       </View>
 
       {/* Details Modal */}

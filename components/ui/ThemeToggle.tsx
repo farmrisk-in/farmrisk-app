@@ -11,7 +11,6 @@ export function ThemeToggle(props: TouchableOpacityProps) {
   return (
     <TouchableOpacity
       onPress={toggleColorScheme}
-      className={`p-2.5 bg-muted rounded-2xl items-center border border-border justify-center ${props.className || ""}`}
       accessibilityRole="button"
       accessibilityLabel="Toggle Theme"
       {...props}
@@ -24,3 +23,4 @@ export function ThemeToggle(props: TouchableOpacityProps) {
     </TouchableOpacity>
   );
 }
+
