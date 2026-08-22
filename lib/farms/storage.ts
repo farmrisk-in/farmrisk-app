@@ -94,7 +94,7 @@ export async function listFields(
     if (error) throw new Error(error.message);
     return (data ?? []).map(mapRowToField);
   }
-  return readLocalFields();
+  return [];
 }
 
 export async function saveField(
@@ -111,31 +111,8 @@ export async function saveField(
     if (error) throw new Error(error.message);
     return mapRowToField(data);
   }
-
-  // Guest — persist locally
-  const id = generateFieldId();
-  const field: SavedField = {
-    id,
-    fieldId: input.fieldId,
-    source: input.source,
-    year: input.year,
-    countryCode: input.countryCode,
-    areaM2: input.areaM2,
-    confidence: input.confidence,
-    geometry: input.geometry,
-    properties: input.properties,
-    savedAt: new Date().toISOString(),
-    name: input.fieldName,
-    centerLat: input.centerLat,
-    centerLng: input.centerLng,
-    crops: input.crops,
-    season: input.season,
-    cropStage: input.cropStage,
-  };
-  const existing = await readLocalFields();
-  existing.push(field);
-  await writeLocalFields(existing);
-  return field;
+  
+  throw new Error("You must be logged in to save farms.");
 }
 
 export async function deleteField(
@@ -151,6 +128,4 @@ export async function deleteField(
     if (error) throw new Error(error.message);
     return;
   }
-  const fields = (await readLocalFields()).filter((f) => f.id !== id);
-  await writeLocalFields(fields);
 }

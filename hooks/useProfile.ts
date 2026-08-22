@@ -267,48 +267,24 @@ export function useProfile() {
         console.warn("[deleteAccount] Storage cleanup warning:", storageErr);
       }
 
-      // 2. Delete user saved fields
-      try {
-        await supabase.from("saved_fields").delete().eq("user_id", userId);
-      } catch (fieldsErr) {
-        console.warn("[deleteAccount] saved_fields delete warning:", fieldsErr);
-      }
-
-      // 3. Delete user profile record
-      try {
-        await supabase.from("profiles").delete().eq("id", userId);
-      } catch (profileErr) {
-        console.warn("[deleteAccount] profiles delete warning:", profileErr);
-      }
-
-      // 4. Delete user auth record via RPC
-      let deletedAuth = false;
-      try {
-        const { error: rpcError } = await supabase.rpc("delete_user_account");
-        if (!rpcError) {
-          deletedAuth = true;
-        } else {
-          console.warn("[deleteAccount] RPC delete_user_account error:", rpcError.message);
+      // 2. Call PostgreSQL RPC function (public.delete_user_account)
+      // The updated RPC function removes saved_fields, profiles, and auth.users entry in one atomic transaction
+      const { error: rpcError } = await supabase.rpc("delete_user_account");
+      if (rpcError) {
+        console.warn("[deleteAccount] RPC delete_user_account error:", rpcError.message);
+        
+        // Fallback: Manually clean user tables if RPC failed
+        try {
+          await supabase.from("saved_fields").delete().eq("user_id", userId);
+          await supabase.from("profiles").delete().eq("id", userId);
+        } catch (cleanupErr) {
+          console.warn("[deleteAccount] Fallback table cleanup warning:", cleanupErr);
         }
-      } catch (rpcEx) {
-        console.warn("[deleteAccount] RPC exception:", rpcEx);
+        
+        throw new Error(rpcError.message || "Failed to permanently delete account");
       }
 
-      // Fallback: If direct deletion failed, sanitize metadata
-      if (!deletedAuth) {
-        await supabase.auth.updateUser({
-          data: {
-            account_deleted: true,
-            deleted_at: new Date().toISOString(),
-            first_name: null,
-            last_name: null,
-            phone: null,
-            avatar_url: null,
-          },
-        });
-      }
-
-      // 5. Sign out & clear queries
+      // 3. Sign out & clear queries
       await signOut();
       queryClient.clear();
       return true;

@@ -11,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { i18n } from "@/i18n";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { LockedFeature } from "@/components/ui/LockedFeature";
 import { Icon } from "@/components/ui/Icon";
 import { usePestDisease } from "@/hooks/usePestDisease";
 import { useCropContext } from "@/providers/CropProvider";
@@ -365,261 +366,208 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
   );
 
   return (
-    <View className="my-6 px-2">
-      {/* Section Header */}
-      <SectionHeader
-        icon={Bug01Icon}
-        title={tDash("hazardPest")}
-        rightContent={
-          <View className="flex-row items-center gap-2">
-            {!isGeneral && sources.length > 0 && (
-              <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-                activeOpacity={0.7}
-              >
-                <View className="flex-row rounded-xl gap-1 px-2.5 py-1 items-center bg-emerald-100 dark:bg-emerald-900/50">
-                  <Icon icon={Book02Icon} size={13} color="#059669" />
-                  <Text className="font-bold text-[10px] uppercase text-emerald-700 dark:text-emerald-300">
-                    {tDash("sources")}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            <View
-              style={{ backgroundColor: color + "20" }}
-              className="px-2.5 py-1 rounded-lg items-center justify-center"
-            >
-              <Text
-                style={{ color }}
-                className="text-xs font-extrabold uppercase tracking-widest leading-none"
-              >
-                {tDash(`risk${band}` as any, band)}
-              </Text>
-            </View>
-          </View>
-        }
-      />
-
-      {/* Main Advisory Box */}
-      <View className="gap-4">
-        {isLoading ? (
-          <View className="py-8 items-center justify-center gap-3">
-            <ActivityIndicator size="small" color="#059669" />
-          </View>
-        ) : cardError ? (
-          <View className="py-3">
-            <Text className="text-xs text-muted-foreground">
-              {tDash("advisoryError") || "Could not generate pest advisory."}
-            </Text>
-          </View>
-        ) : (
-          <>
-            {/* Driver / Major Factor */}
-            {card?.driver && (
-              <View
-                className="p-3 rounded-2xl"
-                style={{ backgroundColor: color + "20" }}
-              >
-                <Text className="text-xs font-semibold text-foreground">
-                  {card.driver}
-                </Text>
-              </View>
-            )}
-
-            {/* Summary Narrative with Term Highlighting */}
-            {card?.summary && (
-              <View
-                className="border-l-4 pl-3 py-1"
-                style={{ borderColor: color }}
-              >
-                {renderHighlightedText(card.summary, summaryTerms)}
-              </View>
-            )}
-
-            {/* Potential Pests & Diseases Tags */}
-            {potential.length > 0 && (
-              <View className="gap-1.5">
-                <Text className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  {tDash("pestPotential") || "Potential Pests & Diseases"}
-                </Text>
-                <View className="flex-row flex-wrap gap-1.5">
-                  {potential.map((p, idx) => (
-                    <View
-                      key={idx}
-                      className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30"
-                    >
-                      <Text className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
-                        {p}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            )}
-
-            {/* Recommended Actions */}
-            {actions.length > 0 && (
-              <View className="gap-2.5 pt-1">
-                <Text className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  {tDash("pestActions") || "Recommended Actions"}
-                </Text>
-                <View className="gap-2.5">
-                  {actions.map((action, i) => {
-                    const ActionIcon = getActionIcon(action.title);
-                    return (
-                      <View
-                        key={i}
-                        className="flex-row items-start gap-3 p-3 rounded-2xl bg-card border border-border"
-                      >
-                        <Icon icon={ActionIcon} size={22} color={color} />
-
-                        <View className="flex-1 gap-0.5">
-                          <Text className="text-sm font-bold text-foreground">
-                            {action.title}
-                          </Text>
-                          {action.detail && (
-                            <View className="mt-0.5">
-                              {renderHighlightedText(
-                                action.detail,
-                                summaryTerms,
-                              )}
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                    );
-                  })}
-                </View>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-
-      {/* CURRENT CONDITIONS PILLS */}
-      {/*<View className="mt-4">
-        <Text className="text-sm font-extrabold text-foreground my-2.5 pl-1">
-          {tDash("pestCurrentConditions")}
-        </Text>
-        <View className="flex-row flex-wrap justify-between gap-y-3">
-          <Pill
-            icon={ThermometerWarmIcon}
-            label={tDash("pestAvgMaxTemp")}
-            value={avgMaxTemp != null ? `${avgMaxTemp.toFixed(1)}°C` : "–"}
-            sub={tDash("pestNext5Days")}
-            colorTheme={{
-              bg: "bg-orange-500/10 dark:bg-orange-500/15",
-              text: "text-orange-700 dark:text-orange-300",
-              icon: "text-orange-600 dark:text-orange-400",
-            }}
-          />
-          <Pill
-            icon={RainDropIcon}
-            label={tDash("pestHumidity")}
-            value={humidity != null ? `${Math.round(humidity)}%` : "–"}
-            sub={tDash("pestCurrent")}
-            colorTheme={{
-              bg: "bg-purple-500/10 dark:bg-purple-500/15",
-              text: "text-purple-700 dark:text-purple-300",
-              icon: "text-purple-600 dark:text-purple-400",
-            }}
-          />
-          <Pill
-            icon={RainDropIcon}
-            label={tDash("pestRain")}
-            value={rainTotal != null ? `${rainTotal.toFixed(1)} mm` : "–"}
-            sub={rainyDays != null ? `${rainyDays} ${wetDaysLabel}` : undefined}
-            colorTheme={{
-              bg: "bg-sky-500/10 dark:bg-sky-500/15",
-              text: "text-sky-700 dark:text-sky-300",
-              icon: "text-sky-600 dark:text-sky-400",
-            }}
-          />
-          <Pill
-            icon={Plant01Icon}
-            label={tDash("pestSoilMoisture")}
-            value={
-              soilPercentile != null ? `${Math.round(soilPercentile)}%` : "–"
-            }
-            sub={tDash("pestPercentile")}
-            colorTheme={{
-              bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-              text: "text-emerald-700 dark:text-emerald-300",
-              icon: "text-emerald-600 dark:text-emerald-400",
-            }}
-          />
-        </View>
-      </View>*/}
-
-      {/* Sources Modal */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <TouchableOpacity
-          className="flex-1 bg-black/60 justify-center px-4"
-          activeOpacity={1}
-          onPressOut={() => setModalVisible(false)}
-        >
-          <TouchableWithoutFeedback>
-            <View className="bg-card w-full max-h-[80%] rounded-3xl p-5 border border-border shadow-lg">
-              <View className="flex flex-row gap-3 mb-3">
-                <View className="w-10 h-10 rounded-xl items-center justify-center bg-emerald-100 dark:bg-emerald-900/50">
-                  <Icon icon={Book02Icon} size={22} color="#059669" />
-                </View>
-                <View className="flex-row items-center gap-3 grow">
-                  <View>
-                    <Text className="text-lg font-bold text-foreground">
-                      {tDash("retrievedSources") || "Retrieved Sources"}
+    <LockedFeature>
+      <View className="my-6 px-2">
+        {/* Section Header */}
+        <SectionHeader
+          icon={Bug01Icon}
+          title={tDash("hazardPest")}
+          rightContent={
+            <View className="flex-row items-center gap-2">
+              {!isGeneral && sources.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setModalVisible(true)}
+                  activeOpacity={0.7}
+                >
+                  <View className="flex-row rounded-xl gap-1 px-2.5 py-1 items-center bg-emerald-100 dark:bg-emerald-900/50">
+                    <Icon icon={Book02Icon} size={13} color="#059669" />
+                    <Text className="font-bold text-[10px] uppercase text-emerald-700 dark:text-emerald-300">
+                      {tDash("sources")}
                     </Text>
                   </View>
-                </View>
-                <TouchableOpacity
-                  onPress={() => setModalVisible(false)}
-                  className="p-2 bg-muted rounded-full ml-auto"
-                >
-                  <Icon
-                    icon={Cancel01Icon}
-                    size={18}
-                    className="text-foreground"
-                  />
                 </TouchableOpacity>
+              )}
+              <View
+                style={{ backgroundColor: color + "20" }}
+                className="px-2.5 py-1 rounded-lg items-center justify-center"
+              >
+                <Text
+                  style={{ color }}
+                  className="text-xs font-extrabold uppercase tracking-widest leading-none"
+                >
+                  {tDash(`risk${band}` as any, band)}
+                </Text>
               </View>
-              <ScrollView showsVerticalScrollIndicator={false} className="mb-1">
-                <View className="gap-2 mt-2">
-                  {Array.from(
-                    new Set(
-                      sources.map(
-                        (s: any) =>
-                          s.source ||
-                          tDash("icarGuideline") ||
-                          "ICAR Guideline",
-                      ),
-                    ),
-                  ).map((sourceName: string, idx: number) => (
-                    <View
-                      key={idx}
-                      className="p-3 rounded-xl border border-border bg-emerald-50/10 dark:bg-emerald-950/20 flex-row items-center gap-2.5"
-                    >
-                      <View className="w-2 h-2 rounded-full bg-emerald-500" />
-                      <Text className="text-xs font-mono text-foreground flex-1">
-                        {sourceName}
+            </View>
+          }
+        />
+
+        {/* Main Advisory Box */}
+        <View className="gap-4">
+          {isLoading ? (
+            <View className="py-8 items-center justify-center gap-3">
+              <ActivityIndicator size="small" color="#059669" />
+            </View>
+          ) : cardError ? (
+            <View className="py-3">
+              <Text className="text-xs text-muted-foreground">
+                {tDash("advisoryError") || "Could not generate pest advisory."}
+              </Text>
+            </View>
+          ) : (
+            <>
+              {/* Driver / Major Factor */}
+              {card?.driver && (
+                <View
+                  className="p-3 rounded-2xl"
+                  style={{ backgroundColor: color + "20" }}
+                >
+                  <Text className="text-xs font-semibold text-foreground">
+                    {card.driver}
+                  </Text>
+                </View>
+              )}
+
+              {/* Summary Narrative with Term Highlighting */}
+              {card?.summary && (
+                <View
+                  className="border-l-4 pl-3 py-1"
+                  style={{ borderColor: color }}
+                >
+                  {renderHighlightedText(card.summary, summaryTerms)}
+                </View>
+              )}
+
+              {/* Potential Pests & Diseases Tags */}
+              {potential.length > 0 && (
+                <View className="gap-1.5">
+                  <Text className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                    {tDash("pestPotential") || "Potential Pests & Diseases"}
+                  </Text>
+                  <View className="flex-row flex-wrap gap-1.5">
+                    {potential.map((p, idx) => (
+                      <View
+                        key={idx}
+                        className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30"
+                      >
+                        <Text className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                          {p}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* Recommended Actions */}
+              {actions.length > 0 && (
+                <View className="gap-2.5 pt-1">
+                  <Text className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                    {tDash("pestActions") || "Recommended Actions"}
+                  </Text>
+                  <View className="gap-2.5">
+                    {actions.map((action, i) => {
+                      const ActionIcon = getActionIcon(action.title);
+                      return (
+                        <View
+                          key={i}
+                          className="flex-row items-start gap-3 p-3 rounded-2xl bg-card border border-border"
+                        >
+                          <Icon icon={ActionIcon} size={22} color={color} />
+
+                          <View className="flex-1 gap-0.5">
+                            <Text className="text-sm font-bold text-foreground">
+                              {action.title}
+                            </Text>
+                            {action.detail && (
+                              <View className="mt-0.5">
+                                {renderHighlightedText(
+                                  action.detail,
+                                  summaryTerms,
+                                )}
+                              </View>
+                            )}
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                </View>
+              )}
+            </>
+          )}
+        </View>
+
+        {/* Sources Modal */}
+        <Modal
+          visible={modalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableOpacity
+            className="flex-1 bg-black/60 justify-center px-4"
+            activeOpacity={1}
+            onPressOut={() => setModalVisible(false)}
+          >
+            <TouchableWithoutFeedback>
+              <View className="bg-card w-full max-h-[80%] rounded-3xl p-5 border border-border shadow-lg">
+                <View className="flex flex-row gap-3 mb-3">
+                  <View className="w-10 h-10 rounded-xl items-center justify-center bg-emerald-100 dark:bg-emerald-900/50">
+                    <Icon icon={Book02Icon} size={22} color="#059669" />
+                  </View>
+                  <View className="flex-row items-center gap-3 grow">
+                    <View>
+                      <Text className="text-lg font-bold text-foreground">
+                        {tDash("retrievedSources") || "Retrieved Sources"}
                       </Text>
                     </View>
-                  ))}
-                  {sources.length === 0 && (
-                    <Text className="text-muted-foreground text-center py-4 text-xs">
-                      {tDash("noSources") || "No specific sources cited."}
-                    </Text>
-                  )}
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => setModalVisible(false)}
+                    className="p-2 bg-muted rounded-full ml-auto"
+                  >
+                    <Icon
+                      icon={Cancel01Icon}
+                      size={18}
+                      className="text-foreground"
+                    />
+                  </TouchableOpacity>
                 </View>
-              </ScrollView>
-            </View>
-          </TouchableWithoutFeedback>
-        </TouchableOpacity>
-      </Modal>
-    </View>
+                <ScrollView showsVerticalScrollIndicator={false} className="mb-1">
+                  <View className="gap-2 mt-2">
+                    {Array.from(
+                      new Set(
+                        sources.map(
+                          (s: any) =>
+                            s.source ||
+                            tDash("icarGuideline") ||
+                            "ICAR Guideline",
+                        ),
+                      ),
+                    ).map((sourceName: string, idx: number) => (
+                      <View
+                        key={idx}
+                        className="p-3 rounded-xl border border-border bg-emerald-50/10 dark:bg-emerald-950/20 flex-row items-center gap-2.5"
+                      >
+                        <View className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <Text className="text-xs font-mono text-foreground flex-1">
+                          {sourceName}
+                        </Text>
+                      </View>
+                    ))}
+                    {sources.length === 0 && (
+                      <Text className="text-muted-foreground text-center py-4 text-xs">
+                        {tDash("noSources") || "No specific sources cited."}
+                      </Text>
+                    )}
+                  </View>
+                </ScrollView>
+              </View>
+            </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    </LockedFeature>
   );
 }

@@ -108,6 +108,7 @@ export default function RootLayout() {
                       presentation: "card",
                     }}
                   />
+                  <Stack.Screen name="locked-features" options={{ headerShown: false, presentation: "modal" }} />
                 </Stack>
                 <StatusBar style={isDark ? "light" : "dark"} />
                 </ThemeProvider>

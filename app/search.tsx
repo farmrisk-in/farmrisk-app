@@ -28,6 +28,7 @@ import { cssInterop } from "nativewind";
 import { useLocationSearch } from "@/hooks/useDashboardQueries";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { useFields } from "@/hooks/useFields";
+import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@/components/ui/Icon";
 import {
   LocationOffline01Icon,
@@ -67,10 +68,10 @@ type RecentItem = {
 
 export default function SearchScreen() {
   const router = useRouter();
-  const { setLocation, requestCurrentLocation, isResolving } =
-    useLocationContext();
+  const { setLocation, requestCurrentLocation, isResolving } = useLocationContext();
   const { t } = useTranslation(["search"]);
   const { fields } = useFields();
+  const { user } = useAuth();
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -427,7 +428,7 @@ export default function SearchScreen() {
             </View>
 
             {/* My Farms Section */}
-            {fields.length > 0 && (
+            {user && fields.length > 0 && (
               <View className="mt-5 px-4">
                 <Text className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 px-1">
                   My Farms

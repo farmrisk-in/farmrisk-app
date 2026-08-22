@@ -45,6 +45,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE_NAMES } from "@/i18n";
 import { Avatar } from "react-native-paper";
+import { LockedFeature } from "@/components/ui/LockedFeature";
 
 export default function ProfileScreen() {
   const { user, loading, signOut } = useAuth();
@@ -380,49 +381,53 @@ export default function ProfileScreen() {
             </View>
 
             {/* Crop */}
-            <View className="flex-row items-center justify-between p-3 px-4 border-b border-border">
-              <View className="flex-row items-center gap-3">
-                <Icon icon={WheatIcon} size={18} className="text-foreground" />
-                <Text className="text-sm font-semibold text-foreground">
-                  {t("activeCrop") || "Active Crop"}
-                </Text>
+            <LockedFeature>
+              <View className="flex-row items-center justify-between p-3 px-4 border-b border-border">
+                <View className="flex-row items-center gap-3">
+                  <Icon icon={WheatIcon} size={18} className="text-foreground" />
+                  <Text className="text-sm font-semibold text-foreground">
+                    {t("activeCrop") || "Active Crop"}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => setCropModalVisible(true)}
+                  className="bg-muted border border-border px-3.5 py-1.5 rounded-xl flex-row items-center gap-1.5"
+                  accessibilityRole="button"
+                >
+                  <Text className="text-xs font-bold text-foreground">
+                    {selectedCrop
+                      ? selectedCropName
+                      : t("selectCrop") || "Select Crop"}
+                  </Text>
+                  <Icon
+                    icon={ChevronRightIcon}
+                    size={14}
+                    className="text-foreground"
+                  />
+                </TouchableOpacity>
               </View>
+            </LockedFeature>
+
+            {/* My Farms */}
+            <LockedFeature>
               <TouchableOpacity
-                onPress={() => setCropModalVisible(true)}
-                className="bg-muted border border-border px-3.5 py-1.5 rounded-xl flex-row items-center gap-1.5"
+                onPress={() => router.push("/my-farms")}
+                className="flex-row items-center justify-between p-3 px-4"
                 accessibilityRole="button"
               >
-                <Text className="text-xs font-bold text-foreground">
-                  {selectedCrop
-                    ? selectedCropName
-                    : t("selectCrop") || "Select Crop"}
-                </Text>
+                <View className="flex-row items-center gap-3">
+                  <Icon icon={MapPinIcon} size={22} className="text-foreground" />
+                  <Text className="text-md font-semibold text-foreground">
+                    {t("myFarms") || "My Farms"}
+                  </Text>
+                </View>
                 <Icon
                   icon={ChevronRightIcon}
-                  size={14}
+                  size={22}
                   className="text-foreground"
                 />
               </TouchableOpacity>
-            </View>
-
-            {/* My Farms */}
-            <TouchableOpacity
-              onPress={() => router.push("/my-farms")}
-              className="flex-row items-center justify-between p-3 px-4"
-              accessibilityRole="button"
-            >
-              <View className="flex-row items-center gap-3">
-                <Icon icon={MapPinIcon} size={22} className="text-foreground" />
-                <Text className="text-md font-semibold text-foreground">
-                  {t("myFarms") || "My Farms"}
-                </Text>
-              </View>
-              <Icon
-                icon={ChevronRightIcon}
-                size={22}
-                className="text-foreground"
-              />
-            </TouchableOpacity>
+            </LockedFeature>
           </View>
         </View>
 

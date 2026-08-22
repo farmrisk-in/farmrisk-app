@@ -28,10 +28,14 @@ import {
  *   - "Select Location Manually" → push to /search.
  *   - "Continue" → advances to farm-select (Step 4 of 4).
  */
+import { useAuth } from "@/hooks/useAuth";
+import { markOnboarded } from "@/lib/onboarding";
+
 export default function LocationPerm() {
   const router = useRouter();
   const { t } = useTranslation(["onboarding"]);
   const { location, requestCurrentLocation } = useLocationContext();
+  const { user } = useAuth();
 
   const [granting, setGranting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +54,13 @@ export default function LocationPerm() {
     router.replace("/onboarding/auth");
   };
 
-  const goNext = () => {
+  const goNext = async () => {
+    if (!user) {
+      // Skip farm select if guest
+      await markOnboarded();
+      router.replace("/");
+      return;
+    }
     try {
       router.push("/onboarding/farm-select");
     } catch {
