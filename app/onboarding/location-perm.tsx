@@ -16,7 +16,7 @@ import { Icon } from "@/components/ui/Icon";
 import {
   PinLocation01Icon,
   Search01Icon,
-  Tick01Icon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons";
 
 /**
@@ -107,7 +107,7 @@ export default function LocationPerm() {
         <View>
           {/* Header & Icon */}
           <View className="items-center my-6">
-            <View className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 items-center justify-center mb-6">
+            <View className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary items-center justify-center mb-6">
               <Icon
                 icon={PinLocation01Icon}
                 size={40}
@@ -126,10 +126,10 @@ export default function LocationPerm() {
 
           {/* Current Location Badge if already acquired */}
           {hasLocation && (
-            <View className="bg-primary/10 border border-primary/30 rounded-2xl p-4 flex-row items-center gap-3 my-2">
+            <View className="bg-primary/10 border border-primary rounded-2xl p-4 flex-row items-center gap-3 my-2">
               <View className="w-8 h-8 rounded-full bg-primary items-center justify-center">
                 <Icon
-                  icon={Tick01Icon}
+                  icon={Tick02Icon}
                   size={18}
                   className="text-primary-foreground"
                 />
@@ -150,7 +150,7 @@ export default function LocationPerm() {
 
           {/* Error message */}
           {error && (
-            <View className="bg-destructive/10 border border-destructive/30 rounded-2xl p-4 my-2">
+            <View className="bg-destructive/10 border border-destructive rounded-2xl p-4 my-2">
               <Text className="text-sm text-destructive font-medium text-center">
                 {error}
               </Text>
@@ -201,4 +201,3 @@ export default function LocationPerm() {
     </SafeAreaView>
   );
 }
-

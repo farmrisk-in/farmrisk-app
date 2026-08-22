@@ -18,7 +18,12 @@ import { useTranslation } from "react-i18next";
 import { useFields } from "@/hooks/useFields";
 import { useFarmContext } from "@/providers/FarmProvider";
 import { areaToHectares } from "@/lib/drawField";
-import { SEASONS, CROP_STAGES, type Season, type CropStage } from "@/constants/farm";
+import {
+  SEASONS,
+  CROP_STAGES,
+  type Season,
+  type CropStage,
+} from "@/constants/farm";
 import { Icon } from "@/components/ui/Icon";
 import {
   Cancel01Icon,
@@ -26,9 +31,10 @@ import {
   Add01Icon,
   Delete01Icon,
   Share01Icon,
-  Tick01Icon,
+  Tick02Icon,
   ArrowRight01Icon,
   WheatIcon,
+  ChevronLeft,
 } from "@hugeicons/core-free-icons";
 import type { SavedField } from "@/types/fields";
 
@@ -41,7 +47,9 @@ export default function MyFarmsScreen() {
   const seasonLabel = (s?: string) =>
     s && SEASONS.includes(s as Season) ? t(`seasons.${s as Season}`) : s || "";
   const stageLabel = (s?: string) =>
-    s && CROP_STAGES.includes(s as CropStage) ? t(`stages.${s as CropStage}`) : s || "";
+    s && CROP_STAGES.includes(s as CropStage)
+      ? t(`stages.${s as CropStage}`)
+      : s || "";
   const isActive = (f: SavedField) => selectedFarm?.id === f.id;
 
   const handleSelect = async (farm: SavedField) => {
@@ -51,7 +59,8 @@ export default function MyFarmsScreen() {
 
   const handleDelete = (farm: SavedField) => {
     Alert.alert(
-      t("deleteConfirm", { name: farm.name || farm.fieldId }) || `Delete "${farm.name || farm.fieldId}"?`,
+      t("deleteConfirm", { name: farm.name || farm.fieldId }) ||
+        `Delete "${farm.name || farm.fieldId}"?`,
       t("deleteHint") || "This removes the farm from your account.",
       [
         { text: t("common:cancel") || "Cancel", style: "cancel" },
@@ -66,7 +75,7 @@ export default function MyFarmsScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -97,35 +106,30 @@ export default function MyFarmsScreen() {
       <View className="flex-row items-center justify-between px-5 pt-2 pb-4 border-b border-border">
         <TouchableOpacity
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center"
           accessibilityRole="button"
           accessibilityLabel={t("common:cancel") || "Close"}
         >
-          <Icon icon={Cancel01Icon} size={20} className="text-foreground" />
+          <Icon icon={ChevronLeft} size={22} className="text-foreground" />
         </TouchableOpacity>
 
         <Text className="text-lg font-bold text-foreground">
           {t("listTitle") || "My Farms"}
         </Text>
-
-        <TouchableOpacity
-          onPress={() => router.push("/farm-select")}
-          className="w-10 h-10 rounded-full bg-emerald-600 items-center justify-center"
-          accessibilityRole="button"
-          accessibilityLabel={t("drawNew") || "Add Farm"}
-        >
-          <Icon icon={Add01Icon} size={20} color="#ffffff" />
-        </TouchableOpacity>
+        <View className="w-5"></View>
       </View>
 
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 16,
+          paddingBottom: 40,
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* ── Top Actions ── */}
-        {fields.length > 0 && (
-          <View className="flex-row gap-3 mb-5">
+        <View className="flex-row gap-3 mb-5">
+          {fields.length > 0 && (
             <TouchableOpacity
               onPress={handleExport}
               className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-2xl bg-card border border-border"
@@ -136,19 +140,18 @@ export default function MyFarmsScreen() {
                 {t("exportGeoJson") || "Export GeoJSON"}
               </Text>
             </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => router.push("/farm-select")}
-              className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-600 active:bg-emerald-700"
-              accessibilityRole="button"
-            >
-              <Icon icon={Add01Icon} size={16} color="#ffffff" />
-              <Text className="text-white text-xs font-bold">
-                {t("drawNew") || "Draw New Farm"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+          )}
+          <TouchableOpacity
+            onPress={() => router.push("/farm-select")}
+            className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-2xl bg-primary"
+            accessibilityRole="button"
+          >
+            <Icon icon={Add01Icon} size={18} color="#ffffff" />
+            <Text className="text-white text-xs font-bold">
+              {t("drawNew") || "Draw New Farm"}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* ── Content ── */}
         {isLoading ? (
@@ -158,13 +161,18 @@ export default function MyFarmsScreen() {
         ) : fields.length === 0 ? (
           <View className="items-center justify-center py-20 px-4">
             <View className="w-16 h-16 rounded-3xl bg-muted border border-border items-center justify-center mb-4">
-              <Icon icon={MapPinIcon} size={32} className="text-muted-foreground" />
+              <Icon
+                icon={MapPinIcon}
+                size={32}
+                className="text-muted-foreground"
+              />
             </View>
             <Text className="text-base font-bold text-foreground text-center mb-1">
               {t("emptyList") || "No farms saved yet"}
             </Text>
             <Text className="text-xs text-muted-foreground text-center mb-6 leading-relaxed max-w-[260px]">
-              {t("noFarmsHint") || "Draw your farm boundary on the map to get localized climate and field advisories."}
+              {t("noFarmsHint") ||
+                "Draw your farm boundary on the map to get localized climate and field advisories."}
             </Text>
             <TouchableOpacity
               onPress={() => router.push("/farm-select")}
@@ -186,22 +194,27 @@ export default function MyFarmsScreen() {
                   key={farm.id}
                   onPress={() => handleSelect(farm)}
                   activeOpacity={0.7}
-                  className={`rounded-3xl p-5 border ${
+                  className={`rounded-3xl p-5  bg-card ${
                     active
-                      ? "bg-emerald-100 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800"
-                      : "bg-card border-border"
+                      ? "border-2 border-emerald-200 dark:border-emerald-800"
+                      : "border border-border"
                   }`}
                   accessibilityRole="button"
                 >
                   {/* Top Row: Name on Left, Area + Active Status on Right */}
                   <View className="flex-row items-start justify-between gap-3 mb-2.5">
                     <View className="flex-1">
-                      <Text className="text-base font-bold text-foreground leading-tight" numberOfLines={1}>
+                      <Text
+                        className="text-base font-bold text-foreground leading-tight"
+                        numberOfLines={1}
+                      >
                         {farm.name || farm.fieldId}
                       </Text>
-                      {farm.year && (
+                      {farm.savedAt && (
                         <Text className="text-[11px] text-muted-foreground mt-0.5">
-                          {t("addedLabel") || "Season"} {farm.year}
+                          {t("addedLabel") || "Season"}
+                          {": "}
+                          {new Date(farm.savedAt).toDateString()}
                         </Text>
                       )}
                     </View>
@@ -213,8 +226,13 @@ export default function MyFarmsScreen() {
                         </Text>
                       )}
                       {active ? (
-                        <View className="flex-row items-center gap-1 mt-1 px-2.5 py-0.5 rounded-full bg-emerald-600">
-                          <Icon icon={Tick01Icon} size={11} color="#ffffff" />
+                        <View className="flex-row items-center gap-1 mt-1 px-2.5 py-0.5 rounded-lg bg-emerald-600">
+                          <Icon
+                            icon={Tick02Icon}
+                            size={12}
+                            strokeWidth={2}
+                            color="#ffffff"
+                          />
                           <Text className="text-white text-[10px] font-bold uppercase tracking-wider">
                             {t("active") || "Active"}
                           </Text>
@@ -237,7 +255,11 @@ export default function MyFarmsScreen() {
                             key={c}
                             className="flex-row items-center gap-1 bg-muted border border-border px-2.5 py-1 rounded-xl"
                           >
-                            <Icon icon={WheatIcon} size={12} className="text-emerald-600 dark:text-emerald-400" />
+                            <Icon
+                              icon={WheatIcon}
+                              size={12}
+                              className="text-emerald-600 dark:text-emerald-400"
+                            />
                             <Text className="text-foreground text-[11px] font-medium">
                               {c}
                             </Text>
@@ -274,9 +296,16 @@ export default function MyFarmsScreen() {
                   {/* Bottom Row: Delete action button */}
                   <View className="flex-row items-center justify-between pt-3 mt-3 border-t border-border">
                     <View className="flex-row items-center gap-1">
-                      <Icon icon={MapPinIcon} size={13} className="text-muted-foreground" />
+                      <Icon
+                        icon={MapPinIcon}
+                        size={13}
+                        className="text-muted-foreground"
+                      />
                       <Text className="text-[11px] text-muted-foreground">
-                        {farm.fieldId || "Saved Field"}
+                        Lat: {farm.centerLat?.toFixed(3) || "Saved Field"}
+                      </Text>
+                      <Text className="text-[11px] text-muted-foreground">
+                        Lng: {farm.centerLng?.toFixed(3) || "Saved Field"}
                       </Text>
                     </View>
 
@@ -289,9 +318,13 @@ export default function MyFarmsScreen() {
                       className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-destructive"
                       accessibilityRole="button"
                     >
-                      <Icon icon={Delete01Icon} size={14} className="text-destructive" />
+                      <Icon
+                        icon={Delete01Icon}
+                        size={14}
+                        className="text-destructive"
+                      />
                       <Text className="text-destructive text-xs font-bold">
-                        {t("common:cancel") ? t("profile:deleteAccount") || "Delete" : "Delete"}
+                        {"Delete"}
                       </Text>
                     </TouchableOpacity>
                   </View>

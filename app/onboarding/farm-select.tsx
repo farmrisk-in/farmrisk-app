@@ -17,7 +17,7 @@ import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
 import { Icon } from "@/components/ui/Icon";
 import {
   MapPinIcon,
-  Tick01Icon,
+  Tick02Icon,
   PencilEdit02Icon,
   ArrowRight01Icon,
   Add01Icon,
@@ -88,12 +88,8 @@ export default function OnboardingFarmSelect() {
         <View>
           {/* Header & Icon */}
           <View className="items-center my-6">
-            <View className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 items-center justify-center mb-5">
-              <Icon
-                icon={MapPinIcon}
-                size={40}
-                className="text-primary"
-              />
+            <View className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary items-center justify-center mb-5">
+              <Icon icon={MapPinIcon} size={40} className="text-primary" />
             </View>
 
             <Text className="text-3xl font-bold text-foreground text-center leading-tight">
@@ -134,7 +130,7 @@ export default function OnboardingFarmSelect() {
                     className={`rounded-2xl p-4 border flex-row items-center justify-between transition-all ${
                       isSelected
                         ? "bg-primary/10 border-primary shadow-sm"
-                        : "bg-card border-border hover:border-primary/40"
+                        : "bg-card border-border"
                     }`}
                   >
                     <View className="flex-row items-center gap-3.5 flex-1 mr-2">
@@ -144,7 +140,7 @@ export default function OnboardingFarmSelect() {
                         }`}
                       >
                         <Icon
-                          icon={isSelected ? Tick01Icon : MapPinIcon}
+                          icon={isSelected ? Tick02Icon : MapPinIcon}
                           size={20}
                           className={
                             isSelected
@@ -208,9 +204,7 @@ export default function OnboardingFarmSelect() {
             onPress={() => router.push("/farm-select")}
             activeOpacity={0.85}
             className={`rounded-2xl flex-row items-center justify-center py-4 gap-2 ${
-              hasFarms
-                ? "bg-secondary border border-border"
-                : "bg-primary"
+              hasFarms ? "bg-secondary border border-border" : "bg-primary"
             }`}
             accessibilityRole="button"
           >
@@ -218,16 +212,12 @@ export default function OnboardingFarmSelect() {
               icon={hasFarms ? Add01Icon : PencilEdit02Icon}
               size={18}
               className={
-                hasFarms
-                  ? "text-foreground"
-                  : "text-primary-foreground"
+                hasFarms ? "text-foreground" : "text-primary-foreground"
               }
             />
             <Text
               className={`text-lg font-bold ${
-                hasFarms
-                  ? "text-foreground"
-                  : "text-primary-foreground"
+                hasFarms ? "text-foreground" : "text-primary-foreground"
               }`}
             >
               {hasFarms

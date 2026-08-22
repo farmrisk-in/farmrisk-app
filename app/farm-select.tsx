@@ -8,13 +8,23 @@
  * Entry points: profile "My Farms", onboarding farm step.
  */
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColorScheme } from "nativewind";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import * as Location from "expo-location";
-import { FarmMapView, FarmMapHandle, FarmMapEvent } from "@/components/farms/FarmMapView";
+import {
+  FarmMapView,
+  FarmMapHandle,
+  FarmMapEvent,
+} from "@/components/farms/FarmMapView";
 import { SaveFieldDialog } from "@/components/farms/SaveFieldDialog";
 import { useFields } from "@/hooks/useFields";
 import { useFarmContext } from "@/providers/FarmProvider";
@@ -25,7 +35,7 @@ import { Icon } from "@/components/ui/Icon";
 import {
   Cancel01Icon,
   Location01Icon,
-  Tick01Icon,
+  Tick02Icon,
   ArrowRight01Icon,
   Add01Icon,
 } from "@hugeicons/core-free-icons";
@@ -47,9 +57,16 @@ export default function FarmSelectScreen() {
   const [points, setPoints] = useState<Array<{ lat: number; lng: number }>>([]);
   const [polygonArea, setPolygonArea] = useState<number>(0);
   const [saveDialogVisible, setSaveDialogVisible] = useState(false);
-  const [completedGeometry, setCompletedGeometry] = useState<Record<string, unknown> | null>(null);
-  const [completedCenterLat, setCompletedCenterLat] = useState<number | null>(null);
-  const [completedCenterLng, setCompletedCenterLng] = useState<number | null>(null);
+  const [completedGeometry, setCompletedGeometry] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
+  const [completedCenterLat, setCompletedCenterLat] = useState<number | null>(
+    null,
+  );
+  const [completedCenterLng, setCompletedCenterLng] = useState<number | null>(
+    null,
+  );
   const [mapReady, setMapReady] = useState(false);
   const [isGeolocating, setIsGeolocating] = useState(false);
   const [hasMadeChanges, setHasMadeChanges] = useState(false);
@@ -64,83 +81,106 @@ export default function FarmSelectScreen() {
     }
   }, [mapReady, fields]);
 
-  const handleMapEvent = useCallback((evt: FarmMapEvent) => {
-    switch (evt.type) {
-      case "ready":
-        setMapReady(true);
-        break;
-      case "point_added":
-        if (evt.points) {
-          setPoints(evt.points);
-          // Compute area from points
-          import("@turf/area").then(({ area }) => {
-            import("@turf/helpers").then(({ polygon }) => {
-              try {
-                const ring = [...evt.points!.map((p) => [p.lng, p.lat]), [evt.points![0].lng, evt.points![0].lat]];
-                const feat = polygon([ring]);
-                setPolygonArea(area(feat));
-              } catch { setPolygonArea(0); }
-            });
-          });
-        }
-        break;
-      case "point_removed":
-        if (evt.points) {
-          setPoints(evt.points);
-          if (evt.points.length < 3) setPolygonArea(0);
-          else {
+  const handleMapEvent = useCallback(
+    (evt: FarmMapEvent) => {
+      switch (evt.type) {
+        case "ready":
+          setMapReady(true);
+          break;
+        case "point_added":
+          if (evt.points) {
+            setPoints(evt.points);
+            // Compute area from points
             import("@turf/area").then(({ area }) => {
               import("@turf/helpers").then(({ polygon }) => {
                 try {
-                  const ring = [...evt.points!.map((p) => [p.lng, p.lat]), [evt.points![0].lng, evt.points![0].lat]];
-                  setPolygonArea(area(polygon([ring])));
-                } catch { setPolygonArea(0); }
+                  const ring = [
+                    ...evt.points!.map((p) => [p.lng, p.lat]),
+                    [evt.points![0].lng, evt.points![0].lat],
+                  ];
+                  const feat = polygon([ring]);
+                  setPolygonArea(area(feat));
+                } catch {
+                  setPolygonArea(0);
+                }
               });
             });
           }
-        }
-        break;
-      case "polygon_complete":
-        // evt.points already contains the final captured snapshot from the JS side
-        if (evt.points && evt.points.length >= 3) {
-          const pts = evt.points;
-          // Compute center
-          let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
-          for (const p of pts) {
-            if (p.lat < minLat) minLat = p.lat;
-            if (p.lat > maxLat) maxLat = p.lat;
-            if (p.lng < minLng) minLng = p.lng;
-            if (p.lng > maxLng) maxLng = p.lng;
+          break;
+        case "point_removed":
+          if (evt.points) {
+            setPoints(evt.points);
+            if (evt.points.length < 3) setPolygonArea(0);
+            else {
+              import("@turf/area").then(({ area }) => {
+                import("@turf/helpers").then(({ polygon }) => {
+                  try {
+                    const ring = [
+                      ...evt.points!.map((p) => [p.lng, p.lat]),
+                      [evt.points![0].lng, evt.points![0].lat],
+                    ];
+                    setPolygonArea(area(polygon([ring])));
+                  } catch {
+                    setPolygonArea(0);
+                  }
+                });
+              });
+            }
           }
-          const centerLat = (minLat + maxLat) / 2;
-          const centerLng = (minLng + maxLng) / 2;
-          const ring = [...pts.map((p) => [p.lng, p.lat]), [pts[0].lng, pts[0].lat]];
-          setCompletedGeometry({ type: "Polygon", coordinates: [ring] });
-          setCompletedCenterLat(centerLat);
-          setCompletedCenterLng(centerLng);
-          setPoints(pts);
-          // Compute final area from pts
-          import("@turf/area").then(({ area }) => {
-            import("@turf/helpers").then(({ polygon }) => {
-              try {
-                setPolygonArea(area(polygon([ring])));
-              } catch { setPolygonArea(0); }
+          break;
+        case "polygon_complete":
+          // evt.points already contains the final captured snapshot from the JS side
+          if (evt.points && evt.points.length >= 3) {
+            const pts = evt.points;
+            // Compute center
+            let minLat = Infinity,
+              maxLat = -Infinity,
+              minLng = Infinity,
+              maxLng = -Infinity;
+            for (const p of pts) {
+              if (p.lat < minLat) minLat = p.lat;
+              if (p.lat > maxLat) maxLat = p.lat;
+              if (p.lng < minLng) minLng = p.lng;
+              if (p.lng > maxLng) maxLng = p.lng;
+            }
+            const centerLat = (minLat + maxLat) / 2;
+            const centerLng = (minLng + maxLng) / 2;
+            const ring = [
+              ...pts.map((p) => [p.lng, p.lat]),
+              [pts[0].lng, pts[0].lat],
+            ];
+            setCompletedGeometry({ type: "Polygon", coordinates: [ring] });
+            setCompletedCenterLat(centerLat);
+            setCompletedCenterLng(centerLng);
+            setPoints(pts);
+            // Compute final area from pts
+            import("@turf/area").then(({ area }) => {
+              import("@turf/helpers").then(({ polygon }) => {
+                try {
+                  setPolygonArea(area(polygon([ring])));
+                } catch {
+                  setPolygonArea(0);
+                }
+              });
             });
-          });
-          setSaveDialogVisible(true);
-        }
-        break;
-      case "farm_selected":
-        if (evt.fieldId) {
-          const farm = fields.find((f) => f.id === evt.fieldId || f.fieldId === evt.fieldId);
-          if (farm) {
-            selectFarm(farm);
-            setHasMadeChanges(true);
+            setSaveDialogVisible(true);
           }
-        }
-        break;
-    }
-  }, [fields, selectFarm]);
+          break;
+        case "farm_selected":
+          if (evt.fieldId) {
+            const farm = fields.find(
+              (f) => f.id === evt.fieldId || f.fieldId === evt.fieldId,
+            );
+            if (farm) {
+              selectFarm(farm);
+              setHasMadeChanges(true);
+            }
+          }
+          break;
+      }
+    },
+    [fields, selectFarm],
+  );
 
   const toggleDrawMode = () => {
     if (drawMode) {
@@ -212,9 +252,12 @@ export default function FarmSelectScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") return;
-      const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      const pos = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
       mapRef.current?.flyTo(pos.coords.latitude, pos.coords.longitude, 16);
-    } catch {} finally {
+    } catch {
+    } finally {
       setIsGeolocating(false);
     }
   };
@@ -240,7 +283,9 @@ export default function FarmSelectScreen() {
           styles.topBar,
           {
             paddingTop: insets.top + 8,
-            backgroundColor: isDark ? "rgba(9,9,11,0.85)" : "rgba(255,255,255,0.88)",
+            backgroundColor: isDark
+              ? "rgba(9,9,11,0.85)"
+              : "rgba(255,255,255,0.88)",
           },
         ]}
       >
@@ -250,15 +295,23 @@ export default function FarmSelectScreen() {
             styles.topBtn,
             hasConfirmedSelection
               ? { backgroundColor: "#10b981" }
-              : { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)" },
+              : {
+                  backgroundColor: isDark
+                    ? "rgba(255,255,255,0.1)"
+                    : "rgba(0,0,0,0.06)",
+                },
           ]}
-          accessibilityLabel={hasConfirmedSelection ? "Confirm & Continue" : "Cancel"}
+          accessibilityLabel={
+            hasConfirmedSelection ? "Confirm & Continue" : "Cancel"
+          }
           accessibilityRole="button"
         >
           <Icon
-            icon={hasConfirmedSelection ? Tick01Icon : Cancel01Icon}
+            icon={hasConfirmedSelection ? Tick02Icon : Cancel01Icon}
             size={20}
-            color={hasConfirmedSelection ? "#ffffff" : isDark ? "#fff" : "#09090b"}
+            color={
+              hasConfirmedSelection ? "#ffffff" : isDark ? "#fff" : "#09090b"
+            }
           />
         </TouchableOpacity>
 
@@ -278,7 +331,11 @@ export default function FarmSelectScreen() {
           disabled={isGeolocating}
           style={[
             styles.topBtn,
-            { backgroundColor: isDark ? "rgba(52,211,153,0.2)" : "rgba(5,150,105,0.1)" },
+            {
+              backgroundColor: isDark
+                ? "rgba(52,211,153,0.2)"
+                : "rgba(5,150,105,0.1)",
+            },
           ]}
           accessibilityLabel="My Location"
           accessibilityRole="button"
@@ -298,7 +355,9 @@ export default function FarmSelectScreen() {
             styles.drawBar,
             {
               top: insets.top + 68,
-              backgroundColor: isDark ? "rgba(9,9,11,0.92)" : "rgba(255,255,255,0.94)",
+              backgroundColor: isDark
+                ? "rgba(9,9,11,0.92)"
+                : "rgba(255,255,255,0.94)",
             },
           ]}
         >
@@ -314,20 +373,26 @@ export default function FarmSelectScreen() {
               disabled={points.length === 0}
               className="px-3 py-1.5 rounded-xl bg-zinc-800 border border-white/10 disabled:opacity-40"
             >
-              <Text className="text-zinc-300 text-xs font-semibold">{t("undo")}</Text>
+              <Text className="text-zinc-300 text-xs font-semibold">
+                {t("undo")}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => mapRef.current?.finishDrawing()}
               disabled={points.length < 3}
               className="px-3 py-1.5 rounded-xl bg-emerald-600 disabled:opacity-40"
             >
-              <Text className="text-white text-xs font-semibold">{t("finish")}</Text>
+              <Text className="text-white text-xs font-semibold">
+                {t("finish")}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={toggleDrawMode}
               className="px-3 py-1.5 rounded-xl bg-zinc-800 border border-white/10"
             >
-              <Text className="text-zinc-300 text-xs font-semibold">{t("cancel")}</Text>
+              <Text className="text-zinc-300 text-xs font-semibold">
+                {t("cancel")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -340,7 +405,9 @@ export default function FarmSelectScreen() {
             styles.bottomBar,
             {
               paddingBottom: Math.max(insets.bottom + 12, 24),
-              backgroundColor: isDark ? "rgba(9,9,11,0.95)" : "rgba(255,255,255,0.96)",
+              backgroundColor: isDark
+                ? "rgba(9,9,11,0.95)"
+                : "rgba(255,255,255,0.96)",
             },
           ]}
         >
@@ -355,7 +422,10 @@ export default function FarmSelectScreen() {
                       Selected Field
                     </Text>
                   </View>
-                  <Text className="text-base font-bold text-foreground mt-0.5" numberOfLines={1}>
+                  <Text
+                    className="text-base font-bold text-foreground mt-0.5"
+                    numberOfLines={1}
+                  >
                     {selectedFarm.name || selectedFarm.fieldId}
                   </Text>
                   {selectedFarm.areaM2 != null && (
@@ -376,7 +446,7 @@ export default function FarmSelectScreen() {
                 className="w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 flex-row items-center justify-center py-4 gap-2"
                 accessibilityRole="button"
               >
-                <Icon icon={Tick01Icon} size={20} color="#ffffff" />
+                <Icon icon={Tick02Icon} size={20} color="#ffffff" />
                 <Text className="text-white text-base font-bold">
                   Continue with this Farm
                 </Text>
@@ -407,7 +477,9 @@ export default function FarmSelectScreen() {
                 className="w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 items-center justify-center py-4"
                 accessibilityRole="button"
               >
-                <Text className="text-white text-base font-bold">{t("drawNew")}</Text>
+                <Text className="text-white text-base font-bold">
+                  {t("drawNew")}
+                </Text>
               </TouchableOpacity>
             </View>
           )}

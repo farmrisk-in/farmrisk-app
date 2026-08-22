@@ -25,7 +25,7 @@ import {
   ChevronRightIcon,
   User02Icon,
   SmartPhone01Icon,
-  Tick01Icon,
+  Tick02Icon,
   Sun01Icon,
   Login01Icon,
   UserAdd01Icon,
@@ -486,7 +486,7 @@ export default function ProfileScreen() {
                 </Text>
                 {!selectedCrop && (
                   <Icon
-                    icon={Tick01Icon}
+                    icon={Tick02Icon}
                     size={18}
                     className="text-emerald-500"
                   />
@@ -512,7 +512,7 @@ export default function ProfileScreen() {
                     </Text>
                     {isSel && (
                       <Icon
-                        icon={Tick01Icon}
+                        icon={Tick02Icon}
                         size={18}
                         className="text-emerald-500"
                       />

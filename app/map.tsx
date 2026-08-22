@@ -19,7 +19,7 @@ import { Icon } from "@/components/ui/Icon";
 import {
   Cancel01Icon,
   Location01Icon,
-  Tick01Icon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { LeafletMapView, LeafletMapEvent } from "@/components/LeafletMapView";
 
@@ -94,7 +94,8 @@ export default function MapScreen() {
       console.warn("Failed to get current location:", err);
       Alert.alert(
         t("locationErrorTitle" as any) || "Location Error",
-        t("locationErrorDesc" as any) || "Could not get your current location. Please check your GPS and permissions."
+        t("locationErrorDesc" as any) ||
+          "Could not get your current location. Please check your GPS and permissions.",
       );
     } finally {
       setIsGeolocating(false);
@@ -134,8 +135,9 @@ export default function MapScreen() {
       });
       Alert.alert(
         t("geocodeErrorTitle" as any) || "Network Error",
-        t("geocodeErrorDesc" as any) || "Could not fetch place name. Saving coordinates instead.",
-        [{ text: "OK", onPress: () => router.back() }]
+        t("geocodeErrorDesc" as any) ||
+          "Could not fetch place name. Saving coordinates instead.",
+        [{ text: "OK", onPress: () => router.back() }],
       );
     } finally {
       setIsConfirming(false);
@@ -193,9 +195,7 @@ export default function MapScreen() {
           />
         </TouchableOpacity>
 
-        <Text
-          className="text-lg text-foreground font-bold"
-        >
+        <Text className="text-lg text-foreground font-bold">
           {t("chooseLocation")}
         </Text>
 
@@ -287,7 +287,7 @@ export default function MapScreen() {
               <ActivityIndicator size="small" color="#ffffff" />
             ) : (
               <>
-                <Icon icon={Tick01Icon} size={20} color="#ffffff" />
+                <Icon icon={Tick02Icon} size={20} color="#ffffff" />
                 <Text style={styles.confirmButtonText}>{t("confirm")}</Text>
               </>
             )}

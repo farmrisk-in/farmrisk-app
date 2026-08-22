@@ -22,12 +22,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 import { OnboardingProgress } from "@/components/onboarding/OnboardingProgress";
-import {
-  getStoredLanguage,
-  type LanguageCode,
-} from "@/i18n";
+import { getStoredLanguage, type LanguageCode } from "@/i18n";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Tick01Icon, ChevronRightIcon } from "@hugeicons/core-free-icons";
+import { Tick02Icon, ChevronRightIcon } from "@hugeicons/core-free-icons";
 import { Icon } from "@/components/ui/Icon";
 
 interface LanguageMeta {

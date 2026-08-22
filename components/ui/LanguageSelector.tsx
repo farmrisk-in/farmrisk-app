@@ -16,7 +16,7 @@ import {
 } from "@/i18n";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Icon } from "@/components/ui/Icon";
-import { Tick01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
+import { Tick02Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 
 interface Props {
   visible: boolean;
@@ -96,7 +96,7 @@ export function LanguageSelector({ visible, onClose }: Props) {
                     </Text>
                     {isActive && (
                       <Icon
-                        icon={Tick01Icon}
+                        icon={Tick02Icon}
                         size={20}
                         className="text-emerald-600 dark:text-emerald-400"
                       />
