@@ -17,6 +17,8 @@ import { useCropContext } from "@/providers/CropProvider";
 import { useForecast } from "@/hooks/useForecast";
 import { useWeather } from "@/hooks/useWeather";
 import { useSoilMoisture } from "@/hooks/useSoilMoisture";
+import { useLocked } from "@/hooks/useLocked";
+import { LockedCard } from "@/components/ui/LockedCard";
 import {
   Bug01Icon,
   Book02Icon,
@@ -242,6 +244,7 @@ function renderHighlightedText(text: string, terms: string[]) {
 
 export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
   const { t: tDash } = useTranslation(["dashboard"]);
+  const { isLocked } = useLocked();
   const { selectedCrop } = useCropContext();
   const activeCrop = crop || selectedCrop || "general";
 
@@ -401,18 +404,24 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
         />
 
         {/* Main Advisory Box */}
-        <View className="gap-4">
-          {isLoading ? (
-            <View className="py-8 items-center justify-center gap-3">
-              <ActivityIndicator size="small" color="#059669" />
-            </View>
-          ) : cardError ? (
-            <View className="py-3">
-              <Text className="text-xs text-muted-foreground">
-                {tDash("advisoryError") || "Could not generate pest advisory."}
-              </Text>
-            </View>
-          ) : (
+        {isLocked ? (
+          <LockedCard
+            title="Pest & Disease Advisory Locked"
+            description="Sign in or register to get real-time crop disease alerts and ICAR-backed treatment guidelines."
+          />
+        ) : (
+          <View className="gap-4">
+            {isLoading ? (
+              <View className="py-8 items-center justify-center gap-3">
+                <ActivityIndicator size="small" color="#059669" />
+              </View>
+            ) : cardError ? (
+              <View className="py-3">
+                <Text className="text-xs text-muted-foreground">
+                  {tDash("advisoryError") || "Could not generate pest advisory."}
+                </Text>
+              </View>
+            ) : (
             <>
               {/* Driver / Major Factor */}
               {card?.driver && (
@@ -494,7 +503,8 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
               )}
             </>
           )}
-        </View>
+          </View>
+        )}
 
         {/* Sources Modal */}
         <Modal

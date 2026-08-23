@@ -33,6 +33,8 @@ import {
   VictoryScatter,
 } from "victory-native";
 import { useTranslation } from "react-i18next";
+import { useLocked } from "@/hooks/useLocked";
+import { LockedCard } from "@/components/ui/LockedCard";
 
 interface Props {
   crop?: string;
@@ -173,6 +175,23 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
   };
 
   const hideTooltip = () => setTooltip((t) => ({ ...t, visible: false }));
+
+  const { isLocked } = useLocked();
+
+  if (isLocked) {
+    return (
+      <View className="my-6 px-4">
+        <SectionHeader
+          icon={SoilMoistureFieldIcon}
+          title={tW("soilMoisture")}
+        />
+        <LockedCard
+          title="Soil Moisture Analysis Locked"
+          description="Sign in or register to view field moisture levels, drought stress index, and irrigation guidance."
+        />
+      </View>
+    );
+  }
 
   // ── guards ────────────────────────────────────────────────────────────────
   if (isLoading && !chartData.length) {

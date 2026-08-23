@@ -46,9 +46,12 @@ import { useTranslation } from "react-i18next";
 import { LANGUAGE_NAMES } from "@/i18n";
 import { Avatar } from "react-native-paper";
 import { LockedFeature } from "@/components/ui/LockedFeature";
+import { LockedCard } from "@/components/ui/LockedCard";
+import { useLocked } from "@/hooks/useLocked";
 
 export default function ProfileScreen() {
   const { user, loading, signOut } = useAuth();
+  const { isLocked } = useLocked();
   const { profile } = useProfile();
   const { language } = useLanguage();
   const { t } = useTranslation(["profile", "common", "auth"]);
@@ -390,55 +393,102 @@ export default function ProfileScreen() {
                 />
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
 
-            {/* Crop */}
-            <LockedFeature>
-              <View className="flex-row items-center justify-between p-3 px-4 border-b border-border">
-                <View className="flex-row items-center gap-3">
-                  <Icon icon={WheatIcon} size={18} className="text-foreground" />
-                  <Text className="text-sm font-semibold text-foreground">
-                    {t("activeCrop") || "Active Crop"}
+        {/* ── Active Crop Box ── */}
+        <View className="mb-5">
+          <Text className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+            {t("activeCrop") || "Active Crop"}
+          </Text>
+          <View className="bg-card border border-border rounded-3xl p-5">
+            <View className="flex-row items-center justify-between mb-3.5">
+              <View className="flex-row items-center gap-2.5">
+                <View className="w-10 h-10 rounded-2xl bg-emerald-100/80 dark:bg-emerald-950/60 items-center justify-center">
+                  <Icon icon={WheatIcon} size={20} className="text-emerald-600 dark:text-emerald-400" />
+                </View>
+                <View>
+                  <Text className="text-base font-bold text-foreground">
+                    {selectedCrop ? selectedCropName : t("noneDefault") || "No Crop Selected"}
+                  </Text>
+                  <Text className="text-xs text-muted-foreground">
+                    {selectedCrop ? "Applied to AI advisories & charts" : "Select a crop to customize risk analysis"}
                   </Text>
                 </View>
-                <TouchableOpacity
-                  onPress={() => setCropModalVisible(true)}
-                  className="bg-muted border border-border px-3.5 py-1.5 rounded-xl flex-row items-center gap-1.5"
-                  accessibilityRole="button"
-                >
-                  <Text className="text-xs font-bold text-foreground">
-                    {selectedCrop
-                      ? selectedCropName
-                      : t("selectCrop") || "Select Crop"}
-                  </Text>
-                  <Icon
-                    icon={ChevronRightIcon}
-                    size={14}
-                    className="text-foreground"
-                  />
-                </TouchableOpacity>
               </View>
-            </LockedFeature>
+            </View>
 
-            {/* My Farms */}
-            <LockedFeature>
+            {isLocked ? (
+              <LockedCard
+                title="Active Crop Locked"
+                description="Sign in to select and lock in specific crop profiles for tailored risk models."
+                minHeight={110}
+              />
+            ) : (
               <TouchableOpacity
-                onPress={() => router.push("/my-farms")}
-                className="flex-row items-center justify-between p-3 px-4"
+                onPress={() => setCropModalVisible(true)}
+                className="bg-muted border border-border rounded-2xl p-3.5 flex-row items-center justify-between active:bg-muted/80"
                 accessibilityRole="button"
               >
-                <View className="flex-row items-center gap-3">
-                  <Icon icon={MapPinIcon} size={22} className="text-foreground" />
-                  <Text className="text-md font-semibold text-foreground">
-                    {t("myFarms") || "My Farms"}
+                <View className="flex-row items-center gap-2">
+                  <Text className="text-sm font-semibold text-foreground">
+                    {selectedCrop ? selectedCropName : t("selectCrop") || "Choose Crop"}
                   </Text>
                 </View>
-                <Icon
-                  icon={ChevronRightIcon}
-                  size={22}
-                  className="text-foreground"
-                />
+                <View className="flex-row items-center gap-1">
+                  <Text className="text-xs text-primary font-bold">Change</Text>
+                  <Icon icon={ChevronRightIcon} size={14} className="text-primary" />
+                </View>
               </TouchableOpacity>
-            </LockedFeature>
+            )}
+          </View>
+        </View>
+
+        {/* ── My Farms Box ── */}
+        <View className="mb-5">
+          <Text className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+            {t("myFarms") || "My Farms"}
+          </Text>
+          <View className="bg-card border border-border rounded-3xl p-5">
+            <View className="flex-row items-center justify-between mb-3.5">
+              <View className="flex-row items-center gap-2.5">
+                <View className="w-10 h-10 rounded-2xl bg-emerald-100/80 dark:bg-emerald-950/60 items-center justify-center">
+                  <Icon icon={MapPinIcon} size={20} className="text-emerald-600 dark:text-emerald-400" />
+                </View>
+                <View>
+                  <Text className="text-base font-bold text-foreground">
+                    {selectedFarm ? selectedFarm.name || selectedFarm.fieldId : "No Farm Selected"}
+                  </Text>
+                  <Text className="text-xs text-muted-foreground">
+                    {selectedFarm?.areaM2
+                      ? `${(selectedFarm.areaM2 / 10000).toFixed(2)} ha · ${selectedFarm.season || "Active Field"}`
+                      : "Satellite mapped field boundaries"}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {isLocked ? (
+              <LockedCard
+                title="My Farms Locked"
+                description="Sign in or register to draw, save, and export satellite boundary maps for your fields."
+                minHeight={110}
+              />
+            ) : (
+              <TouchableOpacity
+                onPress={() => router.push("/my-farms")}
+                className="bg-muted border border-border rounded-2xl p-3.5 flex-row items-center justify-between active:bg-muted/80"
+                accessibilityRole="button"
+              >
+                <Text className="text-sm font-semibold text-foreground">
+                  {selectedFarm ? "Manage & View Farms" : "Open My Farms"}
+                </Text>
+                <View className="flex-row items-center gap-1">
+                  <Text className="text-xs text-primary font-bold">Open</Text>
+                  <Icon icon={ChevronRightIcon} size={14} className="text-primary" />
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 

@@ -51,24 +51,16 @@ export default function ToolsTabScreen() {
 
         {/*<WhatToDoTodaySection crop={selectedCrop} />1*/}
 
-        <LockedFeature>
-          <AIAdvisorySection crop={selectedCrop} />
-        </LockedFeature>
+        <AIAdvisorySection crop={selectedCrop} />
 
-        <LockedFeature>
-          <PestAndDiseaseSection crop={selectedCrop} />
-        </LockedFeature>
+        <PestAndDiseaseSection crop={selectedCrop} />
 
-        <LockedFeature>
-          <SoilMoistureSection
-            crop={selectedCrop}
-            irrigationInsight={irrigationInsight}
-          />
-        </LockedFeature>
+        <SoilMoistureSection
+          crop={selectedCrop}
+          irrigationInsight={irrigationInsight}
+        />
 
-        <LockedFeature>
-          <CropCalendarSection crop={selectedCrop} />
-        </LockedFeature>
+        <CropCalendarSection crop={selectedCrop} />
       </ScrollView>
     </SafeAreaView>
   );

@@ -14,6 +14,8 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Book02Icon, BotIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { i18n } from "@/i18n";
 import { useTranslation } from "react-i18next";
+import { useLocked } from "@/hooks/useLocked";
+import { LockedCard } from "@/components/ui/LockedCard";
 
 interface Props {
   crop?: string;
@@ -21,6 +23,7 @@ interface Props {
 
 export function AIAdvisorySection({ crop }: Props) {
   const { t } = useTranslation(["dashboard"]);
+  const { isLocked } = useLocked();
   const { data, sources, isLoading, isError } = useAI(crop, i18n.language);
   const [modalVisible, setModalVisible] = useState(false);
   let padMax = 0;
@@ -131,26 +134,34 @@ export function AIAdvisorySection({ crop }: Props) {
           }
         />
 
-        <View>
-          {isLoading && (
-            <View className="py-6 items-center">
-              <ActivityIndicator size="large" color="#059669" />
-              <Text className="text-muted-foreground mt-3 text-sm font-medium">
-                {t("generatingAdvisory")}
-              </Text>
-            </View>
-          )}
-          {isError && (
-            <View className="py-4 bg-red-50 dark:bg-red-950/30 rounded-2xl px-4 border border-red-200 dark:border-red-900/50">
-              <Text className="text-red-600 dark:text-red-400 font-medium">
-                {t("advisoryFailed")}
-              </Text>
-            </View>
-          )}
-          {data && !isLoading && !isError && (
-            <View>{renderHighlightedText(data)}</View>
-          )}
-        </View>
+        {isLocked ? (
+          <LockedCard
+            title="AI Crop Advisory Locked"
+            description="Sign in or register to get tailored AI recommendations and harvest forecasts."
+            className="mt-1"
+          />
+        ) : (
+          <View>
+            {isLoading && (
+              <View className="py-6 items-center">
+                <ActivityIndicator size="large" color="#059669" />
+                <Text className="text-muted-foreground mt-3 text-sm font-medium">
+                  {t("generatingAdvisory")}
+                </Text>
+              </View>
+            )}
+            {isError && (
+              <View className="py-4 bg-red-50 dark:bg-red-950/30 rounded-2xl px-4 border border-red-200 dark:border-red-900/50">
+                <Text className="text-red-600 dark:text-red-400 font-medium">
+                  {t("advisoryFailed")}
+                </Text>
+              </View>
+            )}
+            {data && !isLoading && !isError && (
+              <View>{renderHighlightedText(data)}</View>
+            )}
+          </View>
+        )}
 
         {/* Sources Modal */}
         <Modal
