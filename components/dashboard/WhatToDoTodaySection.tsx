@@ -131,6 +131,12 @@ export function WhatToDoTodaySection({ crop }: Props) {
             })}
           </View>
         )}
+
+        {recommendations.length === 0 && (
+          <Text className="text-muted-foreground text-sm font-medium">
+            No recommendations available.
+          </Text>
+        )}
       </View>
     </View>
   );

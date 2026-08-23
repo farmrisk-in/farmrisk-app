@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -13,6 +19,7 @@ import {
   RobotIcon,
   Location01Icon,
   RainDropIcon,
+  Sparkle,
 } from "@hugeicons/core-free-icons";
 
 export default function LockedFeaturesScreen() {
@@ -59,13 +66,18 @@ export default function LockedFeaturesScreen() {
       >
         <View className="items-center mb-8 mt-4">
           <View className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950 items-center justify-center mb-4">
-            <Icon icon={User02Icon} size={36} className="text-emerald-600 dark:text-emerald-400" />
+            <Icon
+              icon={Sparkle}
+              size={36}
+              className="text-emerald-600 dark:text-emerald-400"
+            />
           </View>
           <Text className="text-2xl font-bold text-foreground text-center mb-2">
             Unlock Full Potential
           </Text>
           <Text className="text-base text-muted-foreground text-center px-4 leading-relaxed">
-            Create a free account or sign in to access advanced farm intelligence and personalized insights.
+            Create a free account or sign in to access advanced farm
+            intelligence and personalized insights.
           </Text>
         </View>
 
@@ -76,9 +88,11 @@ export default function LockedFeaturesScreen() {
           <View className="gap-5">
             {features.map((feature, i) => (
               <View key={i} className="flex-row items-start gap-4">
-                <View className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/50 items-center justify-center border border-emerald-100 dark:border-emerald-900 shrink-0 mt-0.5">
-                  <Icon icon={feature.icon} size={20} className="text-emerald-600 dark:text-emerald-400" />
-                </View>
+                <Icon
+                  icon={feature.icon}
+                  size={24}
+                  className="text-foreground"
+                />
                 <View className="flex-1">
                   <Text className="text-base font-bold text-foreground mb-1">
                     {feature.title}
@@ -95,7 +109,12 @@ export default function LockedFeaturesScreen() {
 
       <View className="px-5 pt-4 pb-6 border-t border-border bg-background">
         <TouchableOpacity
-          onPress={() => router.push("/profile")}
+          onPress={() =>
+            router.push({
+              pathname: "/onboarding/auth",
+              params: { from: "profile", mode: "login" },
+            })
+          }
           className="bg-emerald-600 active:bg-emerald-700 rounded-2xl py-4 items-center justify-center"
         >
           <Text className="text-white font-bold text-base">

@@ -24,7 +24,6 @@ import {
   Logout01Icon,
   ChevronRightIcon,
   User02Icon,
-  SmartPhone01Icon,
   Tick02Icon,
   Sun01Icon,
   Login01Icon,
@@ -35,7 +34,6 @@ import {
   Moon01Icon,
 } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
 import { useCropContext } from "@/providers/CropProvider";
 import { useFarmContext } from "@/providers/FarmProvider";
@@ -45,7 +43,6 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE_NAMES } from "@/i18n";
 import { Avatar } from "react-native-paper";
-import { LockedFeature } from "@/components/ui/LockedFeature";
 import { LockedCard } from "@/components/ui/LockedCard";
 import { useLocked } from "@/hooks/useLocked";
 
@@ -405,14 +402,22 @@ export default function ProfileScreen() {
             <View className="flex-row items-center justify-between mb-3.5">
               <View className="flex-row items-center gap-2.5">
                 <View className="w-10 h-10 rounded-2xl bg-emerald-100/80 dark:bg-emerald-950/60 items-center justify-center">
-                  <Icon icon={WheatIcon} size={20} className="text-emerald-600 dark:text-emerald-400" />
+                  <Icon
+                    icon={WheatIcon}
+                    size={20}
+                    className="text-emerald-600 dark:text-emerald-400"
+                  />
                 </View>
                 <View>
                   <Text className="text-base font-bold text-foreground">
-                    {selectedCrop ? selectedCropName : t("noneDefault") || "No Crop Selected"}
+                    {selectedCrop
+                      ? selectedCropName
+                      : t("noneDefault") || "No Crop Selected"}
                   </Text>
                   <Text className="text-xs text-muted-foreground">
-                    {selectedCrop ? "Applied to AI advisories & charts" : "Select a crop to customize risk analysis"}
+                    {selectedCrop
+                      ? "Applied to AI advisories & charts"
+                      : "Select a crop to customize risk analysis"}
                   </Text>
                 </View>
               </View>
@@ -432,12 +437,18 @@ export default function ProfileScreen() {
               >
                 <View className="flex-row items-center gap-2">
                   <Text className="text-sm font-semibold text-foreground">
-                    {selectedCrop ? selectedCropName : t("selectCrop") || "Choose Crop"}
+                    {selectedCrop
+                      ? selectedCropName
+                      : t("selectCrop") || "Choose Crop"}
                   </Text>
                 </View>
                 <View className="flex-row items-center gap-1">
                   <Text className="text-xs text-primary font-bold">Change</Text>
-                  <Icon icon={ChevronRightIcon} size={14} className="text-primary" />
+                  <Icon
+                    icon={ChevronRightIcon}
+                    size={14}
+                    className="text-primary"
+                  />
                 </View>
               </TouchableOpacity>
             )}
@@ -453,11 +464,17 @@ export default function ProfileScreen() {
             <View className="flex-row items-center justify-between mb-3.5">
               <View className="flex-row items-center gap-2.5">
                 <View className="w-10 h-10 rounded-2xl bg-emerald-100/80 dark:bg-emerald-950/60 items-center justify-center">
-                  <Icon icon={MapPinIcon} size={20} className="text-emerald-600 dark:text-emerald-400" />
+                  <Icon
+                    icon={MapPinIcon}
+                    size={20}
+                    className="text-emerald-600 dark:text-emerald-400"
+                  />
                 </View>
                 <View>
                   <Text className="text-base font-bold text-foreground">
-                    {selectedFarm ? selectedFarm.name || selectedFarm.fieldId : "No Farm Selected"}
+                    {selectedFarm
+                      ? selectedFarm.name || selectedFarm.fieldId
+                      : "No Farm Selected"}
                   </Text>
                   <Text className="text-xs text-muted-foreground">
                     {selectedFarm?.areaM2
@@ -485,7 +502,11 @@ export default function ProfileScreen() {
                 </Text>
                 <View className="flex-row items-center gap-1">
                   <Text className="text-xs text-primary font-bold">Open</Text>
-                  <Icon icon={ChevronRightIcon} size={14} className="text-primary" />
+                  <Icon
+                    icon={ChevronRightIcon}
+                    size={14}
+                    className="text-primary"
+                  />
                 </View>
               </TouchableOpacity>
             )}
