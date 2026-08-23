@@ -87,7 +87,7 @@ const formatShortDate = (raw: string): string => {
 // ── component ────────────────────────────────────────────────────────────────
 export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
   const router = useRouter();
-  const { t } = useTranslation(["dashboard"]);
+  const { t } = useTranslation(["dashboard", "common"]);
   const { t: tW } = useTranslation(["weather"]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [irrigationOpen, setIrrigationOpen] = useState(false);
@@ -186,8 +186,11 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
           title={tW("soilMoisture")}
         />
         <LockedCard
-          title="Soil Moisture Analysis Locked"
-          description="Sign in or register to view field moisture levels, drought stress index, and irrigation guidance."
+          title={t("common:soilMoistureLockedTitle") || "Soil Moisture Analysis Locked"}
+          description={
+            t("common:soilMoistureLockedDesc") ||
+            "Sign in or register to view field moisture levels, drought stress index, and irrigation guidance."
+          }
         />
       </View>
     );

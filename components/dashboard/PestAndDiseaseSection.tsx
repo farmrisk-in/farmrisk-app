@@ -243,7 +243,7 @@ function renderHighlightedText(text: string, terms: string[]) {
 }
 
 export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
-  const { t: tDash } = useTranslation(["dashboard"]);
+  const { t: tDash } = useTranslation(["dashboard", "common"]);
   const { isLocked } = useLocked();
   const { selectedCrop } = useCropContext();
   const activeCrop = crop || selectedCrop || "general";
@@ -406,8 +406,11 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
         {/* Main Advisory Box */}
         {isLocked ? (
           <LockedCard
-            title="Pest & Disease Advisory Locked"
-            description="Sign in or register to get real-time crop disease alerts and ICAR-backed treatment guidelines."
+            title={tDash("common:pestLockedTitle") || "Pest & Disease Advisory Locked"}
+            description={
+              tDash("common:pestLockedDesc") ||
+              "Sign in or register to get real-time crop disease alerts and ICAR-backed treatment guidelines."
+            }
           />
         ) : (
           <View className="gap-4">

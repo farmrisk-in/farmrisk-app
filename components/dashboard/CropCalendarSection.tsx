@@ -288,7 +288,7 @@ function SeasonCard({ entry }: { entry: any }) {
 
 // ── Main Section Component ────────────────────────────────────────────────────
 export function CropCalendarSection({ crop }: Props) {
-  const { t } = useTranslation(["calendar"]);
+  const { t } = useTranslation(["calendar", "common"]);
   const { isLocked } = useLocked();
   const { calendar, isLoading, isError } = useCalendar(crop);
 
@@ -312,8 +312,11 @@ export function CropCalendarSection({ crop }: Props) {
           </Text>
         </View>
         <LockedCard
-          title="Crop Calendar Locked"
-          description="Sign in or register to track seasonal sowing, growing, and harvesting periods for your crops."
+          title={t("common:cropCalendarLockedTitle") || "Crop Calendar Locked"}
+          description={
+            t("common:cropCalendarLockedDesc") ||
+            "Sign in or register to track seasonal sowing, growing, and harvesting periods for your crops."
+          }
         />
       </View>
     );

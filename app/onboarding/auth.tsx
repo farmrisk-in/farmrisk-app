@@ -31,7 +31,9 @@ export default function Auth() {
   const { t: tAuth } = useTranslation(["auth"]);
   const { t: tOB } = useTranslation(["onboarding"]);
 
-  const [mode, setMode] = useState<Mode>(params.mode === "register" ? "register" : "login");
+  const [mode, setMode] = useState<Mode>(
+    params.mode === "register" ? "register" : "login",
+  );
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -49,7 +51,7 @@ export default function Auth() {
         border: "#2a2a2a",
         foreground: "#f4f4f5",
         mutedFg: "#71717a",
-        primary: "#005f44",
+        primary: "#10b981",
         primaryFg: "#ffffff",
       }
     : {
@@ -116,10 +118,22 @@ export default function Auth() {
     }
 
     if (mode === "register") {
-      if (!firstName.trim()) { setError(tAuth("errorFirstName")); return; }
-      if (!lastName.trim()) { setError(tAuth("errorLastName")); return; }
-      if (password.length < 6) { setError(tAuth("errorPasswordLength")); return; }
-      if (password !== confirmPassword) { setError(tAuth("errorPasswordMatch")); return; }
+      if (!firstName.trim()) {
+        setError(tAuth("errorFirstName"));
+        return;
+      }
+      if (!lastName.trim()) {
+        setError(tAuth("errorLastName"));
+        return;
+      }
+      if (password.length < 6) {
+        setError(tAuth("errorPasswordLength"));
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError(tAuth("errorPasswordMatch"));
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -128,14 +142,31 @@ export default function Auth() {
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { first_name: firstName, last_name: lastName, phone: normalizedPhone } },
+          options: {
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+              phone: normalizedPhone,
+            },
+          },
         });
-        if (signUpError) { setError(signUpError.message); }
-        else { setSuccess(tAuth("registrationSuccess")); goNext(); }
+        if (signUpError) {
+          setError(signUpError.message);
+        } else {
+          setSuccess(tAuth("registrationSuccess"));
+          goNext();
+        }
       } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) { setError(signInError.message); }
-        else { setSuccess(tAuth("loginSuccess")); goNext(); }
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (signInError) {
+          setError(signInError.message);
+        } else {
+          setSuccess(tAuth("loginSuccess"));
+          goNext();
+        }
       }
     } catch (err: any) {
       setError(err?.message || tAuth("errorUnexpected"));
@@ -145,19 +176,52 @@ export default function Auth() {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]} style={[s.flex1, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      edges={["top", "bottom"]}
+      style={[s.flex1, { backgroundColor: colors.background }]}
+    >
       {isFromProfile ? (
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 20,
+            paddingTop: 8,
+            paddingBottom: 12,
+          }}
+        >
           <TouchableOpacity
             onPress={handleBack}
             activeOpacity={0.7}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, alignItems: "center", justifyContent: "center" }}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: colors.card,
+              borderWidth: 1,
+              borderColor: colors.border,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <Icon icon={ChevronLeftIcon} size={24} className="text-foreground" />
+            <Icon
+              icon={ChevronLeftIcon}
+              size={24}
+              className="text-foreground"
+            />
           </TouchableOpacity>
-          <Text style={{ fontSize: 16, fontWeight: "700", color: colors.foreground }}>
-            {mode === "login" ? tAuth("signInBtn") || "Sign In" : tAuth("registerBtn") || "Register"}
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "700",
+              color: colors.foreground,
+            }}
+          >
+            {mode === "login"
+              ? tAuth("signInBtn") || "Sign In"
+              : tAuth("registerBtn") || "Register"}
           </Text>
           <View style={{ width: 40 }} />
         </View>
@@ -183,43 +247,84 @@ export default function Auth() {
         >
           <View>
             <Text style={[s.heading, { color: colors.foreground }]}>
-              {mode === "login" ? tOB("authLoginTitle") ?? "Welcome back" : tOB("authRegisterTitle") ?? "Create your account"}
+              {mode === "login"
+                ? (tOB("authLoginTitle") ?? "Welcome back")
+                : (tOB("authRegisterTitle") ?? "Create your account")}
             </Text>
             <Text style={[s.subheading, { color: colors.mutedFg }]}>
               {mode === "login"
-                ? tOB("authLoginSubtitle") ?? "Sign in with your mobile number and password."
-                : tOB("authRegisterSubtitle") ?? "Register to get personalized crop advisories and risk alerts."}
+                ? (tOB("authLoginSubtitle") ??
+                  "Sign in with your mobile number and password.")
+                : (tOB("authRegisterSubtitle") ??
+                  "Register to get personalized crop advisories and risk alerts.")}
             </Text>
           </View>
 
           {/* Segmented tabs — pure style prop, zero dynamic className */}
-          <View style={[s.segmentWrapper, { backgroundColor: colors.muted, borderColor: colors.border }]}>
+          <View
+            style={[
+              s.segmentWrapper,
+              { backgroundColor: colors.muted, borderColor: colors.border },
+            ]}
+          >
             <TouchableOpacity
-              onPress={() => { setError(null); setSuccess(null); setMode("login"); }}
+              onPress={() => {
+                setError(null);
+                setSuccess(null);
+                setMode("login");
+              }}
               activeOpacity={0.8}
               style={[
                 s.segmentTab,
                 mode === "login"
-                  ? { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }
+                  ? {
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      borderWidth: 1,
+                    }
                   : { borderColor: "transparent", borderWidth: 1 },
               ]}
             >
-              <Text style={[s.segmentLabel, { color: mode === "login" ? colors.foreground : colors.mutedFg }]}>
+              <Text
+                style={[
+                  s.segmentLabel,
+                  {
+                    color:
+                      mode === "login" ? colors.foreground : colors.mutedFg,
+                  },
+                ]}
+              >
                 {tAuth("signInBtn") || "Sign In"}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => { setError(null); setSuccess(null); setMode("register"); }}
+              onPress={() => {
+                setError(null);
+                setSuccess(null);
+                setMode("register");
+              }}
               activeOpacity={0.8}
               style={[
                 s.segmentTab,
                 mode === "register"
-                  ? { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }
+                  ? {
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      borderWidth: 1,
+                    }
                   : { borderColor: "transparent", borderWidth: 1 },
               ]}
             >
-              <Text style={[s.segmentLabel, { color: mode === "register" ? colors.foreground : colors.mutedFg }]}>
+              <Text
+                style={[
+                  s.segmentLabel,
+                  {
+                    color:
+                      mode === "register" ? colors.foreground : colors.mutedFg,
+                  },
+                ]}
+              >
                 {tAuth("registerBtn") || "Register"}
               </Text>
             </TouchableOpacity>
@@ -230,53 +335,145 @@ export default function Auth() {
             {mode === "register" && (
               <>
                 <View>
-                  <Text style={[s.fieldLabel, { color: colors.foreground }]}>{tAuth("firstName") ?? "First Name"}</Text>
-                  <TextInput value={firstName} onChangeText={setFirstName} placeholder="e.g. Ram" placeholderTextColor={colors.mutedFg}
-                    style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
-                    autoCapitalize="words" returnKeyType="next" />
+                  <Text style={[s.fieldLabel, { color: colors.foreground }]}>
+                    {tAuth("firstName") ?? "First Name"}
+                  </Text>
+                  <TextInput
+                    value={firstName}
+                    onChangeText={setFirstName}
+                    placeholder="e.g. Ram"
+                    placeholderTextColor={colors.mutedFg}
+                    style={[
+                      s.input,
+                      {
+                        backgroundColor: colors.card,
+                        borderColor: colors.border,
+                        color: colors.foreground,
+                      },
+                    ]}
+                    autoCapitalize="words"
+                    returnKeyType="next"
+                  />
                 </View>
                 <View>
-                  <Text style={[s.fieldLabel, { color: colors.foreground }]}>{tAuth("lastName") ?? "Last Name"}</Text>
-                  <TextInput value={lastName} onChangeText={setLastName} placeholder="e.g. Kumar" placeholderTextColor={colors.mutedFg}
-                    style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
-                    autoCapitalize="words" returnKeyType="next" />
+                  <Text style={[s.fieldLabel, { color: colors.foreground }]}>
+                    {tAuth("lastName") ?? "Last Name"}
+                  </Text>
+                  <TextInput
+                    value={lastName}
+                    onChangeText={setLastName}
+                    placeholder="e.g. Kumar"
+                    placeholderTextColor={colors.mutedFg}
+                    style={[
+                      s.input,
+                      {
+                        backgroundColor: colors.card,
+                        borderColor: colors.border,
+                        color: colors.foreground,
+                      },
+                    ]}
+                    autoCapitalize="words"
+                    returnKeyType="next"
+                  />
                 </View>
               </>
             )}
 
             <View>
-              <Text style={[s.fieldLabel, { color: colors.foreground }]}>{tAuth("mobileLabel") ?? "Mobile Number"}</Text>
-              <TextInput value={phone} onChangeText={setPhone} placeholder="e.g. 9876543210" placeholderTextColor={colors.mutedFg}
-                keyboardType="phone-pad" maxLength={10} returnKeyType="next"
-                style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]} />
+              <Text style={[s.fieldLabel, { color: colors.foreground }]}>
+                {tAuth("mobileLabel") ?? "Mobile Number"}
+              </Text>
+              <TextInput
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="e.g. 9876543210"
+                placeholderTextColor={colors.mutedFg}
+                keyboardType="phone-pad"
+                maxLength={10}
+                returnKeyType="next"
+                style={[
+                  s.input,
+                  {
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.foreground,
+                  },
+                ]}
+              />
             </View>
 
             <View>
-              <Text style={[s.fieldLabel, { color: colors.foreground }]}>{tAuth("passwordLabel") ?? "Password"}</Text>
-              <TextInput value={password} onChangeText={setPassword} placeholder="••••••••" placeholderTextColor={colors.mutedFg}
-                secureTextEntry returnKeyType={mode === "register" ? "next" : "done"}
-                style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]} />
-              <Text style={[s.fieldHint, { color: colors.mutedFg }]}>{tAuth("passwordHint") ?? "Min 6 characters"}</Text>
+              <Text style={[s.fieldLabel, { color: colors.foreground }]}>
+                {tAuth("passwordLabel") ?? "Password"}
+              </Text>
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="••••••••"
+                placeholderTextColor={colors.mutedFg}
+                secureTextEntry
+                returnKeyType={mode === "register" ? "next" : "done"}
+                style={[
+                  s.input,
+                  {
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                    color: colors.foreground,
+                  },
+                ]}
+              />
+              <Text style={[s.fieldHint, { color: colors.mutedFg }]}>
+                {tAuth("passwordHint") ?? "Min 6 characters"}
+              </Text>
             </View>
 
             {mode === "register" && (
               <View>
-                <Text style={[s.fieldLabel, { color: colors.foreground }]}>{tAuth("confirmPasswordLabel") ?? "Confirm Password"}</Text>
-                <TextInput value={confirmPassword} onChangeText={setConfirmPassword} placeholder="••••••••" placeholderTextColor={colors.mutedFg}
-                  secureTextEntry returnKeyType="done"
-                  style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]} />
+                <Text style={[s.fieldLabel, { color: colors.foreground }]}>
+                  {tAuth("confirmPasswordLabel") ?? "Confirm Password"}
+                </Text>
+                <TextInput
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="••••••••"
+                  placeholderTextColor={colors.mutedFg}
+                  secureTextEntry
+                  returnKeyType="done"
+                  style={[
+                    s.input,
+                    {
+                      backgroundColor: colors.card,
+                      borderColor: colors.border,
+                      color: colors.foreground,
+                    },
+                  ]}
+                />
               </View>
             )}
 
             {error ? (
-              <View style={[s.banner, { backgroundColor: "#fee2e2", borderColor: "#fca5a5" }]}>
-                <Text style={[s.bannerText, { color: "#dc2626" }]}>{error}</Text>
+              <View
+                style={[
+                  s.banner,
+                  { backgroundColor: "#fee2e2", borderColor: "#fca5a5" },
+                ]}
+              >
+                <Text style={[s.bannerText, { color: "#dc2626" }]}>
+                  {error}
+                </Text>
               </View>
             ) : null}
 
             {success ? (
-              <View style={[s.banner, { backgroundColor: "#dcfce7", borderColor: "#86efac" }]}>
-                <Text style={[s.bannerText, { color: "#16a34a" }]}>{success}</Text>
+              <View
+                style={[
+                  s.banner,
+                  { backgroundColor: "#dcfce7", borderColor: "#86efac" },
+                ]}
+              >
+                <Text style={[s.bannerText, { color: "#16a34a" }]}>
+                  {success}
+                </Text>
               </View>
             ) : null}
           </View>
@@ -285,21 +482,41 @@ export default function Auth() {
         {/* Bottom pinned */}
         <View style={[s.bottomArea, { backgroundColor: colors.background }]}>
           {!isFromProfile && (
-            <TouchableOpacity onPress={goNext} activeOpacity={0.75} accessibilityRole="button"
-              style={[s.guestBtn, { borderColor: colors.border, backgroundColor: colors.card }]}>
+            <TouchableOpacity
+              onPress={goNext}
+              activeOpacity={0.75}
+              accessibilityRole="button"
+              style={[
+                s.guestBtn,
+                { borderColor: colors.border, backgroundColor: colors.card },
+              ]}
+            >
               <Text style={[s.guestBtnText, { color: colors.mutedFg }]}>
                 {tAuth("continueAsGuest") || "Continue to Free Dashboard →"}
               </Text>
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity onPress={handleAuth} disabled={submitting} activeOpacity={0.85} accessibilityRole="button"
-            style={[s.submitBtn, { backgroundColor: colors.primary, opacity: submitting ? 0.6 : 1 }]}>
+          <TouchableOpacity
+            onPress={handleAuth}
+            disabled={submitting}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            style={[
+              s.submitBtn,
+              {
+                backgroundColor: colors.primary,
+                opacity: submitting ? 0.6 : 1,
+              },
+            ]}
+          >
             {submitting ? (
               <ActivityIndicator color={colors.primaryFg} />
             ) : (
               <Text style={[s.submitBtnText, { color: colors.primaryFg }]}>
-                {mode === "register" ? tAuth("registerBtn") || "Register" : tAuth("signInBtn") || "Sign In"}
+                {mode === "register"
+                  ? tAuth("registerBtn") || "Register"
+                  : tAuth("signInBtn") || "Sign In"}
               </Text>
             )}
           </TouchableOpacity>
@@ -314,18 +531,62 @@ const s = StyleSheet.create({
   scrollContent: { flexGrow: 1, paddingHorizontal: 24, paddingBottom: 20 },
   heading: { fontSize: 30, fontWeight: "700", lineHeight: 36 },
   subheading: { fontSize: 14, marginTop: 8, lineHeight: 22 },
-  segmentWrapper: { flexDirection: "row", borderRadius: 16, padding: 6, marginTop: 24, borderWidth: 1 },
-  segmentTab: { flex: 1, paddingVertical: 12, alignItems: "center", justifyContent: "center", borderRadius: 12 },
+  segmentWrapper: {
+    flexDirection: "row",
+    borderRadius: 16,
+    padding: 6,
+    marginTop: 24,
+    borderWidth: 1,
+  },
+  segmentTab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+  },
   segmentLabel: { fontSize: 16, fontWeight: "700" },
   formArea: { marginTop: 20, gap: 16 },
-  fieldLabel: { fontSize: 14, fontWeight: "600", marginBottom: 6, marginLeft: 4 },
-  input: { borderWidth: 1, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16 },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 6,
+    marginLeft: 4,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+  },
   fieldHint: { fontSize: 12, marginTop: 4, marginLeft: 4 },
-  banner: { borderWidth: 1, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 12 },
+  banner: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
   bannerText: { fontSize: 14, fontWeight: "500", textAlign: "center" },
-  bottomArea: { paddingHorizontal: 24, paddingBottom: 24, paddingTop: 8, gap: 12 },
-  guestBtn: { borderRadius: 16, borderWidth: 1, alignItems: "center", justifyContent: "center", paddingVertical: 11 },
+  bottomArea: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+    paddingTop: 8,
+    gap: 12,
+  },
+  guestBtn: {
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 11,
+  },
   guestBtnText: { fontSize: 14, fontWeight: "600" },
-  submitBtn: { borderRadius: 16, alignItems: "center", justifyContent: "center", paddingVertical: 12 },
+  submitBtn: {
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+  },
   submitBtnText: { fontSize: 16, fontWeight: "700" },
 });

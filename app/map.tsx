@@ -18,6 +18,7 @@ import { reverseGeocode } from "@/lib/api";
 import { Icon } from "@/components/ui/Icon";
 import {
   Cancel01Icon,
+  ChevronLeft,
   Location01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
@@ -171,26 +172,16 @@ export default function MapScreen() {
           styles.topBar,
           {
             paddingTop: insets.top + 8,
-            backgroundColor: isDark
-              ? "rgba(9, 9, 11, 0.85)"
-              : "rgba(255, 255, 255, 0.88)",
           },
         ]}
       >
         <TouchableOpacity
           onPress={() => router.back()}
-          style={[
-            styles.topBarButton,
-            {
-              backgroundColor: isDark
-                ? "rgba(255,255,255,0.1)"
-                : "rgba(0,0,0,0.06)",
-            },
-          ]}
+          style={[styles.topBarButton]}
         >
           <Icon
-            icon={Cancel01Icon}
-            size={20}
+            icon={ChevronLeft}
+            size={28}
             color={isDark ? "#ffffff" : "#09090b"}
           />
         </TouchableOpacity>
@@ -219,7 +210,7 @@ export default function MapScreen() {
           ) : (
             <Icon
               icon={Location01Icon}
-              size={20}
+              size={24}
               color={isDark ? "#34d399" : "#059669"}
             />
           )}

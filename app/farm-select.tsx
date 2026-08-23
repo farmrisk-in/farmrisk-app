@@ -38,6 +38,7 @@ import {
   Tick02Icon,
   ArrowRight01Icon,
   Add01Icon,
+  ChevronLeft,
 } from "@hugeicons/core-free-icons";
 import type { FieldInfo, SavedField } from "@/types/fields";
 
@@ -279,36 +280,23 @@ export default function FarmSelectScreen() {
 
       {/* Top bar */}
       <View
-        style={[
-          styles.topBar,
-          {
-            paddingTop: insets.top + 8,
-            backgroundColor: isDark
-              ? "rgba(9,9,11,0.85)"
-              : "rgba(255,255,255,0.88)",
-          },
-        ]}
+        className="absolute top-0 left-0 right-0 flex flex-row items-center justify-between pb-3 px-4 z-10 bg-background"
+        style={{
+          paddingTop: insets.top + 8,
+        }}
       >
         <TouchableOpacity
           onPress={handleContinue}
-          style={[
-            styles.topBtn,
-            hasConfirmedSelection
-              ? { backgroundColor: "#10b981" }
-              : {
-                  backgroundColor: isDark
-                    ? "rgba(255,255,255,0.1)"
-                    : "rgba(0,0,0,0.06)",
-                },
-          ]}
+          className="w-10 h-10 rounded-full items-center justify-center bg-primary"
           accessibilityLabel={
             hasConfirmedSelection ? "Confirm & Continue" : "Cancel"
           }
           accessibilityRole="button"
         >
           <Icon
-            icon={hasConfirmedSelection ? Tick02Icon : Cancel01Icon}
-            size={20}
+            icon={hasConfirmedSelection ? Tick02Icon : ChevronLeft}
+            size={24}
+            strokeWidth={3}
             color={
               hasConfirmedSelection ? "#ffffff" : isDark ? "#fff" : "#09090b"
             }
@@ -320,7 +308,7 @@ export default function FarmSelectScreen() {
             {t(drawMode ? "drawNew" : "title")}
           </Text>
           {hasConfirmedSelection && !drawMode && (
-            <Text className="text-[11px] font-semibold text-emerald-500">
+            <Text className="text-sm font-semibold text-emerald-500">
               ✓ Farm selected
             </Text>
           )}
@@ -329,21 +317,13 @@ export default function FarmSelectScreen() {
         <TouchableOpacity
           onPress={goToCurrentLocation}
           disabled={isGeolocating}
-          style={[
-            styles.topBtn,
-            {
-              backgroundColor: isDark
-                ? "rgba(52,211,153,0.2)"
-                : "rgba(5,150,105,0.1)",
-            },
-          ]}
           accessibilityLabel="My Location"
           accessibilityRole="button"
         >
           {isGeolocating ? (
             <ActivityIndicator size="small" color="#10b981" />
           ) : (
-            <Icon icon={Location01Icon} size={20} color="#10b981" />
+            <Icon icon={Location01Icon} size={28} className="text-foreground" />
           )}
         </TouchableOpacity>
       </View>
@@ -351,18 +331,15 @@ export default function FarmSelectScreen() {
       {/* Drawing toolbar */}
       {drawMode && (
         <View
+          className="absolute left-4 right-4 flex flex-row items-center justify-between px-3 py-2 rounded-xl border border-border z-10 bg-card"
           style={[
-            styles.drawBar,
             {
               top: insets.top + 68,
-              backgroundColor: isDark
-                ? "rgba(9,9,11,0.92)"
-                : "rgba(255,255,255,0.94)",
             },
           ]}
         >
           <View className="flex-row items-center gap-3">
-            <Text className="text-zinc-300 text-xs">
+            <Text className="text-foreground text-sm">
               {t("pointsCount", { count: points.length })}
               {polygonArea > 0 ? ` · ${areaToHectares(polygonArea)}` : ""}
             </Text>
@@ -371,16 +348,16 @@ export default function FarmSelectScreen() {
             <TouchableOpacity
               onPress={handleUndo}
               disabled={points.length === 0}
-              className="px-3 py-1.5 rounded-xl bg-zinc-800 border border-white/10 disabled:opacity-40"
+              className="px-3 py-1.5 rounded-xl border-2 border-black border-dotted disabled:opacity-30"
             >
-              <Text className="text-zinc-300 text-xs font-semibold">
+              <Text className="text-foreground text-xs font-semibold">
                 {t("undo")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => mapRef.current?.finishDrawing()}
               disabled={points.length < 3}
-              className="px-3 py-1.5 rounded-xl bg-emerald-600 disabled:opacity-40"
+              className="px-3 py-2 rounded-xl bg-primary disabled:opacity-40"
             >
               <Text className="text-white text-xs font-semibold">
                 {t("finish")}
@@ -388,9 +365,9 @@ export default function FarmSelectScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={toggleDrawMode}
-              className="px-3 py-1.5 rounded-xl bg-zinc-800 border border-white/10"
+              className="px-3 py-2 rounded-xl bg-destructive"
             >
-              <Text className="text-zinc-300 text-xs font-semibold">
+              <Text className="text-white text-xs font-semibold">
                 {t("cancel")}
               </Text>
             </TouchableOpacity>
@@ -401,29 +378,20 @@ export default function FarmSelectScreen() {
       {/* Bottom action bar */}
       {!drawMode && (
         <View
+          className="absolute bottom-0 left-0 right-0 px-5 pt-4 rounded-tl-3xl rounded-tr-3xl z-10 bg-background"
           style={[
-            styles.bottomBar,
             {
               paddingBottom: Math.max(insets.bottom + 12, 24),
-              backgroundColor: isDark
-                ? "rgba(9,9,11,0.95)"
-                : "rgba(255,255,255,0.96)",
             },
           ]}
         >
           {selectedFarm ? (
             <View className="gap-3">
               {/* Selected farm summary card */}
-              <View className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-3.5 flex-row items-center justify-between">
-                <View className="flex-1 mr-2">
-                  <View className="flex-row items-center gap-1.5">
-                    <View className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <Text className="text-xs font-bold text-emerald-500 uppercase tracking-wider">
-                      Selected Field
-                    </Text>
-                  </View>
+              <View className="bg-emerald-500/10 border border-emerald-500/30 rounded-3xl p-1.5 px-4 flex-row items-center justify-between">
+                <View className="flex flex-row gap-2 justify-between items-center">
                   <Text
-                    className="text-base font-bold text-foreground mt-0.5"
+                    className="text-base grow font-bold text-foreground mt-0.5"
                     numberOfLines={1}
                   >
                     {selectedFarm.name || selectedFarm.fieldId}
@@ -436,9 +404,36 @@ export default function FarmSelectScreen() {
                         : ""}
                     </Text>
                   )}
+                  <View className="flex-row items-center gap-1 bg-primary py-1.5 pr-3 pl-2 rounded-xl">
+                    <Icon
+                      icon={Tick02Icon}
+                      size={14}
+                      strokeWidth={3}
+                      className="text-white"
+                    />
+                    <Text className="text-xs font-bold text-white">
+                      Selected Field
+                    </Text>
+                  </View>
                 </View>
               </View>
 
+              {/* Secondary draw another button */}
+              <TouchableOpacity
+                onPress={toggleDrawMode}
+                activeOpacity={0.75}
+                className="w-full rounded-2xl bg-muted flex-row items-center justify-center py-3 gap-2 border-2 border-border"
+                accessibilityRole="button"
+              >
+                <Icon
+                  icon={Add01Icon}
+                  size={16}
+                  className="text-muted-foreground"
+                />
+                <Text className="text-muted-foreground text-sm font-semibold">
+                  {t("drawNew") || "Draw Another Farm"}
+                </Text>
+              </TouchableOpacity>
               {/* Primary continue action */}
               <TouchableOpacity
                 onPress={handleContinue}
@@ -446,24 +441,15 @@ export default function FarmSelectScreen() {
                 className="w-full rounded-2xl bg-emerald-600 active:bg-emerald-700 flex-row items-center justify-center py-4 gap-2"
                 accessibilityRole="button"
               >
-                <Icon icon={Tick02Icon} size={20} color="#ffffff" />
                 <Text className="text-white text-base font-bold">
                   Continue with this Farm
                 </Text>
-                <Icon icon={ArrowRight01Icon} size={18} color="#ffffff" />
-              </TouchableOpacity>
-
-              {/* Secondary draw another button */}
-              <TouchableOpacity
-                onPress={toggleDrawMode}
-                activeOpacity={0.75}
-                className="w-full rounded-2xl border border-zinc-700/50 bg-zinc-900/50 flex-row items-center justify-center py-3 gap-2"
-                accessibilityRole="button"
-              >
-                <Icon icon={Add01Icon} size={16} color="#a1a1aa" />
-                <Text className="text-zinc-300 text-sm font-semibold">
-                  {t("drawNew") || "Draw Another Farm"}
-                </Text>
+                <Icon
+                  icon={ArrowRight01Icon}
+                  size={20}
+                  strokeWidth={3}
+                  color="#ffffff"
+                />
               </TouchableOpacity>
             </View>
           ) : (
@@ -504,52 +490,3 @@ export default function FarmSelectScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  topBar: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    zIndex: 10,
-  },
-  topBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  drawBar: {
-    position: "absolute",
-    left: 16,
-    right: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-    zIndex: 10,
-  },
-  bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    borderTopWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-    zIndex: 10,
-  },
-});

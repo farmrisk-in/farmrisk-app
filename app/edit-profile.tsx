@@ -323,14 +323,13 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-background">
       {/* ── Top Header ── */}
-      <View className="flex-row items-center justify-between px-5 pt-2 pb-4 border-b border-border">
+      <View className="flex-row items-center justify-between px-5 pt-2 pb-4">
         <TouchableOpacity
           onPress={() => router.back()}
           activeOpacity={0.7}
-          className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center"
           accessibilityRole="button"
         >
-          <Icon icon={ChevronLeftIcon} size={22} className="text-foreground" />
+          <Icon icon={ChevronLeftIcon} size={28} className="text-foreground" />
         </TouchableOpacity>
 
         <Text className="text-lg font-bold text-foreground">

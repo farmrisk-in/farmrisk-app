@@ -26,13 +26,11 @@ import {
 } from "@/constants/farm";
 import { Icon } from "@/components/ui/Icon";
 import {
-  Cancel01Icon,
   MapPinIcon,
   Add01Icon,
   Delete01Icon,
   Share01Icon,
   Tick02Icon,
-  ArrowRight01Icon,
   WheatIcon,
   ChevronLeft,
 } from "@hugeicons/core-free-icons";
@@ -103,13 +101,13 @@ export default function MyFarmsScreen() {
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-background">
       {/* ── Top Header Bar ── */}
-      <View className="flex-row items-center justify-between px-5 pt-2 pb-4 border-b border-border">
+      <View className="flex-row items-center justify-between px-5 pt-2 pb-4">
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
           accessibilityLabel={t("common:cancel") || "Close"}
         >
-          <Icon icon={ChevronLeft} size={22} className="text-foreground" />
+          <Icon icon={ChevronLeft} size={28} className="text-foreground" />
         </TouchableOpacity>
 
         <Text className="text-lg font-bold text-foreground">
@@ -195,9 +193,7 @@ export default function MyFarmsScreen() {
                   onPress={() => handleSelect(farm)}
                   activeOpacity={0.7}
                   className={`rounded-3xl p-5  bg-card ${
-                    active
-                      ? "border-2 border-emerald-200 dark:border-emerald-800"
-                      : "border border-border"
+                    active ? "border-2 border-primary" : "border border-border"
                   }`}
                   accessibilityRole="button"
                 >

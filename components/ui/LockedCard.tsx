@@ -9,6 +9,7 @@ import {
 import { Icon } from "@/components/ui/Icon";
 import { LockPasswordIcon, SparklesIcon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 interface LockedCardProps {
   title?: string;
@@ -19,13 +20,20 @@ interface LockedCardProps {
 }
 
 export function LockedCard({
-  title = "Unlock with Account",
-  description = "Tap to unlock full potential with AI advisory & real-time insights",
+  title,
+  description,
   className,
   style,
   minHeight = 140,
 }: LockedCardProps) {
   const router = useRouter();
+  const { t } = useTranslation(["common"]);
+
+  const displayTitle = title || t("unlockWithAccount") || "Unlock with Account";
+  const displayDescription =
+    description ||
+    t("tapToUnlockDesc") ||
+    "Tap to unlock full potential with AI advisory & real-time insights";
 
   return (
     <TouchableOpacity
@@ -38,10 +46,10 @@ export function LockedCard({
     >
       <Icon icon={LockPasswordIcon} size={32} className="text-destructive" />
       <Text className="mt-3 text-base font-bold text-foreground text-center">
-        {title}
+        {displayTitle}
       </Text>
       <Text className="text-xs text-muted-foreground text-center mt-1 max-w-[260px] leading-relaxed">
-        {description}
+        {displayDescription}
       </Text>
       <View className="mt-3.5 flex-row items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600/10 border border-emerald-500/20">
         <Icon
@@ -50,7 +58,7 @@ export function LockedCard({
           className="text-emerald-600 dark:text-emerald-400"
         />
         <Text className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
-          Unlock Features
+          {t("lockedFeatures") || "Unlock Features"}
         </Text>
       </View>
     </TouchableOpacity>

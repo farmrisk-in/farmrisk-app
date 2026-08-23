@@ -22,7 +22,7 @@ interface Props {
 }
 
 export function AIAdvisorySection({ crop }: Props) {
-  const { t } = useTranslation(["dashboard"]);
+  const { t } = useTranslation(["dashboard", "common"]);
   const { isLocked } = useLocked();
   const { data, sources, isLoading, isError } = useAI(crop, i18n.language);
   const [modalVisible, setModalVisible] = useState(false);
@@ -136,8 +136,11 @@ export function AIAdvisorySection({ crop }: Props) {
 
         {isLocked ? (
           <LockedCard
-            title="AI Crop Advisory Locked"
-            description="Sign in or register to get tailored AI recommendations and harvest forecasts."
+            title={t("common:aiAdvisoryLockedTitle") || "AI Crop Advisory Locked"}
+            description={
+              t("common:aiAdvisoryLockedDesc") ||
+              "Sign in or register to get tailored AI recommendations and harvest forecasts."
+            }
             className="mt-1"
           />
         ) : (

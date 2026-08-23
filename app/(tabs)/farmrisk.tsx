@@ -14,8 +14,6 @@ import {
 } from "@/components/dashboard";
 import { SoilMoistureSection } from "@/components/dashboard/SoilMoistureSection";
 import { PestAndDiseaseSection } from "@/components/dashboard/PestAndDiseaseSection";
-import { WhatToDoTodaySection } from "@/components/dashboard/WhatToDoTodaySection";
-import { LockedFeature } from "@/components/ui/LockedFeature";
 
 export default function ToolsTabScreen() {
   const { selectedCrop } = useCropContext();

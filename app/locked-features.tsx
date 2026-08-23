@@ -20,6 +20,7 @@ import {
   Location01Icon,
   RainDropIcon,
   Sparkle,
+  ChevronLeft,
 } from "@hugeicons/core-free-icons";
 
 export default function LockedFeaturesScreen() {
@@ -29,34 +30,39 @@ export default function LockedFeaturesScreen() {
   const features = [
     {
       icon: RobotIcon,
-      title: "AI Crop Advisory",
-      desc: "Get personalized actionable insights for your specific farm based on weather and soil data.",
+      title: t("featureAiTitle") || "AI Crop Advisory",
+      desc:
+        t("featureAiDesc") ||
+        "Get personalized actionable insights for your specific farm based on weather and soil data.",
     },
     {
       icon: Bug01Icon,
-      title: "Pest & Disease Risk",
-      desc: "Early warnings for local pest and disease threats using predictive models.",
+      title: t("featurePestTitle") || "Pest & Disease Risk",
+      desc:
+        t("featurePestDesc") ||
+        "Early warnings for local pest and disease threats using predictive models.",
     },
     {
       icon: RainDropIcon,
-      title: "Soil Moisture Tracking",
-      desc: "Detailed soil moisture profiles across 4 depth levels to optimize irrigation.",
+      title: t("featureSoilTitle") || "Soil Moisture Tracking",
+      desc:
+        t("featureSoilDesc") ||
+        "Detailed soil moisture profiles across 4 depth levels to optimize irrigation.",
     },
     {
       icon: Location01Icon,
-      title: "Save Multiple Farms",
-      desc: "Draw and save your field boundaries for pinpoint accurate hyper-local forecasting.",
+      title: t("featureFarmsTitle") || "Save Multiple Farms",
+      desc:
+        t("featureFarmsDesc") ||
+        "Draw and save your field boundaries for pinpoint accurate hyper-local forecasting.",
     },
   ];
 
   return (
     <SafeAreaView edges={["top", "bottom"]} className="flex-1 bg-background">
       <View className="flex-row items-center justify-between px-5 pt-2 pb-4">
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-muted border border-border items-center justify-center"
-        >
-          <Icon icon={Cancel01Icon} size={20} className="text-foreground" />
+        <TouchableOpacity onPress={() => router.back()}>
+          <Icon icon={ChevronLeft} size={28} className="text-foreground" />
         </TouchableOpacity>
       </View>
 
@@ -73,17 +79,17 @@ export default function LockedFeaturesScreen() {
             />
           </View>
           <Text className="text-2xl font-bold text-foreground text-center mb-2">
-            Unlock Full Potential
+            {t("unlockFullPotential") || "Unlock Full Potential"}
           </Text>
           <Text className="text-base text-muted-foreground text-center px-4 leading-relaxed">
-            Create a free account or sign in to access advanced farm
-            intelligence and personalized insights.
+            {t("unlockFullPotentialDesc") ||
+              "Create a free account or sign in to access advanced farm intelligence and personalized insights."}
           </Text>
         </View>
 
         <View className="bg-card border border-border rounded-3xl p-5 mb-8">
           <Text className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">
-            Included in your free account
+            {t("includedFreeAccount") || "Included in your free account"}
           </Text>
           <View className="gap-5">
             {features.map((feature, i) => (

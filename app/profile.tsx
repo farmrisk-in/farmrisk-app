@@ -32,6 +32,7 @@ import {
   Calendar03Icon,
   Call02FreeIcons,
   Moon01Icon,
+  ChevronLeft,
 } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
@@ -146,7 +147,13 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* ── Header ── */}
-        <View className="flex-row justify-between items-center mb-5">
+        <View className="flex-row gap-4 items-center mb-5">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            accessibilityRole="button"
+          >
+            <Icon icon={ChevronLeft} size={28} className="text-foreground" />
+          </TouchableOpacity>
           <View>
             <Text className="text-2xl font-bold text-foreground">
               {t("yourProfile") || "Your Profile"}
@@ -157,13 +164,6 @@ export default function ProfileScreen() {
                 : t("guestUser") || "Guest Farmer"}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-card border border-border items-center justify-center"
-            accessibilityRole="button"
-          >
-            <Icon icon={Cancel01Icon} size={20} className="text-foreground" />
-          </TouchableOpacity>
         </View>
 
         {/* ── Hero Card ── */}
@@ -401,23 +401,17 @@ export default function ProfileScreen() {
           <View className="bg-card border border-border rounded-3xl p-5">
             <View className="flex-row items-center justify-between mb-3.5">
               <View className="flex-row items-center gap-2.5">
-                <View className="w-10 h-10 rounded-2xl bg-emerald-100/80 dark:bg-emerald-950/60 items-center justify-center">
-                  <Icon
-                    icon={WheatIcon}
-                    size={20}
-                    className="text-emerald-600 dark:text-emerald-400"
-                  />
-                </View>
+                <Icon icon={WheatIcon} size={24} className="text-foreground" />
                 <View>
                   <Text className="text-base font-bold text-foreground">
                     {selectedCrop
                       ? selectedCropName
-                      : t("noneDefault") || "No Crop Selected"}
+                      : t("common:noCropSelected") || t("noneDefault") || "No Crop Selected"}
                   </Text>
                   <Text className="text-xs text-muted-foreground">
                     {selectedCrop
-                      ? "Applied to AI advisories & charts"
-                      : "Select a crop to customize risk analysis"}
+                      ? t("common:activeCropSelectedDesc") || "Applied to AI advisories & charts"
+                      : t("common:activeCropEmptyDesc") || "Select a crop to customize risk analysis"}
                   </Text>
                 </View>
               </View>
@@ -425,8 +419,8 @@ export default function ProfileScreen() {
 
             {isLocked ? (
               <LockedCard
-                title="Active Crop Locked"
-                description="Sign in to select and lock in specific crop profiles for tailored risk models."
+                title={t("common:activeCropLockedTitle") || "Active Crop Locked"}
+                description={t("common:activeCropLockedDesc") || "Sign in to select and lock in specific crop profiles for tailored risk models."}
                 minHeight={110}
               />
             ) : (
@@ -439,11 +433,11 @@ export default function ProfileScreen() {
                   <Text className="text-sm font-semibold text-foreground">
                     {selectedCrop
                       ? selectedCropName
-                      : t("selectCrop") || "Choose Crop"}
+                      : t("common:chooseCrop") || t("selectCrop") || "Choose Crop"}
                   </Text>
                 </View>
                 <View className="flex-row items-center gap-1">
-                  <Text className="text-xs text-primary font-bold">Change</Text>
+                  <Text className="text-xs text-primary font-bold">{t("common:change") || "Change"}</Text>
                   <Icon
                     icon={ChevronRightIcon}
                     size={14}
@@ -463,23 +457,17 @@ export default function ProfileScreen() {
           <View className="bg-card border border-border rounded-3xl p-5">
             <View className="flex-row items-center justify-between mb-3.5">
               <View className="flex-row items-center gap-2.5">
-                <View className="w-10 h-10 rounded-2xl bg-emerald-100/80 dark:bg-emerald-950/60 items-center justify-center">
-                  <Icon
-                    icon={MapPinIcon}
-                    size={20}
-                    className="text-emerald-600 dark:text-emerald-400"
-                  />
-                </View>
+                <Icon icon={MapPinIcon} size={24} className="text-foreground" />
                 <View>
                   <Text className="text-base font-bold text-foreground">
                     {selectedFarm
                       ? selectedFarm.name || selectedFarm.fieldId
-                      : "No Farm Selected"}
+                      : t("common:noFarmSelected") || "No Farm Selected"}
                   </Text>
                   <Text className="text-xs text-muted-foreground">
                     {selectedFarm?.areaM2
-                      ? `${(selectedFarm.areaM2 / 10000).toFixed(2)} ha · ${selectedFarm.season || "Active Field"}`
-                      : "Satellite mapped field boundaries"}
+                      ? `${(selectedFarm.areaM2 / 10000).toFixed(2)} ha · ${selectedFarm.season || t("common:activeField") || "Active Field"}`
+                      : t("common:myFarmsEmptyDesc") || "Satellite mapped field boundaries"}
                   </Text>
                 </View>
               </View>
@@ -487,8 +475,8 @@ export default function ProfileScreen() {
 
             {isLocked ? (
               <LockedCard
-                title="My Farms Locked"
-                description="Sign in or register to draw, save, and export satellite boundary maps for your fields."
+                title={t("common:myFarmsLockedTitle") || "My Farms Locked"}
+                description={t("common:myFarmsLockedDesc") || "Sign in or register to draw, save, and export satellite boundary maps for your fields."}
                 minHeight={110}
               />
             ) : (
@@ -498,10 +486,10 @@ export default function ProfileScreen() {
                 accessibilityRole="button"
               >
                 <Text className="text-sm font-semibold text-foreground">
-                  {selectedFarm ? "Manage & View Farms" : "Open My Farms"}
+                  {selectedFarm ? t("common:manageAndOpenFarms") || "Manage & View Farms" : t("common:openMyFarms") || "Open My Farms"}
                 </Text>
                 <View className="flex-row items-center gap-1">
-                  <Text className="text-xs text-primary font-bold">Open</Text>
+                  <Text className="text-xs text-primary font-bold">{t("common:open") || "Open"}</Text>
                   <Icon
                     icon={ChevronRightIcon}
                     size={14}
@@ -519,7 +507,15 @@ export default function ProfileScreen() {
             {t("dataAndExport") || "Data & Export"}
           </Text>
           <View className="bg-card border border-border rounded-3xl p-4">
-            <DownloadButton selectedFarm={selectedFarm} />
+            {isLocked ? (
+              <LockedCard
+                title={t("dataAndExport") || "Export Data"}
+                description={t("signInPrompt") || "Sign in or register to export data."}
+                minHeight={30}
+              />
+            ) : (
+              <DownloadButton selectedFarm={selectedFarm} />
+            )}
           </View>
         </View>
 

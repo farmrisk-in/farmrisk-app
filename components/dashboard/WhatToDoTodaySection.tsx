@@ -11,8 +11,10 @@ import {
   Bug01Icon,
   RainDropIcon,
   CloudFastWindIcon,
+  Loading,
 } from "@hugeicons/core-free-icons";
 import type { WhatToDoCategory } from "@/lib/api/whatToDo";
+import { loadLanguages } from "i18next";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -51,7 +53,7 @@ interface Props {
 
 // ── component ─────────────────────────────────────────────────────────────────
 export function WhatToDoTodaySection({ crop }: Props) {
-  const { t } = useTranslation(["dashboard"]);
+  const { t } = useTranslation(["dashboard", "common"]);
   const { selectedCrop } = useCropContext();
   const activeCrop = crop || selectedCrop || "general";
 
@@ -132,9 +134,9 @@ export function WhatToDoTodaySection({ crop }: Props) {
           </View>
         )}
 
-        {recommendations.length === 0 && (
+        {recommendations.length === 0 && !showLoader && !isError && (
           <Text className="text-muted-foreground text-sm font-medium">
-            No recommendations available.
+            {t("common:noRecommendations") || "No recommendations available."}
           </Text>
         )}
       </View>
