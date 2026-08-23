@@ -2,10 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { getSoilMoisture } from "@/lib/api";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { useForecast } from "./useForecast";
+import { useLocked } from "./useLocked";
 
 export function useSoilMoisture(crop?: string, daysbefore?: number) {
   const { location, isResolving } = useLocationContext();
   const { isLoading: isForecastLoading } = useForecast();
+  const { isLocked } = useLocked();
 
   const activeCrop = crop && crop !== "general" ? crop : undefined;
 
@@ -19,7 +21,7 @@ export function useSoilMoisture(crop?: string, daysbefore?: number) {
     ],
     queryFn: () =>
       getSoilMoisture(location!.lat, location!.lng, activeCrop, daysbefore),
-    enabled: !isResolving && !!location?.lat && !!location?.lng,
+    enabled: !isLocked && !isResolving && !!location?.lat && !!location?.lng,
     staleTime: 60 * 60 * 1000,
   });
 

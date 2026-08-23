@@ -3,6 +3,7 @@ import { useCalendar } from "./useCalendar";
 import { useWeather } from "./useWeather";
 import { useForecast } from "./useForecast";
 import { useSoilMoisture } from "./useSoilMoisture";
+import { useLocked } from "./useLocked";
 import { AIAdvisoryRequestPayload } from "@/types/ai";
 import { VillageReportAPIResponse } from "@/types/forecast";
 import { OpenMeteoResponse } from "@/types/weather";
@@ -90,6 +91,7 @@ const sanitizeWeather = (w: OpenMeteoResponse): OpenMeteoResponse => ({
  */
 export function useAIRequestPayload(cropId?: string, language: string = "en") {
   const { location, isResolving } = useLocationContext();
+  const { isLocked } = useLocked();
   const activeCrop = cropId || "general";
 
   const calendar = useCalendar(activeCrop);
@@ -173,6 +175,7 @@ export function useAIRequestPayload(cropId?: string, language: string = "en") {
       : "none";
 
   const isDataReady =
+    !isLocked &&
     !isResolving &&
     !isForecastLoading &&
     !calendar.isLoading &&

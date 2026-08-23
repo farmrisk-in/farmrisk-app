@@ -1,15 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCalendar } from "@/lib/api";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { useLocked } from "./useLocked";
 
 export function useCalendar(crop?: string) {
   const { location, isResolving } = useLocationContext();
+  const { isLocked } = useLocked();
   const activeCrop = crop || "general";
 
   const query = useQuery({
     queryKey: ["calendar", activeCrop, location?.lat, location?.lng],
     queryFn: () => getCalendar(activeCrop, location!.lat, location!.lng),
-    enabled: !isResolving && !!location?.lat && !!location?.lng && !!activeCrop,
+    enabled: !isLocked && !isResolving && !!location?.lat && !!location?.lng && !!activeCrop,
     staleTime: 60 * 60 * 1000,
   });
 

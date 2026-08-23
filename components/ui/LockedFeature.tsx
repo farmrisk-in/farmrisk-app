@@ -10,7 +10,7 @@ import { Icon } from "@/components/ui/Icon";
 import { LockPasswordIcon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/hooks/useAuth";
+import { useLocked } from "@/hooks/useLocked";
 import Svg, { Defs, RadialGradient, Stop, Rect } from "react-native-svg";
 
 interface LockedFeatureProps {
@@ -25,11 +25,11 @@ export function LockedFeature({
   style,
   className,
 }: LockedFeatureProps) {
-  const { user } = useAuth();
+  const { isLocked } = useLocked();
   const router = useRouter();
   const { t } = useTranslation(["common"]);
 
-  if (user) {
+  if (!isLocked) {
     return (
       <View style={style} className={className}>
         {children}
