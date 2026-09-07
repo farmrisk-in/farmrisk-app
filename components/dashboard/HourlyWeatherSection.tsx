@@ -29,16 +29,16 @@ export function HourlyWeatherSection() {
 
   if (isLoading) {
     return (
-      <View className="my-6 px-3">
+      <View className="my-6">
         <View className="flex pb-4 flex-row gap-2 items-center">
           <Icon
             icon={Clock01Icon}
             className="text-foreground"
             strokeWidth={2}
-            size={26}
+            size={24}
           />
           <Text
-            className="flex-1 shrink text-xl text-foreground font-semibold"
+            className="flex-1 shrink text-lg text-foreground font-semibold"
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.75}
@@ -75,7 +75,7 @@ export function HourlyWeatherSection() {
 
   if (isError) {
     return (
-      <View className="my-6 px-3">
+      <View className="my-6">
         <View className="flex pb-4 flex-row gap-2 items-center">
           <Icon
             icon={Clock01Icon}
@@ -118,7 +118,7 @@ export function HourlyWeatherSection() {
   if (!slots.length) return null;
 
   return (
-    <View className="my-6 px-3">
+    <View className="my-6">
       <SectionHeader
         icon={Clock01Icon}
         title={t("hourlyTitle")}
@@ -134,7 +134,11 @@ export function HourlyWeatherSection() {
                 {t("next24Hours")}
               </Text>
             </View>
-            <Icon icon={ChevronRightIcon} size={28} className="text-foreground" />
+            <Icon
+              icon={ChevronRightIcon}
+              size={28}
+              className="text-foreground"
+            />
           </TouchableOpacity>
         }
       />

@@ -160,3 +160,23 @@ export async function getRiskScore(payload: any): Promise<any> {
   }
   return res.json();
 }
+
+export async function getPreSowingAdvisory(payload: {
+  crop: string;
+  state: string;
+  soil_type: string;
+  season?: string;
+  irrigation_type?: string;
+  language?: string;
+}): Promise<any> {
+  const url = `${getApiUrl()}/api/advisory/pre-sowing`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    throw new Error("getPreSowingAdvisory request failed: " + res.statusText);
+  }
+  return res.json();
+}

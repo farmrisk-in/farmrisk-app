@@ -16,7 +16,6 @@ import {
   FlashIcon,
   ArrowUp01Icon,
   ArrowDown01Icon,
-  ChevronRightIcon,
 } from "@hugeicons/core-free-icons";
 
 // formatHour logic
@@ -62,7 +61,6 @@ export function CompactHourlySection({
   const { t: tDash } = useTranslation(["dashboard"]);
   const { data: weatherData, isLoading: isWeatherLoading } = useWeather();
   const { data: riskData, isLoading: isRiskLoading } = useRiskScore();
-  const router = useRouter();
 
   const hourly = weatherData?.hourly;
   const current = weatherData?.current;
@@ -111,7 +109,7 @@ export function CompactHourlySection({
 
   if (isWeatherLoading || isRiskLoading) {
     return (
-      <View className="my-6 px-3">
+      <View className="my-6">
         <SectionHeader icon={Clock01Icon} title={tDash("hourlyNextHours")} />
         <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-5 shadow-sm">
           <View className="flex-row justify-between mb-4">
@@ -135,7 +133,7 @@ export function CompactHourlySection({
 
   if (!hourly) {
     return (
-      <View className="my-6 px-3">
+      <View className="my-6">
         <SectionHeader icon={Clock01Icon} title={tDash("hourlyNextHours")} />
         <View className="bg-card dark:bg-muted/20 border border-border rounded-3xl p-5 items-center justify-center">
           <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
@@ -148,7 +146,7 @@ export function CompactHourlySection({
   }
 
   return (
-    <View className="my-6 px-3">
+    <View className="my-6">
       <SectionHeader
         icon={Clock01Icon}
         title={tDash("hourlyNextHours")}
