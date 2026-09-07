@@ -1,3 +1,4 @@
 redo export template
-
-lcoaked feature overlay ui fix
+custom crop input
+fix y pad or margin for consistency in every component
+actuall test the rpresowing components also languages

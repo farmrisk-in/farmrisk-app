@@ -8,6 +8,7 @@ import {
   Home01Icon,
   SunCloud01Icon,
   Analytics01Icon,
+  ToolsIcon,
 } from "@hugeicons/core-free-icons";
 import Plant01Icon from "@hugeicons/core-free-icons/Plant01Icon";
 
@@ -70,7 +71,18 @@ export default function TabLayout() {
         }}
       />
 
-      {/* 4. Insights Tab */}
+      {/* 4. Tools Tab */}
+      <Tabs.Screen
+        name="tools"
+        options={{
+          title: t("tabTools"),
+          tabBarIcon: ({ color, size }) => (
+            <Icon icon={ToolsIcon} size={size || 22} color={color} />
+          ),
+        }}
+      />
+
+      {/* 5. Insights Tab */}
       <Tabs.Screen
         name="insights"
         options={{

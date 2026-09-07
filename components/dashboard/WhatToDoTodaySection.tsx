@@ -11,10 +11,8 @@ import {
   Bug01Icon,
   RainDropIcon,
   CloudFastWindIcon,
-  Loading,
 } from "@hugeicons/core-free-icons";
 import type { WhatToDoCategory } from "@/lib/api/whatToDo";
-import { loadLanguages } from "i18next";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -71,7 +69,7 @@ export function WhatToDoTodaySection({ crop }: Props) {
   const showLoader = isLoading || isStaleCrop || isStaleLanguage;
 
   return (
-    <View className="my-6 mx-2">
+    <View className="my-6">
       {/* ── Header ── */}
       <SectionHeader icon={CheckListIcon} title={t("whatToDoToday")} />
       <View className="bg-card border border-border rounded-3xl p-3 shadow-sm">
