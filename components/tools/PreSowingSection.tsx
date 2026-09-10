@@ -33,6 +33,66 @@ import ArrowUp01Icon from "@hugeicons/core-free-icons/ArrowUp01Icon";
 import Tick02Icon from "@hugeicons/core-free-icons/Tick02Icon";
 import { Icon } from "@/components/ui/Icon";
 
+const INDIAN_STATES = [
+  "Andaman & Nicobar Islands",
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chandigarh",
+  "Chhattisgarh",
+  "Dadra & Nagar Haveli",
+  "Daman & Diu",
+  "Delhi",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jammu & Kashmir",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Ladakh",
+  "Lakshadweep",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Puducherry",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+];
+
+function extractStateFromLocation(displayName?: string): string {
+  if (!displayName) return "Gujarat";
+  const lower = displayName.toLowerCase();
+  for (const st of INDIAN_STATES) {
+    if (lower.includes(st.toLowerCase())) {
+      return st;
+    }
+  }
+  const parts = displayName.split(",").map((p) => p.trim());
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const part = parts[i];
+    if (part.toLowerCase() === "india" || /^\d{5,6}$/.test(part)) continue;
+    const match = INDIAN_STATES.find(
+      (s) => s.toLowerCase() === part.toLowerCase(),
+    );
+    if (match) return match;
+  }
+  return "Gujarat";
+}
+
 const SOIL_TYPES = [
   "black cotton soil",
   "sandy loam",
@@ -91,52 +151,54 @@ function DropdownSelector({
 
       {/* Dropdown Options List */}
       {isOpen && (
-        <View className="mt-1.5 rounded-2xl bg-card border border-border overflow-hidden">
-          {options.map((opt, idx) => {
-            const isSelected = selected === opt;
-            const isLast = idx === options.length - 1;
+        <View className="mt-1.5 rounded-2xl bg-card border border-border overflow-hidden max-h-48">
+          <ScrollView nestedScrollEnabled={true}>
+            {options.map((opt, idx) => {
+              const isSelected = selected === opt;
+              const isLast = idx === options.length - 1;
 
-            return (
-              <TouchableOpacity
-                key={opt}
-                activeOpacity={0.7}
-                onPress={() => {
-                  onSelect(opt);
-                  onToggle();
-                }}
-                style={
-                  isSelected
-                    ? {
-                        backgroundColor: isDark
-                          ? "rgba(16, 185, 129, 0.15)"
-                          : "rgba(16, 185, 129, 0.1)",
-                      }
-                    : undefined
-                }
-                className={`flex-row items-center justify-between px-4 py-3.5 ${
-                  !isLast ? "border-b border-border" : ""
-                }`}
-              >
-                <Text
-                  className={`text-sm capitalize ${
+              return (
+                <TouchableOpacity
+                  key={opt}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    onSelect(opt);
+                    onToggle();
+                  }}
+                  style={
                     isSelected
-                      ? "text-emerald-600 dark:text-emerald-400 font-bold"
-                      : "text-foreground font-medium"
+                      ? {
+                          backgroundColor: isDark
+                            ? "rgba(16, 185, 129, 0.15)"
+                            : "rgba(16, 185, 129, 0.1)",
+                        }
+                      : undefined
+                  }
+                  className={`flex-row items-center justify-between px-4 py-3.5 ${
+                    !isLast ? "border-b border-border" : ""
                   }`}
                 >
-                  {opt}
-                </Text>
+                  <Text
+                    className={`text-sm capitalize ${
+                      isSelected
+                        ? "text-emerald-600 dark:text-emerald-400 font-bold"
+                        : "text-foreground font-medium"
+                    }`}
+                  >
+                    {opt}
+                  </Text>
 
-                {isSelected && (
-                  <Icon
-                    icon={Tick02Icon}
-                    size={16}
-                    className="text-emerald-600 dark:text-emerald-400"
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          })}
+                  {isSelected && (
+                    <Icon
+                      icon={Tick02Icon}
+                      size={16}
+                      className="text-emerald-600 dark:text-emerald-400"
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </View>
       )}
     </View>
@@ -152,17 +214,24 @@ export function PreSowingSection() {
   const [modalVisible, setModalVisible] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
+  const initialLocationState = React.useMemo(() => {
+    return extractStateFromLocation(location?.displayName || location?.name);
+  }, [location?.displayName, location?.name]);
+
+  const [selectedState, setSelectedState] = useState(initialLocationState);
   const [soilType, setSoilType] = useState(SOIL_TYPES[0]);
   const [season, setSeason] = useState(SEASONS[0]);
   const [irrigationType, setIrrigationType] = useState(IRRIGATION_TYPES[0]);
 
-  const inferredState = location?.displayName?.includes(",")
-    ? location.displayName.split(",").pop()?.trim() || "Gujarat"
-    : "Gujarat";
+  React.useEffect(() => {
+    if (initialLocationState) {
+      setSelectedState(initialLocationState);
+    }
+  }, [initialLocationState]);
 
   const { data, isLoading, isError } = usePreSowingAdvisory({
     crop: selectedCrop || "Cotton",
-    state: inferredState,
+    state: selectedState,
     soil_type: soilType,
     season: season,
     irrigation_type: irrigationType,
@@ -254,6 +323,16 @@ export function PreSowingSection() {
               </View>
 
               <ScrollView showsVerticalScrollIndicator={false} className="py-1">
+                {/* State Dropdown */}
+                <DropdownSelector
+                  label="State"
+                  options={INDIAN_STATES}
+                  selected={selectedState}
+                  onSelect={setSelectedState}
+                  isOpen={openDropdown === "state"}
+                  onToggle={() => toggleDropdown("state")}
+                />
+
                 {/* Season Dropdown */}
                 <DropdownSelector
                   label="Season"

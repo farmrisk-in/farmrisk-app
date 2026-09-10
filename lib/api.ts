@@ -1,12 +1,7 @@
 import { Platform } from "react-native";
 
 export function getApiUrl() {
-  const url =
-    process.env.EXPO_PUBLIC_API_URL || "https://farmrisk.vercel.app";
-  // Android emulator localhost needs to be routed to 10.0.2.2
-  if (Platform.OS === "android" && url.includes("localhost")) {
-    return url.replace("localhost", "10.0.2.2");
-  }
+  const url = process.env.EXPO_PUBLIC_API_URL || "https://127.0.0.1:7860";
   // Remove trailing slash if any
   return url.replace(/\/$/, "");
 }
@@ -38,7 +33,7 @@ export async function getSoilMoisture(
   lat: number,
   lon: number,
   crop?: string,
-  daysbefore?: number
+  daysbefore?: number,
 ): Promise<any> {
   const baseUrl = getApiUrl();
   let url = `${baseUrl}/api/soil-moisture?lat=${lat}&lon=${lon}`;
@@ -94,7 +89,7 @@ export async function getWeatherSummary(payload: any): Promise<any> {
 export async function searchLocations(q: string): Promise<any[]> {
   const baseUrl = getApiUrl();
   const res = await fetch(
-    `${baseUrl}/api/locations?mode=search&q=${encodeURIComponent(q)}`
+    `${baseUrl}/api/locations?mode=search&q=${encodeURIComponent(q)}`,
   );
   if (!res.ok) {
     throw new Error(`Location search failed: ${res.statusText}`);
@@ -107,7 +102,7 @@ export async function searchLocations(q: string): Promise<any[]> {
 export async function reverseGeocode(lat: number, lng: number): Promise<any> {
   const baseUrl = getApiUrl();
   const res = await fetch(
-    `${baseUrl}/api/locations?mode=reverse&lat=${lat}&lon=${lng}`
+    `${baseUrl}/api/locations?mode=reverse&lat=${lat}&lon=${lng}`,
   );
   if (!res.ok) {
     throw new Error(`Reverse geocoding failed: ${res.statusText}`);
@@ -130,12 +125,12 @@ export async function getCrops(lat: number, lng: number): Promise<any> {
 export async function getCalendar(
   crop: string,
   lat: number,
-  lng: number
+  lng: number,
 ): Promise<any> {
   const baseUrl = getApiUrl();
   // Note: Next.js API spelling is "/api/calender"
   const res = await fetch(
-    `${baseUrl}/api/calender?lat=${lat}&lng=${lng}&crop=${crop}`
+    `${baseUrl}/api/calender?lat=${lat}&lng=${lng}&crop=${crop}`,
   );
 
   if (!res.ok) {
@@ -161,6 +156,7 @@ export async function getRiskScore(payload: any): Promise<any> {
   return res.json();
 }
 
+// 11. Pre Sowing Advisory
 export async function getPreSowingAdvisory(payload: {
   crop: string;
   state: string;
@@ -170,13 +166,28 @@ export async function getPreSowingAdvisory(payload: {
   language?: string;
 }): Promise<any> {
   const url = `${getApiUrl()}/api/advisory/pre-sowing`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    throw new Error("getPreSowingAdvisory request failed: " + res.statusText);
+  console.log(`[getPreSowingAdvisory] POST -> ${url}`, payload);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => "");
+      console.error(`[getPreSowingAdvisory] Failed ${res.status}:`, errText);
+      throw new Error(
+        `getPreSowingAdvisory request failed (${res.status}): ${errText || res.statusText}`,
+      );
+    }
+    const data = await res.json();
+    console.log(
+      `[getPreSowingAdvisory] Success! Received sections:`,
+      Object.keys(data?.sections || {}),
+    );
+    return data;
+  } catch (err) {
+    console.error(`[getPreSowingAdvisory] Network Error:`, err);
+    throw err;
   }
-  return res.json();
 }

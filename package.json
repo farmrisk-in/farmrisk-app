@@ -12,6 +12,7 @@
   "dependencies": {
     "@expo/ngrok": "^4.1.0",
     "@expo/vector-icons": "^15.0.3",
+    "@farmrisk/advisory-template": "github:farmrisk-in/farmrisk-advisory-template",
     "@hugeicons/core-free-icons": "^4.2.3",
     "@hugeicons/react-native": "^1.0.15",
     "@react-native-async-storage/async-storage": "2.2.0",
