@@ -33,6 +33,7 @@ import {
   Call02FreeIcons,
   Moon01Icon,
   ChevronLeft,
+  Plant01Icon,
 } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { LanguageSelector } from "@/components/ui/LanguageSelector";
@@ -46,6 +47,11 @@ import { LANGUAGE_NAMES } from "@/i18n";
 import { Avatar } from "react-native-paper";
 import { LockedCard } from "@/components/ui/LockedCard";
 import { useLocked } from "@/hooks/useLocked";
+import { OtherCropModal } from "@/components/crops/OtherCropModal";
+import {
+  getCleanCropName,
+  isCustomCrop,
+} from "@/constants/categorizedCrops";
 
 export default function ProfileScreen() {
   const { user, loading, signOut } = useAuth();
@@ -59,6 +65,7 @@ export default function ProfileScreen() {
   const { selectedFarm, clearFarm } = useFarmContext();
   const { crops } = useCrops();
   const [cropModalVisible, setCropModalVisible] = useState(false);
+  const [otherCropModalVisible, setOtherCropModalVisible] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -114,6 +121,9 @@ export default function ProfileScreen() {
   const selectedCropName =
     crops.find((c: any) => (c.id || c.name?.toLowerCase()) === selectedCrop)
       ?.name ||
+    (isCustomCrop(selectedCrop)
+      ? getCleanCropName(selectedCrop)
+      : undefined) ||
     t("noneDefault") ||
     "None";
 
@@ -603,10 +613,65 @@ export default function ProfileScreen() {
                   </TouchableOpacity>
                 );
               })}
+
+              {/* Active custom crop if selected */}
+              {isCustomCrop(selectedCrop) && (
+                <View className="py-3.5 px-3 rounded-2xl mb-1.5 flex-row justify-between items-center bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-800">
+                  <View className="flex-row items-center gap-2">
+                    <Text className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+                      {getCleanCropName(selectedCrop)}
+                    </Text>
+                    <View className="px-1.5 py-0.5 rounded bg-emerald-200 dark:bg-emerald-800">
+                      <Text className="text-[10px] font-bold text-emerald-800 dark:text-emerald-200">
+                        Other
+                      </Text>
+                    </View>
+                  </View>
+                  <Icon
+                    icon={Tick02Icon}
+                    size={18}
+                    className="text-emerald-500"
+                  />
+                </View>
+              )}
+
+              {/* Other crop modal trigger */}
+              <TouchableOpacity
+                className="py-3.5 px-3 rounded-2xl mt-1.5 mb-1.5 flex-row justify-between items-center bg-muted border border-border"
+                onPress={() => {
+                  setCropModalVisible(false);
+                  setOtherCropModalVisible(true);
+                }}
+              >
+                <View className="flex-row items-center gap-2">
+                  <Icon
+                    icon={Plant01Icon}
+                    size={18}
+                    className="text-emerald-600 dark:text-emerald-400"
+                  />
+                  <Text className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                    Other crop...
+                  </Text>
+                </View>
+                <Text className="text-xs text-muted-foreground font-semibold">
+                  100+ Crops
+                </Text>
+              </TouchableOpacity>
             </ScrollView>
           </View>
         </TouchableOpacity>
       </Modal>
+
+      {/* ── Other Crop Catalog Modal ── */}
+      <OtherCropModal
+        visible={otherCropModalVisible}
+        onClose={() => setOtherCropModalVisible(false)}
+        onSelectCrop={(cropId) => {
+          setSelectedCrop(cropId);
+          setOtherCropModalVisible(false);
+        }}
+        currentSelectedCropId={selectedCrop}
+      />
 
       {/* ── Language Modal ── */}
       <LanguageSelector

@@ -14,6 +14,7 @@ import { useRiskScore } from "@/hooks/useRiskScore";
 import { useCalendar } from "@/hooks/useCalendar";
 import { useWhatToDo } from "@/hooks/useWhatToDo";
 import { useTranslation } from "react-i18next";
+import { getCleanCropName } from "@/constants/categorizedCrops";
 import type { SavedField } from "@/types/fields";
 
 interface Props {
@@ -43,7 +44,7 @@ export default function ExportTemplate({ selectedFarm, onLoadEnd }: Props) {
       year: "numeric",
     });
 
-    const cropName = (selectedCrop || "General").toUpperCase();
+    const cropName = getCleanCropName(selectedCrop).toUpperCase();
     const activeSeason =
       calendarData?.calendar?.[0]?.season?.toUpperCase() || "KHARIF";
 
