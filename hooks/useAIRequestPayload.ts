@@ -8,6 +8,7 @@ import { AIAdvisoryRequestPayload } from "@/types/ai";
 import { VillageReportAPIResponse } from "@/types/forecast";
 import { OpenMeteoResponse } from "@/types/weather";
 import { CalendarAPIResponse, CalendarEvent } from "@/types/calendar";
+import { getCleanCropName } from "@/constants/categorizedCrops";
 
 const num = (v: unknown): number => {
   const n = typeof v === "number" ? v : Number(v);
@@ -203,11 +204,13 @@ export function useAIRequestPayload(cropId?: string, language: string = "en") {
       }
     : undefined;
 
+  const displayCropName = getCleanCropName(activeCrop);
+
   const payload: AIAdvisoryRequestPayload | undefined =
     isDataReady && sanitizedLocation
       ? {
           location: sanitizedLocation,
-          cropId: activeCrop,
+          cropId: displayCropName,
           calendarData: sanitizeCalendar(calendarData!),
           weatherData: sanitizeWeather(weatherData!),
           forecastData: mockVillageReport,

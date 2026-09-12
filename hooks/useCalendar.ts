@@ -6,7 +6,7 @@ import { useLocked } from "./useLocked";
 export function useCalendar(crop?: string) {
   const { location, isResolving } = useLocationContext();
   const { isLocked } = useLocked();
-  const activeCrop = crop || "general";
+  const activeCrop = crop && crop.startsWith("custom_") ? "general" : (crop || "general");
 
   const query = useQuery({
     queryKey: ["calendar", activeCrop, location?.lat, location?.lng],

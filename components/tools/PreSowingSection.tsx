@@ -205,6 +205,8 @@ function DropdownSelector({
   );
 }
 
+import { getCleanCropName } from "@/constants/categorizedCrops";
+
 export function PreSowingSection() {
   const { t } = useTranslation(["common"]);
   const { isLocked } = useLocked();
@@ -229,8 +231,10 @@ export function PreSowingSection() {
     }
   }, [initialLocationState]);
 
+  const effectiveCrop = getCleanCropName(selectedCrop) || "Cotton";
+
   const { data, isLoading, isError } = usePreSowingAdvisory({
-    crop: selectedCrop || "Cotton",
+    crop: effectiveCrop,
     state: selectedState,
     soil_type: soilType,
     season: season,

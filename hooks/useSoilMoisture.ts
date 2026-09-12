@@ -9,7 +9,8 @@ export function useSoilMoisture(crop?: string, daysbefore?: number) {
   const { isLoading: isForecastLoading } = useForecast();
   const { isLocked } = useLocked();
 
-  const activeCrop = crop && crop !== "general" ? crop : undefined;
+  const isCustom = crop?.startsWith("custom_");
+  const activeCrop = crop && crop !== "general" && !isCustom ? crop : undefined;
 
   const query = useQuery({
     queryKey: [
