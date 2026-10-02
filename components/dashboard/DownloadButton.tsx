@@ -57,8 +57,8 @@ export default function DownloadButton({ selectedFarm }: Props) {
     setIsCapturing(true);
 
     try {
-      // Request permission
-      const { status } = await MediaLibrary.requestPermissionsAsync();
+      // Request permission (writeOnly = true avoids requesting READ_MEDIA_IMAGES on API 33+)
+      const { status } = await MediaLibrary.requestPermissionsAsync(true);
       if (status !== "granted") {
         Alert.alert(
           t("downloadPermissionTitle") || "Permission Required",

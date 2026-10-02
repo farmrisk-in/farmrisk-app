@@ -114,17 +114,6 @@ export default function EditProfileScreen() {
   // Directly launch native gallery picker
   const handlePickFromGallery = async () => {
     try {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(
-          t("permissionDenied") || "Permission Denied",
-          t("galleryPermissionNeeded") ||
-            "Please grant access to your photo gallery to upload a profile picture.",
-        );
-        return;
-      }
-
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         allowsEditing: false,
