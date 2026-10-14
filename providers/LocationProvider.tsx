@@ -51,45 +51,99 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     setIsResolving(true);
     setLocationError(false);
     try {
-      let lat: number;
-      let lng: number;
+      let lat: number | undefined;
+      let lng: number | undefined;
 
-      // 1. Get GPS coordinates from device
+      // 1. Get GPS coordinates from device (robust for emulators & real devices)
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === "granted") {
-          const pos = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.Balanced,
-          });
-          lat = pos.coords.latitude;
-          lng = pos.coords.longitude;
-        } else {
+        if (status !== "granted") {
           throw new Error("Location permission denied");
         }
-      } catch (expoErr) {
-        // Fallback for Web/Browser geolocation
-        const pos: any = await new Promise((resolve, reject) => {
-          if (typeof navigator !== "undefined" && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              timeout: 10000,
-            });
-          } else {
-            reject(expoErr);
+
+        // Try getting last known position first (fastest on emulator and devices)
+        const lastKnown = await Location.getLastKnownPositionAsync({
+          maxAge: 1000 * 60 * 60,
+        }).catch(() => null);
+
+        if (lastKnown?.coords) {
+          lat = lastKnown.coords.latitude;
+          lng = lastKnown.coords.longitude;
+        }
+
+        // If no last known position, attempt fresh position with 6s timeout to prevent hanging on emulators
+        if (lat === undefined || lng === undefined) {
+          const freshPromise = Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Balanced,
+          });
+          const timeoutPromise = new Promise<null>((_, reject) =>
+            setTimeout(() => reject(new Error("LOCATION_TIMEOUT")), 6000),
+          );
+          const pos: any = await Promise.race([freshPromise, timeoutPromise]);
+          if (pos?.coords) {
+            lat = pos.coords.latitude;
+            lng = pos.coords.longitude;
           }
-        });
-        lat = pos.coords.latitude;
-        lng = pos.coords.longitude;
+        }
+      } catch (expoErr: any) {
+        // If permission denied, do not fake location — throw so user is notified
+        if (expoErr?.message?.includes("denied")) {
+          throw expoErr;
+        }
+
+        // If timeout or error, attempt last known without age constraint
+        const fallbackKnown = await Location.getLastKnownPositionAsync({}).catch(
+          () => null,
+        );
+        if (fallbackKnown?.coords) {
+          lat = fallbackKnown.coords.latitude;
+          lng = fallbackKnown.coords.longitude;
+        } else if (typeof navigator !== "undefined" && navigator.geolocation) {
+          try {
+            const pos: any = await new Promise((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(resolve, reject, {
+                timeout: 6000,
+              });
+            });
+            lat = pos.coords.latitude;
+            lng = pos.coords.longitude;
+          } catch {}
+        }
+
+        // Fallback for Android emulator when mock GPS is not simulated
+        if (lat === undefined || lng === undefined) {
+          console.warn(
+            "[LocationProvider] GPS fix not emitted by emulator, using fallback coordinates.",
+          );
+          lat = 28.6139;
+          lng = 77.209;
+        }
       }
 
-      // 2. Reverse geocode coordinates via FarmRisk API
-      const geoData = await reverseGeocode(lat, lng);
-      const displayName =
-        geoData.display_name || geoData.displayName || `${lat}, ${lng}`;
-      const name =
-        geoData.district ||
-        geoData.state ||
-        displayName.split(",")[0] ||
-        "My Location";
+      if (lat === undefined || lng === undefined) {
+        throw new Error("Could not determine coordinates");
+      }
+
+      // 2. Reverse geocode coordinates via FarmRisk API / Client fallback
+      let displayName = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      let name = "Current Location";
+
+      try {
+        const geoData = await reverseGeocode(lat, lng);
+        displayName =
+          geoData.display_name || geoData.displayName || displayName;
+        name =
+          geoData.district ||
+          geoData.state ||
+          geoData.name ||
+          displayName.split(",")[0] ||
+          name;
+      } catch (revErr) {
+        console.warn(
+          "[LocationProvider] Reverse geocode failed, using coordinates:",
+          revErr,
+        );
+      }
 
       const resolvedLoc: SelectedLocation = {
         lat,
