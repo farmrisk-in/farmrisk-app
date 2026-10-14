@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/lib/supabase";
 import { Icon } from "@/components/ui/Icon";
-import { getAvatarSource } from "@/lib/avatar";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useColorScheme } from "nativewind";
 import {
   Cancel01Icon,
@@ -44,7 +44,6 @@ import DownloadButton from "@/components/dashboard/DownloadButton";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTranslation } from "react-i18next";
 import { LANGUAGE_NAMES } from "@/i18n";
-import { Avatar } from "react-native-paper";
 import { LockedCard } from "@/components/ui/LockedCard";
 import { useLocked } from "@/hooks/useLocked";
 import { OtherCropModal } from "@/components/crops/OtherCropModal";
@@ -144,7 +143,7 @@ export default function ProfileScreen() {
     : "—";
 
   const activeAvatarKey =
-    profile?.avatar_url || user?.user_metadata?.avatar_url || "pic5";
+    profile?.avatar_url || user?.user_metadata?.avatar_url;
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -182,9 +181,9 @@ export default function ProfileScreen() {
             {/* Avatar + name row */}
             <View className="flex-row items-center gap-4 mb-5">
               <View className="relative">
-                <Avatar.Image
+                <UserAvatar
                   size={56}
-                  source={getAvatarSource(activeAvatarKey)}
+                  avatarUrl={activeAvatarKey}
                 />
                 <View className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-card" />
               </View>

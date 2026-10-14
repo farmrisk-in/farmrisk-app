@@ -21,8 +21,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
 import { Icon } from "@/components/ui/Icon";
-import { getAvatarSource } from "@/lib/avatar";
-import { Avatar } from "react-native-paper";
+import { UserAvatar } from "@/components/UserAvatar";
 import {
   ChevronLeftIcon,
   User02Icon,
@@ -379,7 +378,7 @@ export default function EditProfileScreen() {
               {/* ── Avatar Section (Direct Gallery Picker) ── */}
               <View className="items-center justify-center py-2">
                 <View className="relative">
-                  <Avatar.Image size={96} source={getAvatarSource(avatarUrl)} />
+                  <UserAvatar size={96} avatarUrl={avatarUrl} />
                   <TouchableOpacity
                     onPress={handlePickFromGallery}
                     className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-emerald-600 border-2 border-background items-center justify-center shadow-sm"
