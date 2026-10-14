@@ -3,9 +3,11 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Icon } from "@/components/ui/Icon";
 import { useWeather } from "@/hooks/useWeather";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { useRiskScore } from "@/hooks/useRiskScore";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import {
@@ -59,6 +61,7 @@ export function CompactHourlySection({
   hourCount?: number;
 }) {
   const { t: tDash } = useTranslation(["dashboard"]);
+  const { location, isResolving } = useLocationContext();
   const { data: weatherData, isLoading: isWeatherLoading } = useWeather();
   const { data: riskData, isLoading: isRiskLoading } = useRiskScore();
 
@@ -106,6 +109,15 @@ export function CompactHourlySection({
       trend: null,
     },
   ];
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6">
+        <SectionHeader icon={Clock01Icon} title={tDash("hourlyNextHours")} />
+        <NoLocationCard message="Select a location to see hourly forecast trends." />
+      </View>
+    );
+  }
 
   if (isWeatherLoading || isRiskLoading) {
     return (

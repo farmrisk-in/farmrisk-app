@@ -11,7 +11,9 @@ import {
 import { VictoryPie } from "victory-native";
 import { useColorScheme } from "nativewind";
 import { useRiskScore } from "@/hooks/useRiskScore";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import Svg from "react-native-svg";
@@ -183,6 +185,7 @@ function RiskGauge({
 export function RiskSection() {
   const { t } = useTranslation(["dashboard"]);
   const { t: tW } = useTranslation(["weather"]);
+  const { location, isResolving } = useLocationContext();
   const { data, isLoading, isError } = useRiskScore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -211,6 +214,25 @@ export function RiskSection() {
       riskcolor: getRiskColor(h.scoreData?.band ?? "Minimal"),
     });
   };
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-4">
+        <View className="flex flex-row gap-2 mt-2 mb-3 px-3 items-center">
+          <Icon
+            icon={SecurityWarningIcon}
+            size={25}
+            strokeWidth={2}
+            className="text-foreground"
+          />
+          <Text className="text-lg text-foreground font-semibold">
+            {t("agricultureRisk")}
+          </Text>
+        </View>
+        <NoLocationCard message="Select a location to view field risk scores and climate hazard alerts." />
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (

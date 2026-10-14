@@ -189,11 +189,11 @@ export function useAIRequestPayload(cropId?: string, language: string = "en") {
 
   const isLoading =
     isResolving ||
-    !location ||
-    calendar.isLoading ||
-    weather.isLoading ||
-    isForecastLoading ||
-    soilMoisture.isLoading;
+    (!!location &&
+      (calendar.isLoading ||
+        weather.isLoading ||
+        isForecastLoading ||
+        soilMoisture.isLoading));
 
   const sanitizedLocation = location
     ? {

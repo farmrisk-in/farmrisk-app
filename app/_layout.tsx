@@ -16,7 +16,12 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "../global.css";
 
-LogBox.ignoreLogs(["Require cycle: node_modules/victory"]);
+LogBox.ignoreLogs([
+  "Require cycle: node_modules/victory",
+  "Due to changes in Android's permission requirements",
+  "Due to changes in Androids permission requirements",
+  "Expo Go can no longer provide full access to the media library",
+]);
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();

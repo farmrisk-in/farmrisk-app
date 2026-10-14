@@ -17,7 +17,7 @@ export function useCrops() {
     crops: query.data?.crops || [],
     district: query.data?.district,
     state: query.data?.state,
-    isLoading: isResolving || !location || query.isLoading,
+    isLoading: isResolving || (!!location && query.isLoading),
     isFetching: query.isFetching,
     isError: query.isError,
     error: query.error,

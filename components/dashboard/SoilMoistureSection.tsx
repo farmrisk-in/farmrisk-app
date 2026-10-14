@@ -13,6 +13,8 @@ import {
   ScrollView,
 } from "react-native";
 import { useSoilMoisture } from "@/hooks/useSoilMoisture";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import {

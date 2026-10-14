@@ -14,7 +14,7 @@ export function useWeather() {
 
   return {
     data: query.data,
-    isLoading: isResolving || !location || query.isLoading,
+    isLoading: isResolving || (!!location && query.isLoading),
     isFetching: query.isFetching,
     isError: query.isError,
     error: query.error,

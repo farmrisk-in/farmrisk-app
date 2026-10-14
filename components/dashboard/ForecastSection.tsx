@@ -12,6 +12,8 @@ import {
   Alert02Icon,
 } from "@hugeicons/core-free-icons";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { useWeather } from "@/hooks/useWeather";
 import { WeatherIcon } from "../WeatherIcon";
 import { LinearGradient } from "expo-linear-gradient";
@@ -104,10 +106,23 @@ export function ForecastSection() {
       }))
     : [];
 
+  const { location, isResolving } = useLocationContext();
   const finalPredictions =
     forecastRows.length > 0 ? forecastRows : fallbackPredictions;
   const isFallbackUsed =
     forecastRows.length === 0 && fallbackPredictions.length > 0;
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6 px-3">
+        <SectionHeader
+          icon={TrendingUpDownIcon}
+          title={tDash("forecast16Day")}
+        />
+        <NoLocationCard message="Select a location to view the 16-day weather forecast." />
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (

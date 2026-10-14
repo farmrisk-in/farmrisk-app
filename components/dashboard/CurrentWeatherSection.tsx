@@ -10,6 +10,7 @@ import { useColorScheme } from "nativewind";
 import { useWeather } from "@/hooks/useWeather";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -84,7 +85,7 @@ function CurrentWeatherSkeleton() {
 
 export function CurrentWeatherSection() {
   const { t } = useTranslation(["weather"]);
-  const { location } = useLocationContext();
+  const { location, isResolving } = useLocationContext();
   const { data, isLoading, isError } = useWeather();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -93,6 +94,14 @@ export function CurrentWeatherSection() {
     isLoading: isLoadingWS,
     isError: isErrorWS,
   } = useWeatherSummary(i18n.language);
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-3">
+        <NoLocationCard message="Select a location to see current weather metrics and conditions." />
+      </View>
+    );
+  }
 
   if (isLoading || !data) {
     return <CurrentWeatherSkeleton />;

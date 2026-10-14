@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 
 export function getApiUrl() {
-  const url = process.env.EXPO_PUBLIC_API_URL || "https://127.0.0.1:7860";
+  const url = process.env.EXPO_PUBLIC_API_URL || "https://farmrisk.vercel.app";
   // Remove trailing slash if any
   return url.replace(/\/$/, "");
 }
@@ -85,29 +85,334 @@ export async function getWeatherSummary(payload: any): Promise<any> {
   return res.json();
 }
 
-// 6. Search Locations
+// 6. Search Locations (Backend + Ola Maps + LocationIQ + Nominatim Fallbacks)
 export async function searchLocations(q: string): Promise<any[]> {
+  const trimmed = q.trim();
+  if (!trimmed) return [];
+
   const baseUrl = getApiUrl();
-  const res = await fetch(
-    `${baseUrl}/api/locations?mode=search&q=${encodeURIComponent(q)}`,
-  );
-  if (!res.ok) {
-    throw new Error(`Location search failed: ${res.statusText}`);
+
+  // 1. Try Backend API first
+  try {
+    const res = await fetch(
+      `${baseUrl}/api/locations?mode=search&q=${encodeURIComponent(trimmed)}`,
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data.results) && data.results.length > 0) {
+        return data.results;
+      }
+    }
+  } catch (backendErr) {
+    console.warn(
+      "[searchLocations] Backend search unavailable, attempting client fallbacks:",
+      backendErr,
+    );
   }
-  const data = await res.json();
-  return data.results || [];
+
+  // 2. Client-side Fallback 1: Ola Maps
+  const olaApiKey =
+    process.env.EXPO_PUBLIC_OLA_MAPS_API_KEY ||
+    process.env.OLA_MAPS_API_KEY ||
+    "1IY0haE3s03m7dPztoZhLYshnZy9UFPEtn5sQa4S";
+
+  if (olaApiKey) {
+    try {
+      const olaRes = await fetch(
+        `https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(
+          trimmed,
+        )}&api_key=${encodeURIComponent(olaApiKey)}`,
+        {
+          headers: {
+            "X-Request-Id": "farmrisk-search",
+            Accept: "application/json",
+          },
+        },
+      );
+      if (olaRes.ok) {
+        const olaData = await olaRes.json();
+        const predictions = olaData.predictions || [];
+        if (predictions.length > 0) {
+          const results: any[] = [];
+          for (let i = 0; i < predictions.length; i++) {
+            const pred = predictions[i];
+            const mainText =
+              pred.structured_formatting?.main_text ||
+              pred.description ||
+              trimmed;
+            const secondaryText =
+              pred.structured_formatting?.secondary_text || "";
+            const name = secondaryText
+              ? `${mainText}, ${secondaryText}`
+              : mainText;
+            const displayName = pred.description || name;
+            const placeId = pred.place_id || `ola-${i}`;
+
+            const lat = pred.geometry?.location?.lat ?? pred.location?.lat;
+            const lng = pred.geometry?.location?.lng ?? pred.location?.lng;
+
+            if (
+              typeof lat === "number" &&
+              typeof lng === "number" &&
+              !isNaN(lat) &&
+              !isNaN(lng)
+            ) {
+              results.push({
+                id: placeId,
+                name,
+                displayName,
+                lat,
+                lng,
+                district: secondaryText.split(",")[0]?.trim() || mainText,
+                provider: "ola",
+              });
+            }
+          }
+          if (results.length > 0) return results;
+        }
+      }
+    } catch (olaErr) {
+      console.warn("[searchLocations] Client Ola Maps search failed:", olaErr);
+    }
+  }
+
+  // 3. Client-side Fallback 2: LocationIQ
+  const locationIqApiKey =
+    process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY ||
+    process.env.LOCATIONIQ_API_KEY ||
+    "pk.697f028b191541778dbab4077852625e";
+
+  if (locationIqApiKey) {
+    try {
+      const liqRes = await fetch(
+        `https://us1.locationiq.com/v1/autocomplete?key=${encodeURIComponent(
+          locationIqApiKey,
+        )}&q=${encodeURIComponent(
+          trimmed,
+        )}&format=json&addressdetails=1&limit=8&countrycodes=in`,
+      );
+      if (liqRes.ok) {
+        const data = await liqRes.json();
+        if (Array.isArray(data) && data.length > 0) {
+          return data.map((item: any) => {
+            const addr = item.address;
+            const main =
+              addr?.village ??
+              addr?.town ??
+              addr?.city ??
+              item.display_place;
+            const dist =
+              addr?.county ?? addr?.state_district ?? addr?.state;
+            return {
+              id: String(item.place_id),
+              name: [main, dist].filter(Boolean).join(", ") || item.display_name,
+              displayName: item.display_name,
+              lat: Number(item.lat),
+              lng: Number(item.lon),
+              district: addr?.county ?? addr?.state_district,
+              state: addr?.state,
+              provider: "locationiq",
+            };
+          });
+        }
+      }
+    } catch (liqErr) {
+      console.warn("[searchLocations] Client LocationIQ search failed:", liqErr);
+    }
+  }
+
+  // 4. Client-side Fallback 3: Nominatim (OpenStreetMap)
+  try {
+    const nomRes = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&countrycodes=in&q=${encodeURIComponent(
+        trimmed,
+      )}`,
+      {
+        headers: {
+          "User-Agent": "farmrisk-app/1.0",
+          Accept: "application/json",
+        },
+      },
+    );
+    if (nomRes.ok) {
+      const data = await nomRes.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data.map((item: any) => {
+          const addr = item.address;
+          const main = addr?.village ?? addr?.town ?? addr?.city;
+          const dist = addr?.county ?? addr?.state_district;
+          return {
+            id: String(item.place_id),
+            name:
+              [main, dist, addr?.state].filter(Boolean).join(", ") ||
+              item.display_name,
+            displayName: item.display_name,
+            lat: Number(item.lat),
+            lng: Number(item.lon),
+            district: dist,
+            state: addr?.state,
+            provider: "nominatim",
+          };
+        });
+      }
+    }
+  } catch (nomErr) {
+    console.warn("[searchLocations] Client Nominatim search failed:", nomErr);
+  }
+
+  return [];
 }
 
-// 7. Reverse Geocode
+// 7. Reverse Geocode (Backend + Ola Maps + LocationIQ + Nominatim Fallbacks)
 export async function reverseGeocode(lat: number, lng: number): Promise<any> {
   const baseUrl = getApiUrl();
-  const res = await fetch(
-    `${baseUrl}/api/locations?mode=reverse&lat=${lat}&lon=${lng}`,
-  );
-  if (!res.ok) {
-    throw new Error(`Reverse geocoding failed: ${res.statusText}`);
+
+  // 1. Try Backend API first
+  try {
+    const res = await fetch(
+      `${baseUrl}/api/locations?mode=reverse&lat=${lat}&lon=${lng}`,
+    );
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (backendErr) {
+    console.warn(
+      "[reverseGeocode] Backend reverse geocode unavailable, attempting client fallbacks:",
+      backendErr,
+    );
   }
-  return res.json();
+
+  // 2. Client-side Fallback 1: Ola Maps
+  const olaApiKey =
+    process.env.EXPO_PUBLIC_OLA_MAPS_API_KEY ||
+    process.env.OLA_MAPS_API_KEY ||
+    "1IY0haE3s03m7dPztoZhLYshnZy9UFPEtn5sQa4S";
+
+  if (olaApiKey) {
+    try {
+      const olaRes = await fetch(
+        `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${lat},${lng}&api_key=${encodeURIComponent(
+          olaApiKey,
+        )}`,
+        {
+          headers: {
+            "X-Request-Id": "farmrisk-reverse",
+            Accept: "application/json",
+          },
+        },
+      );
+      if (olaRes.ok) {
+        const olaData = await olaRes.json();
+        const results = olaData.results || [];
+        if (results.length > 0) {
+          const top = results[0];
+          const displayName =
+            top.formatted_address || top.name || `${lat}, ${lng}`;
+          let state: string | undefined;
+          let district: string | undefined;
+          if (Array.isArray(top.address_components)) {
+            for (const comp of top.address_components) {
+              const types: string[] = comp.types || [];
+              if (types.includes("administrative_area_level_1")) {
+                state = comp.long_name;
+              } else if (
+                types.includes("administrative_area_level_2") ||
+                types.includes("locality") ||
+                types.includes("district")
+              ) {
+                if (!district) district = comp.long_name;
+              }
+            }
+          }
+          return {
+            name: top.name || district || state || displayName.split(",")[0],
+            displayName,
+            lat,
+            lng,
+            district,
+            state,
+            provider: "ola",
+          };
+        }
+      }
+    } catch (olaErr) {
+      console.warn("[reverseGeocode] Client Ola reverse failed:", olaErr);
+    }
+  }
+
+  // 3. Client-side Fallback 2: LocationIQ
+  const locationIqApiKey =
+    process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY ||
+    process.env.LOCATIONIQ_API_KEY ||
+    "pk.697f028b191541778dbab4077852625e";
+
+  if (locationIqApiKey) {
+    try {
+      const liqRes = await fetch(
+        `https://us1.locationiq.com/v1/reverse?key=${encodeURIComponent(
+          locationIqApiKey,
+        )}&lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
+      );
+      if (liqRes.ok) {
+        const item = await liqRes.json();
+        const addr = item.address;
+        const main = addr?.village ?? addr?.town ?? addr?.city;
+        const dist = addr?.county ?? addr?.state_district;
+        return {
+          name: [main, dist].filter(Boolean).join(", ") || item.display_name,
+          displayName: item.display_name,
+          lat,
+          lng,
+          district: dist,
+          state: addr?.state,
+          provider: "locationiq",
+        };
+      }
+    } catch (liqErr) {
+      console.warn("[reverseGeocode] Client LocationIQ reverse failed:", liqErr);
+    }
+  }
+
+  // 4. Client-side Fallback 3: Nominatim
+  try {
+    const nomRes = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${lat}&lon=${lng}`,
+      {
+        headers: {
+          "User-Agent": "farmrisk-app/1.0",
+          Accept: "application/json",
+        },
+      },
+    );
+    if (nomRes.ok) {
+      const item = await nomRes.json();
+      const addr = item.address;
+      const main = addr?.village ?? addr?.town ?? addr?.city;
+      const dist = addr?.county ?? addr?.state_district;
+      return {
+        name:
+          [main, dist, addr?.state].filter(Boolean).join(", ") ||
+          item.display_name,
+        displayName: item.display_name,
+        lat,
+        lng,
+        district: dist,
+        state: addr?.state,
+        provider: "nominatim",
+      };
+    }
+  } catch (nomErr) {
+    console.warn("[reverseGeocode] Client Nominatim reverse failed:", nomErr);
+  }
+
+  // Final graceful fallback (coordinates)
+  return {
+    name: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+    displayName: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+    lat,
+    lng,
+    provider: "coordinates",
+  };
 }
 
 // 8. Get Crops

@@ -43,7 +43,7 @@ export function useForecast() {
   return {
     data: query.data,
     forecastRows,
-    isLoading: isResolving || !location || isWeatherLoading || query.isLoading,
+    isLoading: isResolving || (!!location && (isWeatherLoading || query.isLoading)),
     isFetching: query.isFetching,
     isError: query.isError && rawForecastRows.length === 0,
     error: query.error,

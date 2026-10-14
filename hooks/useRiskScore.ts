@@ -71,7 +71,13 @@ export function useRiskScore() {
 
   return {
     data: query.data,
-    isLoading: isResolving || !location || isWeatherLoading || isForecastLoading || isSoilLoading || query.isLoading,
+    isLoading:
+      isResolving ||
+      (!!location &&
+        (isWeatherLoading ||
+          isForecastLoading ||
+          isSoilLoading ||
+          query.isLoading)),
     isError: query.isError,
     error: query.error,
   };

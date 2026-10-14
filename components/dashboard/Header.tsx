@@ -1,12 +1,12 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
-import { Text, Avatar } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { Icon } from "@/components/ui/Icon";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { getAvatarSource } from "@/lib/avatar";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Logo } from "@/components/Logo";
 import { useTranslation } from "react-i18next";
 
@@ -45,9 +45,9 @@ export function Header() {
           activeOpacity={0.8}
           className="flex-row items-center gap-3"
         >
-          <Avatar.Image
+          <UserAvatar
             size={45}
-            source={getAvatarSource(avatarKey)}
+            avatarUrl={avatarKey}
           />
           <View>
             <Text className="text-sm text-muted-foreground font-medium">

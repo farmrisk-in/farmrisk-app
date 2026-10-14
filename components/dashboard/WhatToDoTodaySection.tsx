@@ -3,8 +3,10 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import { i18n } from "@/i18n";
 import { useCropContext } from "@/providers/CropProvider";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { useWhatToDo } from "@/hooks/useWhatToDo";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { Icon } from "@/components/ui/Icon";
 import {
   CheckListIcon,
@@ -55,6 +57,7 @@ export function WhatToDoTodaySection({ crop }: Props) {
   const { selectedCrop } = useCropContext();
   const activeCrop = crop || selectedCrop || "general";
 
+  const { location, isResolving } = useLocationContext();
   const { data, recommendations, isLoading, isFetching, isError } = useWhatToDo(
     activeCrop,
     i18n.language,
@@ -67,6 +70,15 @@ export function WhatToDoTodaySection({ crop }: Props) {
     isFetching && !!data && data.language !== i18n.language;
 
   const showLoader = isLoading || isStaleCrop || isStaleLanguage;
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6">
+        <SectionHeader icon={CheckListIcon} title={t("whatToDoToday")} />
+        <NoLocationCard message="Select a location to receive daily crop and field recommendations." />
+      </View>
+    );
+  }
 
   return (
     <View className="my-6">

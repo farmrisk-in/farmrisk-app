@@ -28,7 +28,7 @@ export function useSoilMoisture(crop?: string, daysbefore?: number) {
 
   return {
     data: query.data,
-    isLoading: isResolving || !location || isForecastLoading || query.isLoading,
+    isLoading: isResolving || (!!location && (isForecastLoading || query.isLoading)),
     isFetching: query.isFetching,
     isError: query.isError,
     error: query.error,

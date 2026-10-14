@@ -11,7 +11,9 @@ import {
   CloudOffIcon,
 } from "@hugeicons/core-free-icons";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { useRouter } from "expo-router";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { useTranslation } from "react-i18next";
 
 const formatHour = (dateInput: Date | string) => {
@@ -25,7 +27,17 @@ const formatHour = (dateInput: Date | string) => {
 export function HourlyWeatherSection() {
   const router = useRouter();
   const { t } = useTranslation(["dashboard", "weather"]);
+  const { location, isResolving } = useLocationContext();
   const { data, isLoading, isError } = useWeather();
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6">
+        <SectionHeader icon={Clock01Icon} title={t("hourlyTitle")} />
+        <NoLocationCard message="Select a location to view the 24-hour weather forecast." />
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (

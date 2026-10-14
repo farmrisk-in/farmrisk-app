@@ -20,7 +20,7 @@ export function useCalendar(crop?: string) {
     calendar: query.data?.calendar || [],
     district: query.data?.district,
     state: query.data?.state,
-    isLoading: isResolving || !location || query.isLoading,
+    isLoading: isResolving || (!!location && query.isLoading),
     isFetching: query.isFetching,
     isError: query.isError,
     error: query.error,
