@@ -17,6 +17,7 @@ import { usePreSowingAdvisory } from "@/hooks/usePreSowingAdvisory";
 import { useLocked } from "@/hooks/useLocked";
 import { useCropContext } from "@/providers/CropProvider";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 
 // Icons
 import Calendar01Icon from "@hugeicons/core-free-icons/Calendar01Icon";
@@ -211,7 +212,7 @@ export function PreSowingSection() {
   const { t } = useTranslation(["common"]);
   const { isLocked } = useLocked();
   const { selectedCrop } = useCropContext();
-  const { location } = useLocationContext();
+  const { location, isResolving } = useLocationContext();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -247,6 +248,14 @@ export function PreSowingSection() {
   const toggleDropdown = (name: string) => {
     setOpenDropdown((prev) => (prev === name ? null : name));
   };
+
+  if (!location && !isResolving) {
+    return (
+      <View className="mt-2 pb-12">
+        <NoLocationCard message="Select a location to calculate optimal sowing window and moisture readiness." />
+      </View>
+    );
+  }
 
   return (
     <View className="mt-2 pb-12">

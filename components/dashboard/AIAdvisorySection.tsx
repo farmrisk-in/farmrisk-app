@@ -15,7 +15,9 @@ import { Book02Icon, BotIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { i18n } from "@/i18n";
 import { useTranslation } from "react-i18next";
 import { useLocked } from "@/hooks/useLocked";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { LockedCard } from "@/components/ui/LockedCard";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 
 interface Props {
   crop?: string;
@@ -24,6 +26,7 @@ interface Props {
 export function AIAdvisorySection({ crop }: Props) {
   const { t } = useTranslation(["dashboard", "common"]);
   const { isLocked } = useLocked();
+  const { location, isResolving } = useLocationContext();
   const { data, sources, isLoading, isError } = useAI(crop, i18n.language);
   const [modalVisible, setModalVisible] = useState(false);
   let padMax = 0;
@@ -143,6 +146,8 @@ export function AIAdvisorySection({ crop }: Props) {
             }
             className="mt-1"
           />
+        ) : !location && !isResolving ? (
+          <NoLocationCard message="Select a location to generate AI agricultural advisories." />
         ) : (
           <View>
             {isLoading && (

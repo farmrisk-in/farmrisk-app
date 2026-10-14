@@ -5,6 +5,7 @@ import { useWeather } from "@/hooks/useWeather";
 import { useLocationContext } from "@/providers/LocationProvider";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { CloudOffIcon, Lightning } from "@hugeicons/core-free-icons";
 import { WebView } from "react-native-webview";
 import { useColorScheme } from "nativewind";
@@ -118,6 +119,30 @@ export function LightningRiskSection() {
   const isDark = colorScheme === "dark";
 
   const lightning = data?.lightning;
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6 px-3">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={Lightning}
+            className="text-foreground"
+            strokeWidth={2}
+            size={26}
+          />
+          <Text
+            className="flex-1 shrink text-lg text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
+            {t("lightningRisk")}
+          </Text>
+        </View>
+        <NoLocationCard message="Select a location to monitor real-time convective storm and lightning alerts." />
+      </View>
+    );
+  }
 
   if (isResolving || isLoading) {
     return (

@@ -121,6 +121,7 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
   const touchMoved = useRef(false);
 
   // ── data ─────────────────────────────────────────────────────────────────
+  const { location, isResolving } = useLocationContext();
   const { data, isLoading, isError } = useSoilMoisture(crop, daysbefore);
   const rawArray = Array.isArray(data) ? data : (data?.soil_moisture ?? []);
 
@@ -199,6 +200,30 @@ export function SoilMoistureSection({ crop, irrigationInsight }: Props) {
   }
 
   // ── guards ────────────────────────────────────────────────────────────────
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6 px-4">
+        <View className="flex pb-4 flex-row gap-2 items-center">
+          <Icon
+            icon={SoilMoistureFieldIcon}
+            size={28}
+            strokeWidth={1.5}
+            className="text-foreground"
+          />
+          <Text
+            className="flex-1 shrink text-lg text-foreground font-semibold"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
+            {tW("soilMoisture")}
+          </Text>
+        </View>
+        <NoLocationCard message="Select a location to view root-zone soil moisture and moisture percentiles." />
+      </View>
+    );
+  }
+
   if (isLoading && !chartData.length) {
     return (
       <View className="my-6 px-4">

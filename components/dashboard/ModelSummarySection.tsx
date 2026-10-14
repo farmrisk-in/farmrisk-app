@@ -5,6 +5,8 @@ import { useForecast } from "@/hooks/useForecast";
 import { useWeather } from "@/hooks/useWeather";
 import { useAI } from "@/hooks/useAI";
 import { useSoilMoisture } from "@/hooks/useSoilMoisture";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Icon } from "@/components/ui/Icon";
@@ -68,9 +70,18 @@ const extractOutlook = (text?: string): OutlookKey | "" => {
 export function ModelSummarySection() {
   const { t: tDash, i18n } = useTranslation(["dashboard"]);
   const locale = i18n.language || "en";
+  const { location, isResolving } = useLocationContext();
 
   const { data: report, isLoading: isForecastLoading } = useForecast();
   const predictions = report?.forecast || [];
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6 px-3">
+        <NoLocationCard message="Select a location to see the 16-day forecast model summary." />
+      </View>
+    );
+  }
 
   const { data: weatherData } = useWeather();
   const daily = weatherData?.daily;

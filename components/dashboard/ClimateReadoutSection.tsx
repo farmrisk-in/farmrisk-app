@@ -5,6 +5,8 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Icon } from "@/components/ui/Icon";
 import { useWeather } from "@/hooks/useWeather";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import {
   SunCloudIcon,
   CloudOffIcon,
@@ -39,9 +41,18 @@ const getWindDirection = (deg: number): string => {
 
 export function ClimateReadoutSection() {
   const { t: tDash } = useTranslation(["dashboard"]);
+  const { location, isResolving } = useLocationContext();
   const { data, isLoading, isError, error } = useWeather();
   const current = data?.current;
   const errorMessage = error?.message;
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6 px-3">
+        <NoLocationCard message="Select a location to see the current climate readout." />
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (

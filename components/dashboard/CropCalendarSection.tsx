@@ -10,7 +10,9 @@ import {
 } from "@hugeicons/core-free-icons";
 import { useTranslation } from "react-i18next";
 import { useLocked } from "@/hooks/useLocked";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { LockedCard } from "@/components/ui/LockedCard";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 
 interface Props {
   crop?: string;
@@ -290,6 +292,7 @@ function SeasonCard({ entry }: { entry: any }) {
 export function CropCalendarSection({ crop }: Props) {
   const { t } = useTranslation(["calendar", "common"]);
   const { isLocked } = useLocked();
+  const { location, isResolving } = useLocationContext();
   const { calendar, isLoading, isError } = useCalendar(crop);
 
   if (isLocked) {
@@ -318,6 +321,30 @@ export function CropCalendarSection({ crop }: Props) {
             "Sign in or register to track seasonal sowing, growing, and harvesting periods for your crops."
           }
         />
+      </View>
+    );
+  }
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6 px-4">
+        <View className="flex-row items-center gap-2 pb-4">
+          <Icon
+            icon={Calendar03Icon}
+            size={26}
+            strokeWidth={1.5}
+            className="text-foreground"
+          />
+          <Text
+            className="flex-1 shrink text-lg font-semibold text-foreground"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
+            {t("cropCalendar")}
+          </Text>
+        </View>
+        <NoLocationCard message="Select a location to view localized crop calendar stages." />
       </View>
     );
   }

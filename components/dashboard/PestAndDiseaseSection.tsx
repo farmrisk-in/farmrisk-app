@@ -18,7 +18,9 @@ import { useForecast } from "@/hooks/useForecast";
 import { useWeather } from "@/hooks/useWeather";
 import { useSoilMoisture } from "@/hooks/useSoilMoisture";
 import { useLocked } from "@/hooks/useLocked";
+import { useLocationContext } from "@/providers/LocationProvider";
 import { LockedCard } from "@/components/ui/LockedCard";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import {
   Bug01Icon,
   Book02Icon,
@@ -247,6 +249,7 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
   const { isLocked } = useLocked();
   const { selectedCrop } = useCropContext();
   const activeCrop = crop || selectedCrop || "general";
+  const { location, isResolving } = useLocationContext();
 
   const {
     data: card,
@@ -412,6 +415,8 @@ export function PestAndDiseaseSection({ crop }: PestAndDiseaseSectionProps) {
               "Sign in or register to get real-time crop disease alerts and ICAR-backed treatment guidelines."
             }
           />
+        ) : !location && !isResolving ? (
+          <NoLocationCard message="Select a location to see pest, disease, and fungal spray risk." />
         ) : (
           <View className="gap-4">
             {isLoading ? (

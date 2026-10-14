@@ -22,6 +22,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import { useWeather } from "@/hooks/useWeather";
 import { useForecast } from "@/hooks/useForecast";
+import { useLocationContext } from "@/providers/LocationProvider";
+import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { useTranslation } from "react-i18next";
 
@@ -54,11 +56,31 @@ export default function WeatherTableScreen() {
   const { t: tDash } = useTranslation(["dashboard"]);
   const { type } = useLocalSearchParams<{ type: string }>();
   const router = useRouter();
+  const { location, isResolving } = useLocationContext();
 
   const { data: weatherData, isLoading: weatherLoading } = useWeather();
   const { forecastRows, isLoading: forecastLoading } = useForecast();
 
   const isHourly = type === "hourly";
+
+  if (!location && !isResolving) {
+    return (
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="px-5 pt-6 pb-4">
+          <TouchableOpacity onPress={() => router.back()}>
+            <Icon
+              icon={ArrowLeft01Icon}
+              size={32}
+              className="text-foreground"
+            />
+          </TouchableOpacity>
+        </View>
+        <View className="px-5 mt-6">
+          <NoLocationCard message="Select a location to view detailed weather tables." />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if ((isHourly && weatherLoading) || (!isHourly && forecastLoading)) {
     return (
