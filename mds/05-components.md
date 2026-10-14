@@ -19,7 +19,7 @@ Barrel file `components/dashboard/index.ts` exports:
 
 - Time-based greeting ("Good morning," etc.) + user name (from `useAuth().user.user_metadata`, falls back to email prefix or "Farmer").
 - Logged out: shows `Logo` + "FarmRisk" wordmark.
-- Logged in: shows avatar image (`assets/pic5.webp`) + name.
+- Logged in: shows avatar image (`assets/avatar-default-svgrepo-com.svg`) + name.
 - Menu button (right) → `router.push("/profile")`.
 
 ### `SearchSection`

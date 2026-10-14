@@ -106,7 +106,7 @@ farmrisk-app/
 ├── assets/
 │   ├── images/             # App icons, splash, adaptive icons
 │   ├── images/weathericons/# 24 SVG weather icons
-│   └── pic5.webp           # Header avatar image
+│   └── avatar-default-svgrepo-com.svg # Default avatar SVG
 ├── global.css              # Tailwind + CSS design tokens (light/dark)
 ├── tailwind.config.js      # Maps CSS vars → Tailwind color names
 ├── app.json                # Expo app config
