@@ -23,6 +23,7 @@ import {
 import { useWeather } from "@/hooks/useWeather";
 import { useForecast } from "@/hooks/useForecast";
 import { useLocationContext } from "@/providers/LocationProvider";
+import { HourlyWeatherDetail } from "@/components/weather/HourlyWeatherDetail";
 import { NoLocationCard } from "@/components/ui/NoLocationCard";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { useTranslation } from "react-i18next";
@@ -62,6 +63,10 @@ export default function WeatherTableScreen() {
   const { forecastRows, isLoading: forecastLoading } = useForecast();
 
   const isHourly = type === "hourly";
+
+  if (isHourly) {
+    return <HourlyWeatherDetail />;
+  }
 
   if (!location && !isResolving) {
     return (
