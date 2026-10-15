@@ -2,7 +2,9 @@ import React from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useColorScheme } from "nativewind";
 import { useNearestKVK } from "@/hooks/useNearestKVK";
+import { useLocked } from "@/hooks/useLocked";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { LockedCard } from "@/components/ui/LockedCard";
 import { Icon } from "@/components/ui/Icon";
 import {
   LandmarkIcon,
@@ -15,7 +17,19 @@ import type { KVKDetail } from "@/lib/api";
 export function NearestKVKSection() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { isLocked } = useLocked();
   const { kvkData, isLoading, isError } = useNearestKVK();
+
+  if (isLocked) {
+    return (
+      <View className="mb-6 px-3">
+        <LockedCard
+          title="Krishi Vigyan Kendra (KVK) Guidance"
+          description="Direct contacts with ICAR district agricultural scientists, official phone numbers, email addresses, and personalized guidance are exclusive to registered accounts."
+        />
+      </View>
+    );
+  }
 
   if (isLoading) {
     return (

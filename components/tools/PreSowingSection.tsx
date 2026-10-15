@@ -371,6 +371,17 @@ export function PreSowingSection() {
     }
   };
 
+  if (isLocked) {
+    return (
+      <View className="mt-2 pb-12">
+        <LockedCard
+          title="Pre-Sowing Agronomic Intelligence"
+          description="Sowing window calculations, seed variety recommendations, personalized fertilizer and irrigation schedules, and downloadable advisory reports are exclusive to registered accounts. Please sign in to access."
+        />
+      </View>
+    );
+  }
+
   if (!location && !isResolving) {
     return (
       <View className="mt-2 pb-12">
