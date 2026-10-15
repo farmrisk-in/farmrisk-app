@@ -55,6 +55,16 @@
         {
           "granularPermissions": []
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "extraProguardRules": "-keep class com.facebook.react.** { *; }\n-keep class com.swmansion.reanimated.** { *; }\n-keep class com.swmansion.gesturehandler.** { *; }\n-keep class com.swmansion.rnscreens.** { *; }\n-dontwarn com.facebook.react.**\n-dontwarn okhttp3.**\n-dontwarn okio.**"
+          }
+        }
       ]
     ],
     "experiments": {
