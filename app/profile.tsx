@@ -17,7 +17,6 @@ import { Icon } from "@/components/ui/Icon";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useColorScheme } from "nativewind";
 import {
-  Cancel01Icon,
   Globe02Icon,
   WheatIcon,
   MapPinIcon,
@@ -51,6 +50,7 @@ import {
   getCleanCropName,
   isCustomCrop,
 } from "@/constants/categorizedCrops";
+import { FeedbackSection } from "@/components/feedback/FeedbackSection";
 
 export default function ProfileScreen() {
   const { user, loading, signOut } = useAuth();
@@ -527,6 +527,9 @@ export default function ProfileScreen() {
             )}
           </View>
         </View>
+
+        {/* ── Feedback & Support ── */}
+        <FeedbackSection />
 
         {/* ── Dev-Only ── */}
         {__DEV__ && (
