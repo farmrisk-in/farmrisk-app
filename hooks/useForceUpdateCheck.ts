@@ -65,6 +65,11 @@ export function useForceUpdateCheck() {
       const isOlderCode =
         data.minVersionCode !== undefined && currentCode < data.minVersionCode;
 
+      if (__DEV__) {
+        setNeedsUpdate(false);
+        return;
+      }
+
       if ((isOlderVersion || isOlderCode) && data.forceUpdate !== false) {
         setNeedsUpdate(true);
       } else {

@@ -14,7 +14,6 @@ import {
 import { LogBox } from "react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ForceUpdateModal } from "@/components/ForceUpdateModal";
 import "../global.css";
 
 LogBox.ignoreLogs([
@@ -125,7 +124,6 @@ export default function RootLayout() {
                   <Stack.Screen name="locked-features" options={{ headerShown: false, presentation: "modal" }} />
                 </Stack>
                 <StatusBar style={isDark ? "light" : "dark"} />
-                <ForceUpdateModal />
                 </ThemeProvider>
                 </FarmProvider>
               </CropProvider>

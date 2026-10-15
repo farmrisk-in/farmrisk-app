@@ -215,11 +215,7 @@ export function RiskSection() {
     null,
   );
 
-  const handlePress = (
-    h: any,
-    customBand?: string,
-    customColor?: string,
-  ) => {
+  const handlePress = (h: any, customBand?: string, customColor?: string) => {
     const band = h.scoreData?.band ?? "Minimal";
     setSelectedRisk({
       hazard: h.name,
@@ -344,7 +340,7 @@ export function RiskSection() {
       <SectionHeader
         icon={SecurityWarningIcon}
         title={t("agricultureRisk")}
-        containerClassName="flex flex-row gap-2 mt-6 items-center"
+        containerClassName="flex flex-row gap-2 mt-6 mb-3 items-center"
         rightContent={
           <View className="flex flex-row rounded-xl gap-1.5 px-3 py-1.5 h-min items-center bg-card border border-border">
             <Icon icon={overallIcon} size={16} color={overallColor} />
