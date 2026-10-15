@@ -58,8 +58,8 @@ export function useForceUpdateCheck() {
       const data: VersionInfo = await res.json();
       setUpdateInfo(data);
 
-      const currentVersion = Constants.expoConfig?.version || "1.0.0";
-      const currentCode = Constants.expoConfig?.android?.versionCode ?? 1;
+      const currentVersion = Constants.expoConfig?.version || "1.0.1";
+      const currentCode = Constants.expoConfig?.android?.versionCode ?? 2;
 
       const isOlderVersion = isVersionOlder(currentVersion, data.minVersion);
       const isOlderCode =
