@@ -470,7 +470,7 @@ export async function getPreSowingAdvisory(payload: {
   irrigation_type?: string;
   language?: string;
 }): Promise<any> {
-  const url = `${getApiUrl()}/api/advisory/pre-sowing`;
+  const url = `${getApiUrl()}/api/ai/pre-sowing`;
   console.log(`[getPreSowingAdvisory] POST -> ${url}`, payload);
   try {
     const res = await fetch(url, {
@@ -495,4 +495,69 @@ export async function getPreSowingAdvisory(payload: {
     console.error(`[getPreSowingAdvisory] Network Error:`, err);
     throw err;
   }
+}
+
+// 12. Soil Detection
+export interface DetectedSoilResponse {
+  lat: number;
+  lon: number;
+  code: number;
+  wrb: string;
+  soil_type: string;
+  note: string;
+}
+
+export async function getSoilType(
+  lat: number,
+  lon: number,
+): Promise<DetectedSoilResponse> {
+  const url = `${getApiUrl()}/api/soil?lat=${lat}&lon=${lon}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Soil detection failed: ${res.statusText}`);
+  }
+  return res.json();
+}
+
+// 13. Nearest Krishi Vigyan Kendra (KVK)
+export interface KVKDetail {
+  zone?: string;
+  state: string;
+  kvk: string;
+  district: string;
+  host: string;
+  year_of_sanction?: string;
+  host_type?: string;
+  latitude?: number;
+  longitude?: number;
+  distance_km?: number;
+  bearing?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+}
+
+export interface KVKResponse {
+  success: boolean;
+  query_district?: string;
+  same_district?: boolean;
+  nearest?: KVKDetail | null;
+  district_kvk?: KVKDetail | null;
+  notes?: string[];
+}
+
+export async function getNearestKVK(
+  lat: number,
+  lon: number,
+  district?: string,
+): Promise<KVKResponse> {
+  const query = district
+    ? `lat=${lat}&lon=${lon}&district=${encodeURIComponent(district)}`
+    : `lat=${lat}&lon=${lon}`;
+  const url = `${getApiUrl()}/api/kvk?${query}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`KVK query failed: ${res.statusText}`);
+  }
+  return res.json();
 }
