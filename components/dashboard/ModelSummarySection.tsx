@@ -75,14 +75,6 @@ export function ModelSummarySection() {
   const { data: report, isLoading: isForecastLoading } = useForecast();
   const predictions = report?.forecast || [];
 
-  if (!location && !isResolving) {
-    return (
-      <View className="my-6 px-3">
-        <NoLocationCard message="Select a location to see the 16-day forecast model summary." />
-      </View>
-    );
-  }
-
   const { data: weatherData } = useWeather();
   const daily = weatherData?.daily;
 
@@ -169,6 +161,14 @@ export function ModelSummarySection() {
       minTemp,
     };
   }, [finalPredictions]);
+
+  if (!location && !isResolving) {
+    return (
+      <View className="my-6 px-3">
+        <NoLocationCard message="Select a location to see the 16-day forecast model summary." />
+      </View>
+    );
+  }
 
   if (finalPredictions.length === 0 && !isForecastLoading) {
     return (

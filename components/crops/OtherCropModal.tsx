@@ -275,7 +275,7 @@ export function OtherCropModal({
                 />
               </View>
               <Text className="text-base font-bold text-foreground text-center">
-                No crops found matching "{searchQuery}"
+                {`No crops found matching "${searchQuery}"`}
               </Text>
               <Text className="text-xs text-muted-foreground text-center mt-1">
                 Try searching with an alternative English or Hindi name.
