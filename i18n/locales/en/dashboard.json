@@ -41,6 +41,7 @@
   "riskHigh": "High",
   "riskSevere": "Severe",
   "riskExtreme": "Extreme",
+  "hazardBandNoRisk": "No Risk",
   "smartUtilities": "Smart Field Utilities",
   "smartUtilitiesDesc": "Additional agricultural decision support tools",
   "irrigationTool": "Irrigation Tool",

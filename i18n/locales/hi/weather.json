@@ -59,6 +59,7 @@
   "moderateRisk": "बिजली गिरने का मध्यम जोखिम।",
   "highRisk": "बिजली गिरने का उच्च जोखिम।",
   "severeRisk": "बिजली गिरने का गंभीर जोखिम।",
+  "hazardBandNoRisk": "कोई जोखिम नहीं",
   "fetchingLightningRisk": "बिजली जोखिम डेटा लोड हो रहा है...",
   "lightningLoadError": "बिजली डेटा लोड करने में त्रुटि...",
   "feelsLike": "महसूस हो रहा है {{temp}}°C",

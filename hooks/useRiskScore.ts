@@ -4,6 +4,7 @@ import { useLocationContext } from "@/providers/LocationProvider";
 import { useWeather } from "./useWeather";
 import { useForecast } from "./useForecast";
 import { useSoilMoisture } from "./useSoilMoisture";
+import { lightningRisk } from "@/lib/services/lightningRisk";
 
 export function useRiskScore() {
   const { location, isResolving } = useLocationContext();
@@ -31,15 +32,34 @@ export function useRiskScore() {
     }
 
     if (weatherData) {
-      payload.humidity = weatherData.current?.relative_humidity_2m;
-      payload.wind_speed = weatherData.current?.wind_speed_10m;
-      payload.wind_gusts = weatherData.current?.wind_gusts_10m;
+      const current = weatherData.current;
+      payload.humidity = current?.relative_humidity_2m ?? null;
+      payload.wind_speed = current?.wind_speed_10m ?? null;
+      payload.wind_gusts = current?.wind_gusts_10m ?? null;
       
       if (weatherData.hourly) {
         payload.gusts_hourly = weatherData.hourly.wind_gusts_10m?.slice(0, 24);
         payload.times_hourly = weatherData.hourly.time?.slice(0, 24);
       }
-      payload.lightning_score = weatherData.current?.lightning_score ?? null; 
+
+      // Unified lightning inputs and computation
+      const lightning = weatherData.lightning;
+      const computedLightning = current
+        ? lightningRisk({
+            code: current.weather_code ?? 0,
+            cloudCover: current.cloud_cover ?? 0,
+            precipitation: current.precipitation ?? 0,
+            humidity: current.relative_humidity_2m ?? 0,
+            windGusts: current.wind_gusts_10m ?? 0,
+          })
+        : null;
+
+      const effectiveLightning = lightning ?? computedLightning;
+      payload.lightning_score = effectiveLightning?.score ?? null;
+      payload.lightning_category = effectiveLightning?.category ?? null;
+      payload.cloud_cover = current?.cloud_cover ?? null;
+      payload.precipitation = current?.precipitation ?? null;
+      payload.weather_code = current?.weather_code ?? null;
     }
 
     if (soilMoistureData && soilMoistureData.soil_moisture && soilMoistureData.soil_moisture.length > 0) {

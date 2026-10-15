@@ -10,9 +10,14 @@ import { CloudOffIcon, Lightning } from "@hugeicons/core-free-icons";
 import { WebView } from "react-native-webview";
 import { useColorScheme } from "nativewind";
 import { useTranslation } from "react-i18next";
+import { lightningRisk } from "@/lib/services/lightningRisk";
 
 type LightningAdvisoryKey =
-  "lowRisk" | "moderateRisk" | "highRisk" | "severeRisk";
+  | "lowRisk"
+  | "moderateRisk"
+  | "highRisk"
+  | "severeRisk"
+  | "hazardBandNoRisk";
 
 const getLightningDetails = (category: string | undefined) => {
   switch (category) {
@@ -35,11 +40,17 @@ const getLightningDetails = (category: string | undefined) => {
         zoom: 13,
       };
     case "Low":
-    default:
       return {
         color: "#006045",
         advisory: "lowRisk" as LightningAdvisoryKey,
-        zoom: 10.5,
+        zoom: 14,
+      };
+    case "No Risk":
+    default:
+      return {
+        color: "#718096",
+        advisory: "hazardBandNoRisk" as LightningAdvisoryKey,
+        zoom: 14,
       };
   }
 };
@@ -51,10 +62,9 @@ const generateMapHtml = (
   color: string,
   isDark: boolean,
 ) => {
-  const lightTile =
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+  const lightTile = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
   const darkTile =
-    "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+    "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}";
   const tileUrl = isDark ? darkTile : lightTile;
 
   return `
@@ -84,10 +94,17 @@ const generateMapHtml = (
     }).setView([${lat}, ${lng}], ${zoom});
 
     L.tileLayer('${tileUrl}', {
+      maxZoom: 19,
+      maxNativeZoom: ${isDark ? 16 : 19},
       attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    const radius = ${zoom} === 11 ? 25000 : ${zoom} === 12 ? 15000 : ${zoom} === 13 ? 8000 : 4000;
+    let radius = 2000;
+    if ('${color}' === '#006045' || '${color}' === 'green') radius = 2000;
+    else if ('${color}' === '#FF9C04' || '${color}' === 'yellow') radius = 5000;
+    else if ('${color}' === '#FF4116' || '${color}' === 'orange') radius = 8000;
+    else if ('${color}' === '#FF040E' || '${color}' === 'red') radius = 12000;
+    else if ('${color}' === '#718096') radius = 1000;
 
     L.circle([${lat}, ${lng}], {
       color: '${color}',
@@ -112,13 +129,24 @@ const generateMapHtml = (
 };
 
 export function LightningRiskSection() {
-  const { t } = useTranslation(["weather"]);
+  const { t } = useTranslation(["weather", "dashboard"]);
   const { data, isLoading, isError } = useWeather();
   const { location, isResolving } = useLocationContext();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const lightning = data?.lightning;
+  const current = data?.current;
+  const fallbackLightning = current
+    ? lightningRisk({
+        code: current.weather_code ?? 0,
+        cloudCover: current.cloud_cover ?? 0,
+        precipitation: current.precipitation ?? 0,
+        humidity: current.relative_humidity_2m ?? 0,
+        windGusts: current.wind_gusts_10m ?? 0,
+      })
+    : undefined;
+
+  const lightning = data?.lightning ?? fallbackLightning;
 
   if (!location && !isResolving) {
     return (
@@ -218,9 +246,18 @@ export function LightningRiskSection() {
         title={t("lightningRisk")}
         titleClassName="flex-1 shrink text-lg text-foreground font-bold"
         rightContent={
-          <View className="px-3 py-1 rounded-xl bg-emerald-100/80 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50">
-            <Text className="text-[10px] uppercase text-emerald-800 dark:text-emerald-300">
-              {t(advisory)}
+          <View
+            className="px-3 py-1 rounded-xl border"
+            style={{
+              backgroundColor: `${color}18`,
+              borderColor: `${color}35`,
+            }}
+          >
+            <Text
+              style={{ color }}
+              className="text-[10px] uppercase font-bold"
+            >
+              {lightning.category || t(advisory)}
             </Text>
           </View>
         }
@@ -247,3 +284,5 @@ export function LightningRiskSection() {
     </View>
   );
 }
+
+export default LightningRiskSection;

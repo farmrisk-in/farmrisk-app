@@ -41,6 +41,7 @@
   "riskHigh": "उच्च",
   "riskSevere": "गंभीर",
   "riskExtreme": "अत्यधिक",
+  "hazardBandNoRisk": "कोई जोखिम नहीं",
   "smartUtilities": "स्मार्ट फील्ड सुविधाएँ",
   "smartUtilitiesDesc": "अतिरिक्त कृषि निर्णय समर्थन उपकरण",
   "irrigationTool": "सिंचाई उपकरण",

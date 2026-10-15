@@ -59,6 +59,7 @@
   "moderateRisk": "વીજળીનું મધ્યમ જોખમ.",
   "highRisk": "વીજળીનું ઊંચું જોખમ.",
   "severeRisk": "વીજળીનું ગંભીર જોખમ.",
+  "hazardBandNoRisk": "કોઈ જોખમ નથી",
   "fetchingLightningRisk": "વીજળી જોખમ ડેટા લોડ થઈ રહ્યો છે...",
   "lightningLoadError": "વીજળી ડેટા લોડ કરવામાં ભૂલ...",
   "feelsLike": "લાગે છે {{temp}}°C",

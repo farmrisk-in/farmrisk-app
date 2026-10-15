@@ -46,10 +46,13 @@ type RiskBandKey =
   | "riskHigh"
   | "riskSevere"
   | "riskMinimal"
-  | "riskExtreme";
+  | "riskExtreme"
+  | "hazardBandNoRisk";
 
 const getBandKey = (band: string): RiskBandKey | null => {
   switch (band?.toLowerCase()) {
+    case "no risk":
+      return "hazardBandNoRisk";
     case "minimal":
       return "riskMinimal";
     case "low":
@@ -75,22 +78,25 @@ const formatBand = (t: TFunction<"dashboard">, band: string): string => {
 function getRiskColor(band: string) {
   switch (band?.toLowerCase()) {
     case "extreme":
-      return "#ef4444"; // red-500
+    case "severe":
+      return "#FF040E";
     case "high":
-      return "#f97316"; // orange-500
+      return "#FF4116";
     case "moderate":
-      return "#eab308"; // yellow-500
+      return "#FF9C04";
     case "low":
-      return "#10b981"; // emerald-500
+      return "#006045";
+    case "no risk":
     case "minimal":
     default:
-      return "#718096"; // gray-500
+      return "#718096";
   }
 }
 
 function getRiskIcon(band: string) {
   switch (band?.toLowerCase()) {
     case "extreme":
+    case "severe":
       return DangerIcon;
     case "high":
       return Alert02Icon;
@@ -98,6 +104,7 @@ function getRiskIcon(band: string) {
       return SecurityWarningIcon;
     case "low":
       return Plant01Icon;
+    case "no risk":
     case "minimal":
     default:
       return TractorIcon;
@@ -110,6 +117,8 @@ function RiskGauge({
   data,
   isDark,
   color,
+  customBand,
+  customColor,
   onPress,
 }: {
   hazard: string;
@@ -117,6 +126,8 @@ function RiskGauge({
   data: any;
   isDark: boolean;
   color: string;
+  customBand?: string;
+  customColor?: string;
   onPress: () => void;
 }) {
   const { t } = useTranslation(["dashboard"]);
@@ -124,7 +135,7 @@ function RiskGauge({
 
   const score = Math.max(0, Math.min(100, data.score ?? 0));
   const band = data.band ?? "Minimal";
-  const riskcolor = getRiskColor(band);
+  const riskcolor = customColor ?? getRiskColor(band);
 
   const chartData = [
     { x: "score", y: score },
@@ -176,7 +187,7 @@ function RiskGauge({
         style={{ color: riskcolor }}
         numberOfLines={1}
       >
-        {formatBand(t, band)}
+        {customBand ?? formatBand(t, band)}
       </Text>
     </TouchableOpacity>
   );
@@ -195,6 +206,7 @@ export function RiskSection() {
     majorFactor: string;
     reasons: string[];
     band: string;
+    displayBand?: string;
     color: string;
     riskcolor: string;
     icon: any;
@@ -203,15 +215,21 @@ export function RiskSection() {
     null,
   );
 
-  const handlePress = (h: any) => {
+  const handlePress = (
+    h: any,
+    customBand?: string,
+    customColor?: string,
+  ) => {
+    const band = h.scoreData?.band ?? "Minimal";
     setSelectedRisk({
       hazard: h.name,
       icon: h.icon,
       majorFactor: h.scoreData?.major_factor ?? "",
       reasons: h.scoreData?.reasons ?? [],
-      band: h.scoreData?.band ?? "Minimal",
+      band,
+      displayBand: customBand ?? formatBand(t, band),
       color: h.color,
-      riskcolor: getRiskColor(h.scoreData?.band ?? "Minimal"),
+      riskcolor: customColor ?? getRiskColor(band),
     });
   };
 
@@ -342,17 +360,44 @@ export function RiskSection() {
 
       {/* 3-Column (3x2) Hazard Grid */}
       <View className="flex-row flex-wrap justify-between gap-y-3">
-        {hazards.map((hazard) => (
-          <RiskGauge
-            key={hazard.id}
-            hazard={hazard.name}
-            icon={hazard.icon}
-            data={hazard.scoreData}
-            isDark={isDark}
-            color={hazard.color}
-            onPress={() => handlePress(hazard)}
-          />
-        ))}
+        {hazards.map((hazard) => {
+          let customBand: string | undefined;
+          let customColor: string | undefined;
+
+          if (hazard.id === "lightning") {
+            const rawCat = hazard.scoreData?.band;
+            if (rawCat === "Severe") {
+              customBand = t("riskSevere");
+              customColor = "#FF040E";
+            } else if (rawCat === "High") {
+              customBand = t("riskHigh");
+              customColor = "#FF4116";
+            } else if (rawCat === "Moderate") {
+              customBand = t("riskModerate");
+              customColor = "#FF9C04";
+            } else if (rawCat === "Low") {
+              customBand = t("riskLow");
+              customColor = "#006045";
+            } else {
+              customBand = t("hazardBandNoRisk");
+              customColor = "#718096";
+            }
+          }
+
+          return (
+            <RiskGauge
+              key={hazard.id}
+              hazard={hazard.name}
+              icon={hazard.icon}
+              data={hazard.scoreData}
+              isDark={isDark}
+              color={hazard.color}
+              customBand={customBand}
+              customColor={customColor}
+              onPress={() => handlePress(hazard, customBand, customColor)}
+            />
+          );
+        })}
       </View>
 
       {/* Details Modal */}
@@ -363,7 +408,8 @@ export function RiskSection() {
         onRequestClose={() => setSelectedRisk(null)}
       >
         <TouchableOpacity
-          className="flex-1 bg-black/60 justify-center px-5"
+          className="flex-1 justify-center px-5"
+          style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
           activeOpacity={1}
           onPressOut={() => setSelectedRisk(null)}
         >
@@ -409,14 +455,15 @@ export function RiskSection() {
                       icon={getRiskIcon(selectedRisk?.band)}
                       size={20}
                       strokeWidth={1.5}
-                      color={getRiskColor(selectedRisk?.band)}
+                      color={selectedRisk?.riskcolor}
                     />
                   )}
                   <Text
                     className="font-bold text-md uppercase"
                     style={{ color: selectedRisk?.riskcolor }}
                   >
-                    {selectedRisk?.band && formatBand(t, selectedRisk.band)}
+                    {selectedRisk?.displayBand ??
+                      (selectedRisk?.band && formatBand(t, selectedRisk.band))}
                   </Text>
                 </View>
 

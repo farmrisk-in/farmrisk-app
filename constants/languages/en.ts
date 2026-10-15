@@ -176,6 +176,7 @@ export const en = {
     advModerate: "Moderate risk",
     advHigh: "High risk.",
     advSevere: "Severe risk.",
+    hazardBandNoRisk: "No Risk",
   },
 
   profile: {

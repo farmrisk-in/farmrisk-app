@@ -178,6 +178,7 @@ export const mr = {
     advModerate: "मध्यम धोका. हवामानावर लक्ष ठेवा.",
     advHigh: "दाट ढग आणि पावसामुळे विजेचा धोका वाढतो.",
     advSevere: "तुमच्या भागात वादळाची शक्यता आहे.",
+    hazardBandNoRisk: "जोखिम नाही",
   },
 
   profile: {

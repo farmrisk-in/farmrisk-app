@@ -59,6 +59,7 @@
   "moderateRisk": "மின்னல் அபாயம் மிதமானது.",
   "highRisk": "மின்னல் அபாயம் அதிகம்.",
   "severeRisk": "மின்னல் அபாயம் மிகவும் கடுமையானது.",
+  "hazardBandNoRisk": "ஆபத்து இல்லை",
   "fetchingLightningRisk": "மின்னல் அபாய தரவு ஏற்றப்படுகிறது...",
   "lightningLoadError": "மின்னல் தரவை ஏற்றுவதில் பிழை...",
   "feelsLike": "{{temp}}°C போல் உணர்கிறது",

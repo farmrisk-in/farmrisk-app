@@ -59,6 +59,7 @@
   "moderateRisk": "विजेचा मध्यम धोका.",
   "highRisk": "विजेचा उच्च धोका.",
   "severeRisk": "विजेचा गंभीर धोका.",
+  "hazardBandNoRisk": "जोखिम नाही",
   "fetchingLightningRisk": "विजेचा धोका डेटा लोड होत आहे...",
   "lightningLoadError": "विजेचा डेटा लोड करण्यात त्रुटी...",
   "feelsLike": "जाणवत आहे {{temp}}°C",

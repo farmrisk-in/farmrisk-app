@@ -59,6 +59,7 @@
   "moderateRisk": "Moderate risk of lightning.",
   "highRisk": "High risk of lightning.",
   "severeRisk": "Severe risk of lightning.",
+  "hazardBandNoRisk": "No Risk",
   "fetchingLightningRisk": "Fetching Lightning Risk Data...",
   "lightningLoadError": "Error Loading Lightning Data...",
   "feelsLike": "Feels like {{temp}}°C",

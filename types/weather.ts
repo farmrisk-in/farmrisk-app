@@ -43,6 +43,13 @@ export type HourlyWeather = {
   weather_code: number[];
   icon: string[];
   rain: number[];
+  wind_gusts_10m?: number[];
+  is_day?: number[];
+  relative_humidity_2m?: number[];
+  apparent_temperature?: number[];
+  uv_index?: number[];
+  cloud_cover?: number[];
+  et0_fao_evapotranspiration?: number[];
 };
 
 export type DailyWeather = {
