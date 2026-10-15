@@ -22,6 +22,13 @@ export interface MarkdownViewerProps {
   emptySubtext?: string;
 }
 
+function preprocessMarkdown(text: string): string {
+  if (!text) return "";
+  // Unescape literal \n sequences from JSON transport
+  let formatted = text.replace(/\\n/g, "\n");
+  return formatted.trim();
+}
+
 export function MarkdownViewer({
   content,
   isLoading,
@@ -50,8 +57,8 @@ export function MarkdownViewer({
     return (
       <View className="flex flex-col items-center justify-center py-7 px-4 text-center">
         <Icon icon={CloudOffIcon} size={32} className="text-destructive" />
-        <Text className="mt-4 text-muted-foreground font-medium">
-          ERROR HAPPPEDNED
+        <Text className="mt-4 text-muted-foreground font-medium text-center">
+          {errorMessage}
         </Text>
       </View>
     );
@@ -75,9 +82,11 @@ export function MarkdownViewer({
     );
   }
 
+  const cleanContent = preprocessMarkdown(content);
+
   return (
     <View className="w-full">
-      <Markdown style={styles}>{content}</Markdown>
+      <Markdown style={styles}>{cleanContent}</Markdown>
     </View>
   );
 }
@@ -181,19 +190,20 @@ const lightStyles = StyleSheet.create({
     flexDirection: "row",
   },
   th: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
     fontWeight: "700",
-    fontSize: 12,
+    fontSize: 11,
     textTransform: "uppercase",
     color: "#0f172a",
     borderRightWidth: 1,
     borderRightColor: "#e2e8f0",
   },
   td: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    fontSize: 13,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    fontSize: 11,
+    lineHeight: 16,
     borderRightWidth: 1,
     borderRightColor: "#e2e8f0",
     color: "#334155",
@@ -304,19 +314,20 @@ const darkStyles = StyleSheet.create({
     flexDirection: "row",
   },
   th: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
     fontWeight: "700",
-    fontSize: 12,
+    fontSize: 11,
     textTransform: "uppercase",
     color: "#f8fafc",
     borderRightWidth: 1,
     borderRightColor: "#334155",
   },
   td: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    fontSize: 13,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    fontSize: 11,
+    lineHeight: 16,
     borderRightWidth: 1,
     borderRightColor: "#334155",
     color: "#cbd5e1",
